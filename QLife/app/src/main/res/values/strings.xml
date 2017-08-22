@@ -18,6 +18,7 @@
     <string name="fragment_student_tools">Student Tools</string>
     <string name="fragment_emerg_contacts">Emergency Contacts</string>
     <string name="fragment_eng_contacts">Engineering Contacts</string>
+    <string name="fragment_ilc_rooms">ILC Room Info</string>
 
     <!--Short text in app-->
     <string name="brought_by">Brought to you by</string>
@@ -84,6 +85,8 @@
     <string name="suggestions_url">http://qtap.engsoc.queensu.ca/improvements_form.html</string>
     <string name="db_get_database">http://qtap.engsoc.queensu.ca/database/get_database.php</string>
     <string name="suggestions_accepted_url">http://qtap.engsoc.queensu.ca/submit_improvement.php</string>
+    <string name="dibs_get_rooms">https://queensu.evanced.info/dibsAPI/rooms</string>
+    <string name="dibs_get_rooms_times">https://queensu.evanced.info/dibsAPI/reservations/</string>
 
     <!-- other strings -->
     <string name="ellipses">&#8226;</string>
@@ -116,4 +119,7 @@ Shout out to the 2016-17 Engineering Society IT Team for starting this project! 
 
     <string name="ask_suggestions">If you liked the app, please use the button below to review it on the Play Store!\n\nIf you have any suggestions for improvements, please feel free to email
     doit@engsoc.queensu.ca or submit a suggestion using the button below!</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

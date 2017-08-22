@@ -48,6 +48,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(SqlStringStatements.CREATE_BUILDINGS);
         db.execSQL(SqlStringStatements.CREATE_FOOD);
         db.execSQL(SqlStringStatements.CREATE_CAFETERIAS);
+        db.execSQL(SqlStringStatements.CREATE_ILC_ROOM_INFO);
     }
 
     @Override
@@ -61,6 +62,7 @@ public class DbHelper extends SQLiteOpenHelper {
         db.execSQL(SqlStringStatements.DELETE_BUILDINGS);
         db.execSQL(SqlStringStatements.DELETE_FOOD);
         db.execSQL(SqlStringStatements.DELETE_CAFETERIAS);
+        db.execSQL(SqlStringStatements.DELETE_ILC_ROOM_INFO);
         onCreate(db);
     }
 
