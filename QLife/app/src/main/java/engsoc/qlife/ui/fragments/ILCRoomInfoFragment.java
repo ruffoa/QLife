@@ -17,12 +17,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import engsoc.qlife.R;
 import engsoc.qlife.activities.MainTabActivity;
 import engsoc.qlife.ui.recyclerview.DataObject;
-import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
 import engsoc.qlife.database.dibs.ILCRoomObj;
 import engsoc.qlife.database.dibs.ILCRoomObjManager;
 import engsoc.qlife.database.dibs.getDibsApiInfo;
@@ -115,9 +115,9 @@ public class ILCRoomInfoFragment extends Fragment {
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                DataObject data = ((RecyclerViewAdapter) mAdapter).getItem(position);
+                DataObject data = ((SectionedRecyclerView) mAdapter).getItem(position);
 
-                CardView card = (CardView) mView.findViewById(R.id.card_view);
+                LinearLayout card = (LinearLayout) mView.findViewById(R.id.sectioned_card_view);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     card.setTransitionName("transistion_event_info" + position);
                 }
