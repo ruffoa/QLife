@@ -7,17 +7,21 @@ package engsoc.qlife.ui.recyclerview;
 public class DataObject {
     private String mText1;
     private String mText2;
+    private String mHeader;
     private int mId;
+    private boolean mHasTV;
 
     public DataObject(String text1, String text2) {
         mText1 = text1;
         mText2 = text2;
     }
 
-    public DataObject(String text1, String text2, int id) {
+    public DataObject(String text1, String text2, int id, boolean hasTV, String header) {
         mText1 = text1;
         mText2 = text2;
         mId = id;
+        mHasTV = hasTV;
+        mHeader = header;
     }
 
     public String getmText1() {
@@ -43,4 +47,8 @@ public class DataObject {
     public void setmText2(String mText2) {
         this.mText2 = mText2;
     }
+    public boolean getHasTV() {return mHasTV; }
+    public String getHeader() {return mHeader; }
+    public void setHeader(String header) {this.mHeader = header; }
+    public void setHasTV(boolean hasTV) {this.mHasTV = hasTV; }
 }

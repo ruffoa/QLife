@@ -3,8 +3,8 @@ package engsoc.qlife.ui.fragments;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.transition.Visibility;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
@@ -12,33 +12,29 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.format.DateFormat;
 import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import engsoc.qlife.R;
 import engsoc.qlife.activities.MainTabActivity;
 import engsoc.qlife.ui.recyclerview.DataObject;
-import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
 import engsoc.qlife.database.dibs.ILCRoomObj;
 import engsoc.qlife.database.dibs.ILCRoomObjManager;
 import engsoc.qlife.database.dibs.getDibsApiInfo;
 import engsoc.qlife.database.local.DatabaseRow;
-import engsoc.qlife.database.local.courses.OneClass.*;
+import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
 
 import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.regex.Pattern;
 
 public class ILCRoomInfoFragment extends Fragment {
 
@@ -60,11 +56,13 @@ public class ILCRoomInfoFragment extends Fragment {
     private TextView mDateText;
     private JSONArray json;
 
+    private ArrayList<DataObject> mRoomData;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        mView = inflater.inflate(R.layout.fragment_day, container, false);
+        mView = inflater.inflate(R.layout.fragment_ilcroom_info, container, false);
         mDateText = (TextView) mView.findViewById(R.id.date);
 
         Bundle bundle = getArguments();
@@ -79,11 +77,11 @@ public class ILCRoomInfoFragment extends Fragment {
         }
 
 
-        mRecyclerView = (RecyclerView) mView.findViewById(R.id.my_recycler_view);
+        mRecyclerView = (RecyclerView) mView.findViewById(R.id.ilcRoomInfoRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new RecyclerViewAdapter(getDayEventData());
+        mAdapter = new SectionedRecyclerView(getDayEventData());
         mRecyclerView.setAdapter(mAdapter);
 
         Button nextButton = (Button) mView.findViewById(R.id.next);
@@ -103,16 +101,23 @@ public class ILCRoomInfoFragment extends Fragment {
             }
         });
 
+        FloatingActionButton myFab = (FloatingActionButton) mView.findViewById(R.id.sortRoomsFab);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                onFABClick();
+            }
+        });
+
         nextButton.setVisibility(View.GONE);
         prevButton.setVisibility(View.GONE);
 
-        ((RecyclerViewAdapter) mAdapter).setOnItemClickListener(new RecyclerViewAdapter
+        ((SectionedRecyclerView) mAdapter).setOnItemClickListener(new SectionedRecyclerView
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                DataObject data = ((RecyclerViewAdapter) mAdapter).getItem(position);
+                DataObject data = ((SectionedRecyclerView) mAdapter).getItem(position);
 
-                CardView card = (CardView) mView.findViewById(R.id.card_view);
+                LinearLayout card = (LinearLayout) mView.findViewById(R.id.sectioned_card_view);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     card.setTransitionName("transistion_event_info" + position);
                 }
@@ -197,6 +202,39 @@ public class ILCRoomInfoFragment extends Fragment {
         mNavView.getMenu().findItem(R.id.nav_rooms).setChecked(true);
     }
 
+    private void onFABClick() {
+        ArrayList<DataObject> small = new ArrayList<DataObject>();
+        ArrayList<DataObject> med = new ArrayList<DataObject>();
+        ArrayList<DataObject> large = new ArrayList<DataObject>();
+        ArrayList<DataObject> other = new ArrayList<DataObject>();
+        ArrayList<DataObject> res = new ArrayList<DataObject>();
+
+        for (DataObject obj : mRoomData) {
+            if (Pattern.compile(Pattern.quote("small"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
+                small.add(obj);
+            else if (Pattern.compile(Pattern.quote("medium"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
+                med.add(obj);
+            else if (Pattern.compile(Pattern.quote("large"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
+                large.add(obj);
+            else other.add(obj);
+        }
+
+
+        small.get(0).setHeader("Small Group Rooms");
+        med.get(0).setHeader("Medium Group Rooms");
+        large.get(0).setHeader("Large Group Rooms");
+        other.get(0).setHeader("Uncategorized Rooms");
+
+        res.addAll(small);
+        res.addAll(med);
+        res.addAll(large);
+        res.addAll(other);
+
+        mAdapter = new SectionedRecyclerView(res);
+        mRecyclerView.setAdapter(mAdapter);
+
+    }
+
     public void changeDate(int numChange) {
 //        mCalendar.add(Calendar.DAY_OF_YEAR, numChange);
 //        mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
@@ -204,8 +242,8 @@ public class ILCRoomInfoFragment extends Fragment {
     }
 
     public ArrayList<DataObject> getDayEventData() {
-        TextView noClassMessage = (TextView) mView.findViewById(R.id.no_class_message);
-        noClassMessage.setVisibility(View.GONE); //updates day view when go to new day - may have class
+//        TextView noClassMessage = (TextView) mView.findViewById(R.id.no_class_message);
+//        noClassMessage.setVisibility(View.GONE); //updates day view when go to new day - may have class
         ILCRoomObjManager roomInf = new ILCRoomObjManager(this.getContext());
 
         ArrayList<DataObject> result = new ArrayList<DataObject>();
@@ -215,9 +253,10 @@ public class ILCRoomInfoFragment extends Fragment {
         if (data != null && data.size() > 0) {
             for (DatabaseRow row : data) {
                 ILCRoomObj room = (ILCRoomObj) row;
-                String hasTV = room.getDescription().contains("TV") || room.getDescription().contains("Projector") ? "Yes" : "No";
-                result.add(new DataObject(room.getName(), room.getDescription() + "\nHas TV: " + hasTV, room.getRoomId()));
+                boolean hasTV = room.getDescription().contains("TV") || room.getDescription().contains("Projector") ? true : false;
+                result.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), hasTV, ""));
             }
+            mRoomData = result;
             return result;
         }
         return null;
