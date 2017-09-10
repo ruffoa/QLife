@@ -68,7 +68,7 @@ public class RoomAvaliabilityInfoFragment extends Fragment {
             mRoomID = bundle.getInt(ILCRoomInfoFragment.TAG_ROOM_ID);
         }
         myView = inflater.inflate(R.layout.fragment_room_avaliability_info, container, false);
-        cal.add(Calendar.MONTH, -5);    // for debugging purposes - there is no summer booking data :/
+        cal.add(Calendar.MONTH, -6);    // for debugging purposes - there is no summer booking data :/
 
         getDibsRoomInfo dibs = new getDibsRoomInfo(this.getContext());
         try {
@@ -137,11 +137,11 @@ public class RoomAvaliabilityInfoFragment extends Fragment {
         if (mAdapter.getItemCount() > 0) {
             TextView dateAvaliability = (TextView) view.findViewById(R.id.RoomAvaliabilityDate);
             if (Calendar.getInstance() == cal)
-                dateAvaliability.setText("Current room bookings for today");
+                dateAvaliability.setText("Current room availability for today");
             else {
                 CharSequence date = DateFormat.format("EEEE, MMMM d, yyyy", cal.getTime());
                 String mDateString = date.toString();
-                dateAvaliability.setText("Current room bookings for " + mDateString);
+                dateAvaliability.setText("Current room availability for " + mDateString);
             }
         }
 
@@ -190,6 +190,10 @@ public class RoomAvaliabilityInfoFragment extends Fragment {
         ArrayList<DataObject> result = new ArrayList<DataObject>();
         ArrayList<DataObject> list = new ArrayList<DataObject>();
 
+        for (int i = 0; i < 16; i++) {
+            result.add(new DataObject("From: " + (i + 7)+":" + 30,"To: " + (i + 8)+":" + 30));
+        }
+
         if (roomAvaliabiliy != null && roomAvaliabiliy.length() > 0) {
             try {
                 JSONArray arr = new JSONArray(roomAvaliabiliy);
@@ -201,10 +205,53 @@ public class RoomAvaliabilityInfoFragment extends Fragment {
 
                     start = start.substring(start.indexOf("T") + 1);
                     end = end.substring(end.indexOf("T") + 1);
-                    list.add(new DataObject("From: " + start, "To: " + end));
+
+                    DataObject currentTime = new DataObject("From: " + start, "To: " + end);
+
+                    list.add(currentTime);
+
+                    for (int j = 0; j < result.size(); j++) {
+                            DataObject temp = result.get(j);
+                        String test = result.get(j).getmText1().substring(6);
+                        int startTime = Integer.parseInt(test.substring(0,test.indexOf(":")));
+//                        int tempend = Integer.parseInt(result.get(j).getmText2().substring(0,result.get(j).getmText1().indexOf(":")));
+
+                        if (Integer.parseInt(start.substring(0,2)) == startTime){
+                            result.remove(j);
+                            if (j > 0)
+                                j --;
+                        }
+                        else if (Integer.parseInt(start.substring(0,2)) < startTime && Integer.parseInt(end.substring(0,2)) > startTime ){
+                            result.remove(j);
+                            if (j > 0)
+                                j --;
+                        }
+                    }
+//                    if (result.contains(currentTime)){
+//                        result.remove(currentTime);
+//                    }
+
+//                    list.add(new DataObject("From: " + start, "To: " + end));
                 }
 
-                return list;
+                for (int j = 0; j < result.size(); j++) {
+                    String test = result.get(j).getmText1().substring(6);
+                    int temptime = Integer.parseInt(test.substring(0,test.indexOf(":")));
+
+                    if (temptime > 12) {
+                        result.get(j).setmText1("From: " + (temptime - 12) + ":30 PM");
+                        test = result.get(j).getmText2().substring(4);
+                        int endtime = Integer.parseInt(test.substring(0,test.indexOf(":")));
+                        result.get(j).setmText2("To: " + (endtime - 12) + ":30 PM");
+                    }
+                    else if (temptime == 12)
+                    {
+                        test = result.get(j).getmText2().substring(4);
+                        int endtime = Integer.parseInt(test.substring(0,test.indexOf(":")));
+                        result.get(j).setmText2("To: " + (endtime - 12) + ":30 PM");
+                    }
+                }
+                return result;
             } catch (JSONException e) {
 
             }

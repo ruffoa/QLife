@@ -47,8 +47,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Carson on 21/06/2017.
- * Async task that downloads and parses the cloud database into the phone database.
+ * Created by Alex Ruffo on 21/06/2017.
+ * Gets the D!bs API data for the selected day
  */
 public class getDibsApiInfo extends AsyncTask<Void, Void, Void> {
 

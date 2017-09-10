@@ -1,9 +1,5 @@
 package engsoc.qlife.database.dibs;
 
-/**
- * Created by Alex on 8/21/2017.
- */
-
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
