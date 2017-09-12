@@ -68,7 +68,6 @@ public class RoomAvaliabilityInfoFragment extends Fragment {
             mRoomID = bundle.getInt(ILCRoomInfoFragment.TAG_ROOM_ID);
         }
         myView = inflater.inflate(R.layout.fragment_room_avaliability_info, container, false);
-        cal.add(Calendar.MONTH, -6);    // for debugging purposes - there is no summer booking data :/
 
         getDibsRoomInfo dibs = new getDibsRoomInfo(this.getContext());
         try {

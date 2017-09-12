@@ -1,5 +1,8 @@
 package engsoc.qlife.ui.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,10 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import engsoc.qlife.R;
 import engsoc.qlife.activities.MainTabActivity;
+import engsoc.qlife.database.dibs.getDibsRoomInfo;
 import engsoc.qlife.ui.recyclerview.DataObject;
 import engsoc.qlife.database.dibs.ILCRoomObj;
 import engsoc.qlife.database.dibs.ILCRoomObjManager;
@@ -30,6 +35,8 @@ import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,6 +62,8 @@ public class ILCRoomInfoFragment extends Fragment {
     private View mView;
     private TextView mDateText;
     private JSONArray json;
+    private String roomAvaliabiliy;
+    private View mProgressView;
 
     private ArrayList<DataObject> mRoomData;
 
@@ -101,13 +110,21 @@ public class ILCRoomInfoFragment extends Fragment {
             }
         });
 
+        mProgressView = mView.findViewById(R.id.ilcRoomInf_progress);
+
         FloatingActionButton myFab = (FloatingActionButton) mView.findViewById(R.id.sortRoomsFab);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onFABClick();
             }
         });
-
+        myFab.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View v) {
+                boolean res = false;
+                res = onFABLongClick();
+                return res;
+            }
+        });
         nextButton.setVisibility(View.GONE);
         prevButton.setVisibility(View.GONE);
 
@@ -235,6 +252,65 @@ public class ILCRoomInfoFragment extends Fragment {
 
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    private boolean onFABLongClick() {
+
+        mProgressView.setVisibility(View.VISIBLE);
+
+        ILCRoomObjManager roomInf = new ILCRoomObjManager(this.getContext());
+        ArrayList<DataObject> result = new ArrayList<DataObject>();
+        ArrayList<DatabaseRow> data = roomInf.getTable();
+
+        Calendar cal = Calendar.getInstance();
+
+        try {
+            if (data != null && data.size() > 0) {
+
+                showProgress(true);
+                mProgressView.setVisibility(View.VISIBLE);
+
+                for (DatabaseRow row : data) {
+                    getDibsRoomInfo dibs = new getDibsRoomInfo(this.getContext());
+                    ILCRoomObj room = (ILCRoomObj) row;
+                    roomAvaliabiliy = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
+                    boolean isFree = getDayAvaliability();
+                    if (isFree) {
+                        result.add(new DataObject(room.getName(), "Is Avaliable Today", room.getRoomId(), true, ""));
+
+                    }
+                }
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+
+        showProgress(false);
+
+        mAdapter = new SectionedRecyclerView(result);
+        mRecyclerView.setAdapter(mAdapter);
+
+        return true;
+    }
+
     public void changeDate(int numChange) {
 //        mCalendar.add(Calendar.DAY_OF_YEAR, numChange);
 //        mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
@@ -260,5 +336,36 @@ public class ILCRoomInfoFragment extends Fragment {
             return result;
         }
         return null;
+    }
+
+    public boolean getDayAvaliability() {
+
+        boolean isFree = false;
+
+        if (roomAvaliabiliy != null && roomAvaliabiliy.length() > 0) {
+            try {
+                JSONArray arr = new JSONArray(roomAvaliabiliy);
+
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject roomInfo = arr.getJSONObject(i);
+                    String start = roomInfo.getString("StartTime");
+                    String end = roomInfo.getString("EndTime");
+
+                    start = start.substring(start.indexOf("T") + 1);
+
+                    int sHour = Integer.parseInt(start.substring(0,2));
+                    Calendar cal = Calendar.getInstance();
+                    int test = cal.get(Calendar.HOUR_OF_DAY);
+
+                    if (sHour >= test) {
+                        return true;
+                    }
+                }
+                return isFree;
+            } catch (JSONException e) {
+
+            }
+        }
+        return false;
     }
 }
