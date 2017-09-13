@@ -288,7 +288,7 @@ public class ILCRoomInfoFragment extends Fragment {
                     roomAvaliabiliy = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
                     boolean isFree = getDayAvaliability();
                     if (isFree) {
-                        result.add(new DataObject(room.getName(), "Is Avaliable Today", room.getRoomId(), true, ""));
+                        result.add(new DataObject(room.getName(), "Is Avaliable Now", room.getRoomId(), true, ""));
 
                     }
                 }
@@ -340,7 +340,7 @@ public class ILCRoomInfoFragment extends Fragment {
 
     public boolean getDayAvaliability() {
 
-        boolean isFree = false;
+        boolean isFree = true;
 
         if (roomAvaliabiliy != null && roomAvaliabiliy.length() > 0) {
             try {
@@ -357,8 +357,8 @@ public class ILCRoomInfoFragment extends Fragment {
                     Calendar cal = Calendar.getInstance();
                     int test = cal.get(Calendar.HOUR_OF_DAY);
 
-                    if (sHour >= test) {
-                        return true;
+                    if (sHour == test) {
+                        return false;
                     }
                 }
                 return isFree;
