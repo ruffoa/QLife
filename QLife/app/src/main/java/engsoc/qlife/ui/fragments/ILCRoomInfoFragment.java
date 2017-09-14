@@ -297,7 +297,7 @@ public class ILCRoomInfoFragment extends Fragment {
                     else if (status == 4)
                         result.add(new DataObject(room.getName(), "Is Avaliable Until " + cal.get(Calendar.HOUR) + ":30", room.getRoomId(), true, "", room.getDescription()));
                     else if (status == 3)
-                        result.add(new DataObject(room.getName(), "Is Avaliable Until" + (cal.get(Calendar.HOUR) + 1) + ":30", room.getRoomId(), true, "", room.getDescription()));
+                        result.add(new DataObject(room.getName(), "Is Avaliable Until " + (cal.get(Calendar.HOUR) + 1) + ":30", room.getRoomId(), true, "", room.getDescription()));
                 }
             }
 
