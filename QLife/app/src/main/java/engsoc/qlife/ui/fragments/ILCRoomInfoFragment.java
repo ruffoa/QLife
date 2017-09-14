@@ -76,15 +76,18 @@ public class ILCRoomInfoFragment extends Fragment {
 
         Bundle bundle = getArguments();
 
-        getDibsApiInfo dibs = new getDibsApiInfo(this.getContext());
-        try {
-            dibs.execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        ILCRoomObjManager roomInf = new ILCRoomObjManager(this.getContext());
+        ArrayList<DatabaseRow> data = roomInf.getTable();
+        if (data == null || data.size() == 0) {
+            getDibsApiInfo dibs = new getDibsApiInfo(this.getContext());
+            try {
+                dibs.execute().get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
-
 
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.ilcRoomInfoRecyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -160,11 +163,11 @@ public class ILCRoomInfoFragment extends Fragment {
 
                 Bundle bundle = new Bundle();
                 bundle.putString(TAG_TITLE, data.getmText1());
-                bundle.putString(TAG_DESC, data.getmText2());
+                bundle.putString(TAG_DESC, data.getDescription());
                 bundle.putString(TAG_MAP, map);
                 bundle.putString(TAG_PIC, pic);
                 bundle.putString(TAG_DATE, Calendar.getInstance().toString());
-                bundle.putInt(TAG_ROOM_ID, position);
+                bundle.putInt(TAG_ROOM_ID, data.getID());
 
 
                 nextFrag.setArguments(bundle);
@@ -286,11 +289,15 @@ public class ILCRoomInfoFragment extends Fragment {
                     getDibsRoomInfo dibs = new getDibsRoomInfo(this.getContext());
                     ILCRoomObj room = (ILCRoomObj) row;
                     roomAvaliabiliy = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
-                    boolean isFree = getDayAvaliability();
-                    if (isFree) {
-                        result.add(new DataObject(room.getName(), "Is Avaliable Now", room.getRoomId(), true, ""));
-
-                    }
+                    int status = getDayAvaliability();
+                    if (status == 0) {
+                        result.add(new DataObject(room.getName(), "Is Avaliable Now", room.getRoomId(), true, "", room.getDescription()));
+                    } else if (status == 2)
+                        result.add(new DataObject(room.getName(), "Is Avaliable at " + cal.get(Calendar.HOUR) + ":30", room.getRoomId(), true, "", room.getDescription()));
+                    else if (status == 4)
+                        result.add(new DataObject(room.getName(), "Is Avaliable Until " + cal.get(Calendar.HOUR) + ":30", room.getRoomId(), true, "", room.getDescription()));
+                    else if (status == 3)
+                        result.add(new DataObject(room.getName(), "Is Avaliable Until" + (cal.get(Calendar.HOUR) + 1) + ":30", room.getRoomId(), true, "", room.getDescription()));
                 }
             }
 
@@ -338,13 +345,14 @@ public class ILCRoomInfoFragment extends Fragment {
         return null;
     }
 
-    public boolean getDayAvaliability() {
+    public int getDayAvaliability() {
 
-        boolean isFree = true;
 
         if (roomAvaliabiliy != null && roomAvaliabiliy.length() > 0) {
             try {
                 JSONArray arr = new JSONArray(roomAvaliabiliy);
+
+                int state = 0;
 
                 for (int i = 0; i < arr.length(); i++) {
                     JSONObject roomInfo = arr.getJSONObject(i);
@@ -353,19 +361,25 @@ public class ILCRoomInfoFragment extends Fragment {
 
                     start = start.substring(start.indexOf("T") + 1);
 
-                    int sHour = Integer.parseInt(start.substring(0,2));
+                    int sHour = Integer.parseInt(start.substring(0, 2));
                     Calendar cal = Calendar.getInstance();
-                    int test = cal.get(Calendar.HOUR_OF_DAY);
+                    int now = cal.get(Calendar.HOUR_OF_DAY);
+                    int nowMin = cal.get(Calendar.MINUTE);
 
-                    if (sHour == test) {
-                        return false;
-                    }
+                    if (sHour == now) {
+                        return 1;
+                    } else if (sHour == now - 1 && nowMin < 30)
+                        state = 2;
+                    else if (sHour == now + 1)
+                        state = 3;
+                    else if (sHour == now && nowMin < 30)
+                        state = 4;
                 }
-                return isFree;
+                return state;
             } catch (JSONException e) {
 
             }
         }
-        return false;
+        return 0;
     }
 }

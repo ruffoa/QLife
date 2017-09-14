@@ -10,6 +10,7 @@ public class DataObject {
     private String mHeader;
     private int mId;
     private boolean mHasTV;
+    private String mDescription;
 
     public DataObject(String text1, String text2) {
         mText1 = text1;
@@ -22,6 +23,15 @@ public class DataObject {
         mId = id;
         mHasTV = hasTV;
         mHeader = header;
+    }
+
+    public DataObject(String text1, String text2, int id, boolean hasTV, String header, String Description) {
+        mText1 = text1;
+        mText2 = text2;
+        mId = id;
+        mHasTV = hasTV;
+        mHeader = header;
+        mDescription = Description;
     }
 
     public String getmText1() {
@@ -47,6 +57,11 @@ public class DataObject {
     public void setmText2(String mText2) {
         this.mText2 = mText2;
     }
+    public void setmDescription(String description) {
+        this.mDescription = description;
+    }
+    public String getDescription() {return mDescription; }
+
     public boolean getHasTV() {return mHasTV; }
     public String getHeader() {return mHeader; }
     public void setHeader(String header) {this.mHeader = header; }

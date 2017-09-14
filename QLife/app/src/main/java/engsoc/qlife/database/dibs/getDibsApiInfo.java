@@ -168,6 +168,7 @@ public class getDibsApiInfo extends AsyncTask<Void, Void, Void> {
 //            }
             for (int i = 0; i < rooms.length(); i++) {
                 JSONObject roomInfo = rooms.getJSONObject(i);
+
                 tableManager.insertRow(new ILCRoomObj(roomInfo.getInt(ILCRoomObj.COLUMN_ROOM_ID), roomInfo.getInt(ILCRoomObj.COLUMN_BUILDING_ID), roomInfo.getString(ILCRoomObj.COLUMN_DESCRIPTION),
                         roomInfo.getString(ILCRoomObj.COLUMN_MAP_URL), roomInfo.getString(ILCRoomObj.COLUMN_NAME), roomInfo.getString(ILCRoomObj.COLUMN_PIC_URL), roomInfo.getInt(ILCRoomObj.COLUMN_ROOM_ID)));
             }
