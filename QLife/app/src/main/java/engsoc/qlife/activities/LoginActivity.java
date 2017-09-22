@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
@@ -18,10 +19,12 @@ import engsoc.qlife.ICS.DownloadICSFile;
 import engsoc.qlife.R;
 import engsoc.qlife.database.GetCloudDb;
 import engsoc.qlife.database.local.DatabaseAccessor;
+import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -178,6 +181,28 @@ public class LoginActivity extends AppCompatActivity {
                 addUserSession();
                 (new GetCloudDb(LoginActivity.this)).execute(); //get cloud db into phone db
                 getIcsFile();
+            } else {
+                User userData = (User)mUserManager.getTable().get(0);
+                String date = userData.getDateInit();
+                if (!date.equals("")) { // if the user has previously downloaded a schedule
+                    Calendar cal = Calendar.getInstance();  // initialize a calendar variable to today's date
+                    Calendar lastWeek = Calendar.getInstance();
+                    lastWeek.add(Calendar.DAY_OF_YEAR, -7); // initialize a calendar variable to one week ago
+                    SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.ENGLISH);
+
+                    try {
+                        cal.setTime(sdf.parse(date));   // try to parse the date that the user last got a schedule for
+                        if (cal.after(lastWeek)) {      // if it has been more than a week since the data was downloaded...
+                            new DownloadICSFile(LoginActivity.this).execute(mIcsUrl);  // download the new schedule data in the background, this will be updated on next run, or when the day view is refreshed.
+                        }
+                    } catch (Exception e) {
+
+                    }
+                } else    // the user never downloaded a schedule successfully, thus we should download the information immediately, and wait until it's complete before continuing
+                    try {
+                        new DownloadICSFile(LoginActivity.this).execute(mIcsUrl).get();  // download the new schedule data in the background, this will be updated on next run, or when the day view is refreshed.
+                    } catch (Exception e) {
+                    }
             }
             startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
         }
@@ -198,7 +223,11 @@ public class LoginActivity extends AppCompatActivity {
          */
         private void getIcsFile() {
             if (mIcsUrl != null && mIcsUrl.contains(".ics")) {
-                new DownloadICSFile(LoginActivity.this).execute(mIcsUrl);
+                try {
+                    new DownloadICSFile(LoginActivity.this).execute(mIcsUrl).get();
+                } catch (Exception e) {
+
+                }
             }
         }
     }

@@ -122,4 +122,5 @@ Shout out to the 2016-17 Engineering Society IT Team for starting this project! 
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="today">TODAY</string>
 </resources>

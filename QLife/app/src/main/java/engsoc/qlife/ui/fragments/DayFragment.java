@@ -120,6 +120,14 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         mCalendar.add(Calendar.DAY_OF_YEAR, numChange);
         mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
         mRecyclerView.setAdapter(mAdapter);
+//        Calendar cal = Calendar.getInstance();
+//        Button todayBtn = (Button) mView.findViewById(R.id.today);
+//        if (mCalendar != cal)
+//        {
+//            todayBtn.setVisibility(View.VISIBLE); //updates day view when go to new day - may have class
+//        }
+//        else
+//            todayBtn.setVisibility(View.GONE);
     }
 
     public ArrayList<DataObject> getDayEventData(Calendar calendar) {
