@@ -230,6 +230,11 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 String amPMTime;
                 if (minHour > 12)
                     amPMTime = (minHour - 12) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
+                else if (minHour < 12 && endHour >= 12)
+                    if (endHour == 12)
+                        amPMTime = (minHour) + ":" + minMin + " AM-" + (endHour) + ":" + endMin + " PM";
+                    else
+                        amPMTime = (minHour) + ":" + minMin + " AM-" + (endHour - 12) + ":" + endMin + " PM";
                 else if (endHour > 12)
                     amPMTime = (minHour) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
                 else amPMTime = time.get(posSmall) + " AM";
