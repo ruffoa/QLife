@@ -74,7 +74,10 @@ public class BuildingManager extends DatabaseManager {
      * 5 letters of the building name. So we search for a name that contains
      * that sequence.
      * Just in case there are multiple buildings returned, the first one
-     * will always be returned.
+     * will always be returned. This causes an issue with Etherington Hall, where
+     * the art centre location is returned instead. Thus, a hardcoded special case is made.
+     * No class is ever held in the art centre, so if the returned Building name has 'Art
+     * Centre' in it, the cursor is moved to next.
      *
      * @param icsName The ICS file building name.
      * @return The Building object corresponding to the ICS file name.
@@ -83,6 +86,9 @@ public class BuildingManager extends DatabaseManager {
         try (Cursor cursor = getDatabase().rawQuery("SELECT * FROM Buildings GROUP BY Name HAVING Name LIKE '%" + icsName + "%'", null)) {
             Building building = null;
             if (cursor.moveToNext()) {
+                if (cursor.getString(Building.NAME_POS).contains("Art Centre")){
+                    cursor.moveToNext();
+                }
                 //getInt()>0 because SQLite doesn't have boolean types - 1 is true, 0 is false
                 building = new Building(cursor.getInt(Building.ID_POS), cursor.getString(Building.NAME_POS), cursor.getString(Building.PURPOSE_POS),
                         cursor.getInt(Building.BOOK_ROOKS_POS) > 0, cursor.getInt(Building.FOOD_POS) > 0, cursor.getInt(Building.ATM_POS) > 0,
