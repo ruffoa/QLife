@@ -47,8 +47,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Created by Carson on 21/06/2017.
- * Async task that downloads and parses the cloud database into the phone database.
+ * Created by Alex Ruffo on 21/06/2017.
+ * Gets the D!bs API data for the selected day
  */
 public class getDibsApiInfo extends AsyncTask<Void, Void, Void> {
 
@@ -168,6 +168,7 @@ public class getDibsApiInfo extends AsyncTask<Void, Void, Void> {
 //            }
             for (int i = 0; i < rooms.length(); i++) {
                 JSONObject roomInfo = rooms.getJSONObject(i);
+
                 tableManager.insertRow(new ILCRoomObj(roomInfo.getInt(ILCRoomObj.COLUMN_ROOM_ID), roomInfo.getInt(ILCRoomObj.COLUMN_BUILDING_ID), roomInfo.getString(ILCRoomObj.COLUMN_DESCRIPTION),
                         roomInfo.getString(ILCRoomObj.COLUMN_MAP_URL), roomInfo.getString(ILCRoomObj.COLUMN_NAME), roomInfo.getString(ILCRoomObj.COLUMN_PIC_URL), roomInfo.getInt(ILCRoomObj.COLUMN_ROOM_ID)));
             }

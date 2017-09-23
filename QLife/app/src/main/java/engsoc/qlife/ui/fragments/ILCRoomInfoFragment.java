@@ -1,5 +1,8 @@
 package engsoc.qlife.ui.fragments;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,10 +21,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import engsoc.qlife.R;
 import engsoc.qlife.activities.MainTabActivity;
+import engsoc.qlife.database.dibs.getDibsRoomInfo;
 import engsoc.qlife.ui.recyclerview.DataObject;
 import engsoc.qlife.database.dibs.ILCRoomObj;
 import engsoc.qlife.database.dibs.ILCRoomObjManager;
@@ -30,6 +35,8 @@ import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,6 +62,8 @@ public class ILCRoomInfoFragment extends Fragment {
     private View mView;
     private TextView mDateText;
     private JSONArray json;
+    private String roomAvaliabiliy;
+    private View mProgressView;
 
     private ArrayList<DataObject> mRoomData;
 
@@ -67,15 +76,18 @@ public class ILCRoomInfoFragment extends Fragment {
 
         Bundle bundle = getArguments();
 
-        getDibsApiInfo dibs = new getDibsApiInfo(this.getContext());
-        try {
-            dibs.execute().get();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
+        ILCRoomObjManager roomInf = new ILCRoomObjManager(this.getContext());
+        ArrayList<DatabaseRow> data = roomInf.getTable();
+        if (data == null || data.size() == 0) {
+            getDibsApiInfo dibs = new getDibsApiInfo(this.getContext());
+            try {
+                dibs.execute().get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
-
 
         mRecyclerView = (RecyclerView) mView.findViewById(R.id.ilcRoomInfoRecyclerView);
         mRecyclerView.setHasFixedSize(true);
@@ -101,13 +113,21 @@ public class ILCRoomInfoFragment extends Fragment {
             }
         });
 
+        mProgressView = mView.findViewById(R.id.ilcRoomInf_progress);
+
         FloatingActionButton myFab = (FloatingActionButton) mView.findViewById(R.id.sortRoomsFab);
         myFab.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 onFABClick();
             }
         });
-
+        myFab.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View v) {
+                boolean res = false;
+                res = onFABLongClick();
+                return res;
+            }
+        });
         nextButton.setVisibility(View.GONE);
         prevButton.setVisibility(View.GONE);
 
@@ -143,11 +163,11 @@ public class ILCRoomInfoFragment extends Fragment {
 
                 Bundle bundle = new Bundle();
                 bundle.putString(TAG_TITLE, data.getmText1());
-                bundle.putString(TAG_DESC, data.getmText2());
+                bundle.putString(TAG_DESC, data.getDescription());
                 bundle.putString(TAG_MAP, map);
                 bundle.putString(TAG_PIC, pic);
                 bundle.putString(TAG_DATE, Calendar.getInstance().toString());
-                bundle.putInt(TAG_ROOM_ID, position);
+                bundle.putInt(TAG_ROOM_ID, data.getID());
 
 
                 nextFrag.setArguments(bundle);
@@ -235,6 +255,69 @@ public class ILCRoomInfoFragment extends Fragment {
 
     }
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showProgress(final boolean show) {
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime).alpha(
+                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    private boolean onFABLongClick() {
+
+        mProgressView.setVisibility(View.VISIBLE);
+
+        ILCRoomObjManager roomInf = new ILCRoomObjManager(this.getContext());
+        ArrayList<DataObject> result = new ArrayList<DataObject>();
+        ArrayList<DatabaseRow> data = roomInf.getTable();
+
+        Calendar cal = Calendar.getInstance();
+
+        try {
+            if (data != null && data.size() > 0) {
+
+                showProgress(true);
+                mProgressView.setVisibility(View.VISIBLE);
+
+                for (DatabaseRow row : data) {
+                    getDibsRoomInfo dibs = new getDibsRoomInfo(this.getContext());
+                    ILCRoomObj room = (ILCRoomObj) row;
+                    roomAvaliabiliy = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
+                    int status = getDayAvaliability();
+                    if (status == 0) {
+                        result.add(new DataObject(room.getName(), "Is Avaliable Now", room.getRoomId(), true, "", room.getDescription()));
+                    } else if (status == 2)
+                        result.add(new DataObject(room.getName(), "Is Avaliable at " + cal.get(Calendar.HOUR) + ":30", room.getRoomId(), true, "", room.getDescription()));
+                    else if (status == 4)
+                        result.add(new DataObject(room.getName(), "Is Avaliable Until " + cal.get(Calendar.HOUR) + ":30", room.getRoomId(), true, "", room.getDescription()));
+                    else if (status == 3)
+                        result.add(new DataObject(room.getName(), "Is Avaliable Until " + (cal.get(Calendar.HOUR) + 1) + ":30", room.getRoomId(), true, "", room.getDescription()));
+                }
+            }
+
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return false;
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+
+        showProgress(false);
+
+        mAdapter = new SectionedRecyclerView(result);
+        mRecyclerView.setAdapter(mAdapter);
+
+        return true;
+    }
+
     public void changeDate(int numChange) {
 //        mCalendar.add(Calendar.DAY_OF_YEAR, numChange);
 //        mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
@@ -260,5 +343,43 @@ public class ILCRoomInfoFragment extends Fragment {
             return result;
         }
         return null;
+    }
+
+    public int getDayAvaliability() {
+
+
+        if (roomAvaliabiliy != null && roomAvaliabiliy.length() > 0) {
+            try {
+                JSONArray arr = new JSONArray(roomAvaliabiliy);
+
+                int state = 0;
+
+                for (int i = 0; i < arr.length(); i++) {
+                    JSONObject roomInfo = arr.getJSONObject(i);
+                    String start = roomInfo.getString("StartTime");
+                    String end = roomInfo.getString("EndTime");
+
+                    start = start.substring(start.indexOf("T") + 1);
+
+                    int sHour = Integer.parseInt(start.substring(0, 2));
+                    Calendar cal = Calendar.getInstance();
+                    int now = cal.get(Calendar.HOUR_OF_DAY);
+                    int nowMin = cal.get(Calendar.MINUTE);
+
+                    if (sHour == now) {
+                        return 1;
+                    } else if (sHour == now - 1 && nowMin < 30)
+                        state = 2;
+                    else if (sHour == now + 1)
+                        state = 3;
+                    else if (sHour == now && nowMin < 30)
+                        state = 4;
+                }
+                return state;
+            } catch (JSONException e) {
+
+            }
+        }
+        return 0;
     }
 }

@@ -9,7 +9,10 @@ public class DataObject {
     private String mText2;
     private String mHeader;
     private int mId;
+    private long mClassId;
     private boolean mHasTV;
+    private boolean mHasName;
+    private String mDescription;
 
     public DataObject(String text1, String text2) {
         mText1 = text1;
@@ -22,6 +25,27 @@ public class DataObject {
         mId = id;
         mHasTV = hasTV;
         mHeader = header;
+    }
+    public DataObject(String text1, String text2, long classId) {
+        mText1 = text1;
+        mText2 = text2;
+        mClassId = classId;
+    }
+
+    public DataObject(String text1, String text2, long classId, boolean hasName) {
+        mText1 = text1;
+        mText2 = text2;
+        mClassId = classId;
+        mHasName = hasName;
+    }
+
+    public DataObject(String text1, String text2, int id, boolean hasTV, String header, String Description) {
+        mText1 = text1;
+        mText2 = text2;
+        mId = id;
+        mHasTV = hasTV;
+        mHeader = header;
+        mDescription = Description;
     }
 
     public String getmText1() {
@@ -47,8 +71,15 @@ public class DataObject {
     public void setmText2(String mText2) {
         this.mText2 = mText2;
     }
+    public void setmDescription(String description) {
+        this.mDescription = description;
+    }
+    public String getDescription() {return mDescription; }
+    public long getClassId(){return mClassId; }
     public boolean getHasTV() {return mHasTV; }
+    public boolean getHasName() {return mHasName; }
     public String getHeader() {return mHeader; }
     public void setHeader(String header) {this.mHeader = header; }
     public void setHasTV(boolean hasTV) {this.mHasTV = hasTV; }
+    public void setHasName(boolean hasName) {this.mHasName = hasName; }
 }

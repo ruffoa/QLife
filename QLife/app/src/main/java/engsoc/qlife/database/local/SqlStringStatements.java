@@ -21,7 +21,7 @@ public class SqlStringStatements {
 
     //create table statements
     public static final String CREATE_COURSES = "CREATE TABLE " + Course.TABLE_NAME + "(" +
-            Course.ID + " INTEGER PRIMARY KEY," + Course.COLUMN_TITLE + " TEXT);";
+            Course.ID + " INTEGER PRIMARY KEY," + Course.COLUMN_TITLE + " TEXT," + Course.COLUMN_DESCRIPTION + " TEXT);";
 
     public static final String CREATE_USERS = "CREATE TABLE " + User.TABLE_NAME + "(" +
             User.ID + " INTEGER PRIMARY KEY," + User.COLUMN_NETID + " TEXT," +
@@ -33,7 +33,7 @@ public class SqlStringStatements {
             OneClass.COLUMN_BUILDING_ID + " INT," + OneClass.COLUMN_ROOM_NUM + " TEXT," +
             OneClass.COLUMN_START_TIME + " TEXT," + OneClass.COLUMN_END_TIME + " TEXT," +
             OneClass.COLUMN_DAY + " TEXT," + OneClass.COLUMN_MONTH + " TEXT," + OneClass.COLUMN_YEAR +
-            " TEXT," + OneClass.COLUMN_COURSE_ID + " INT );";
+            " TEXT," + OneClass.COLUMN_COURSE_ID + " INT," + OneClass.COLUMN_HAS_NAME + " TEXT);";
 
     public static final String CREATE_ENGINEERING_CONTACTS = "CREATE TABLE " + EngineeringContact.TABLE_NAME + "(" + EngineeringContact.ID +
             " INTEGER PRIMARY KEY," + EngineeringContact.COLUMN_NAME + " TEXT," + EngineeringContact.COLUMN_EMAIL + " TEXT,"

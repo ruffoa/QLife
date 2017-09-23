@@ -1,4 +1,4 @@
-package engsoc.qlife.database.dibs;
+package engsoc.qlife.ICS;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -12,36 +12,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import android.app.ProgressDialog;
-import android.content.Context;
-import android.os.AsyncTask;
-import android.util.Log;
 
 import engsoc.qlife.R;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Created by Alex on 8/6/2017.
  */
 
-public class getDibsRoomInfo extends AsyncTask<Integer, Void, String> {
+public class getCourseInfo extends AsyncTask<String, Void, String> {
 
     /**
-     * Created by Alex Ruffo on 21/06/2017.
+     * Created by Alex Ruffo on 23/09/2017.
      * Async task that downloads and parses the cloud database into the phone database.
      */
 
@@ -49,7 +30,7 @@ public class getDibsRoomInfo extends AsyncTask<Integer, Void, String> {
 
     private Context mContext;
 
-    public getDibsRoomInfo(Context context) {
+    public getCourseInfo(Context context) {
         mContext = context;
     }
 
@@ -59,23 +40,24 @@ public class getDibsRoomInfo extends AsyncTask<Integer, Void, String> {
     }
 
     @Override
-    protected String doInBackground(Integer... roomID) {
+    protected String doInBackground(String... info) {
         try {
 //            Calendar cal;
 //            cal = Calendar.getInstance();
-            int rmid = roomID[0];
-            int day = roomID[1];
-            int month = roomID[2];
-            int year = roomID[3];
-
+            String courseType = info[0];
+            String htmlStr;
             //call php script on server that gets info from cloud database
-            String jsonStr = getJSON(mContext.getString(R.string.dibs_get_rooms_times) + year + "-" + (month + 1) + "-" + day + "/" + rmid, 5000);
-            return jsonStr;
+            if (courseType.contains("COMM"))
+                htmlStr = getHTML(mContext.getString(R.string.cal_get_comm_class_names), 5000);
+            else
+                htmlStr = getHTML(mContext.getString(R.string.cal_get_eng_class_names) + courseType + mContext.getString(R.string.cal_get_eng_class_names_end), 5000);
+
+            return htmlStr;
 //            if (json != null) {
 //                return json;
 //            }
         } catch (Exception e) {
-            Log.d("HELLOTHERE", "BAD: " + e);
+            Log.d("HELLOTHERE", "Error: " + e);
         }
         return null;
     }
@@ -85,7 +67,7 @@ public class getDibsRoomInfo extends AsyncTask<Integer, Void, String> {
         super.onPostExecute(result);
     }
 
-    private String getJSON(String url, int timeout) {
+    private String getHTML(String url, int timeout) {
         HttpURLConnection con = null;
         try {
             URL u = new URL(url);
@@ -127,6 +109,7 @@ public class getDibsRoomInfo extends AsyncTask<Integer, Void, String> {
         }
         return null;
     }
+
 
 //    public JSONArray getRoomTimes(JSONArray json, int roomID) {
 //        try {
