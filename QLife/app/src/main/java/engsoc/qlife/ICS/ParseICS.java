@@ -12,6 +12,8 @@ import engsoc.qlife.database.local.courses.OneClass.OneClassManager;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
 import engsoc.qlife.ui.fragments.StudentToolsFragment;
+import engsoc.qlife.ui.recyclerview.DataObject;
+import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -243,4 +245,61 @@ public class ParseICS {
             mUserManager.updateRow(user, nUser);
         }
     }
+
+    public void addClassName(String htmlRes, String classType) {
+        if (htmlRes == null || htmlRes.length() == 0)
+            return;
+
+        CourseManager mCourseManager = new CourseManager(mContext);
+        ArrayList<DatabaseRow> courses = mCourseManager.getTable();
+
+        for (DatabaseRow course : courses) {
+            Course c = (Course) course;
+            Course backup = c;
+            if (c.getTitle().contains(classType)) {
+
+                if (htmlRes.contains(c.getTitle())) {
+                    int index = htmlRes.indexOf(c.getTitle());
+                    String temp = htmlRes.substring(index);
+                    temp = temp.substring(0, temp.indexOf("|"));
+                    c.setTitle(temp);
+                    c.setDescription("true");
+                    mCourseManager.updateRow(backup,c);
+                }
+            }
+        }
+    }
+
+    public void getClassTypes() {
+
+        mOneClassManager = new OneClassManager(mContext);
+        mCourseManager = new CourseManager(mContext);
+        ArrayList<DatabaseRow> courses = mCourseManager.getTable();
+        ArrayList<DatabaseRow> classes = mOneClassManager.getTable();
+
+
+        String types = "";
+        for (DatabaseRow data : courses) {
+            Course c = (Course) data;
+            String temp = c.getTitle().substring(0, c.getTitle().indexOf(" "));
+            if (!types.contains(temp) && c.getDesription() != "true")
+                types += " " + temp;
+        }
+
+        if (types != "") {
+            String[] parts = types.split(" ");
+            for (final String str : parts) {
+                if (str.length() > 0) {
+                    getCourseInfo cInfo = new getCourseInfo(this.mContext) {
+                        @Override
+                        public void onPostExecute(String result) {
+                            addClassName(result, str);
+                        }
+                    };
+                    cInfo.execute(str, "TEST");
+                }
+            }
+        }
+    }
+
 }

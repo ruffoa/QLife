@@ -85,6 +85,7 @@ public class DownloadICSFile extends AsyncTask<String, Integer, String> {
         }
         final ParseICS parser = new ParseICS(mContext);
         parser.parseICSData();
+        parser.getClassTypes();
         return null;
     }
 
