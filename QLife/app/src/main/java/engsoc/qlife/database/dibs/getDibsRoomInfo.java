@@ -41,7 +41,7 @@ import java.util.logging.Logger;
 public class getDibsRoomInfo extends AsyncTask<Integer, Void, String> {
 
     /**
-     * Created by Carson on 21/06/2017.
+     * Created by Alex Ruffo on 21/06/2017.
      * Async task that downloads and parses the cloud database into the phone database.
      */
 

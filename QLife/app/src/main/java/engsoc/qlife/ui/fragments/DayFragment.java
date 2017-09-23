@@ -3,6 +3,7 @@ package engsoc.qlife.ui.fragments;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.BoolRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -23,6 +24,8 @@ import engsoc.qlife.ICS.getCourseInfo;
 import engsoc.qlife.R;
 import engsoc.qlife.activities.MainTabActivity;
 import engsoc.qlife.database.local.DatabaseRow;
+import engsoc.qlife.database.local.courses.Course.Course;
+import engsoc.qlife.database.local.courses.Course.CourseManager;
 import engsoc.qlife.interfaces.OnHomePressedListener;
 import engsoc.qlife.utility.HomeButtonListener;
 import engsoc.qlife.utility.Util;
@@ -151,7 +154,8 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         List<String> list = new ArrayList<String>();
         List<String> loc = new ArrayList<>();
         List<String> time = new ArrayList<>();
-        List<String> des = new ArrayList<>();
+        List<Long> classID = new ArrayList<>();
+        List<Boolean> hasName = new ArrayList<>();
 
         ArrayList<DatabaseRow> data = oneClassManager.getTable();
 
@@ -179,7 +183,17 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 list.add(oneClass.getType());
                 loc.add(oneClass.getRoomNum());
                 time.add(oneClass.getStartTime() + "-" + oneClass.getEndTime());
-                des.add(oneClass.getType());
+                classID.add(oneClass.getCourseID());
+//                DatabaseRow courseRow = courseManager.getRow(oneClass.getCourseID());
+//                Course course = (Course) courseRow;
+//                if (course.getDesription() != null)
+//                    hasName.add(course.getDesription().contains("true") ? true : false);
+//                else
+//                    hasName.add(false);
+                if (oneClass.getHasName() != null)
+                    hasName.add(oneClass.getHasName().contains("true") ? true : false);
+                else
+                    hasName.add(false);
 
                 eventsToday = true;
             }
@@ -251,16 +265,17 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                     amPMTime = (minHour) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
                 else amPMTime = time.get(posSmall) + " AM";
 
-                result.add(new DataObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall)));
+                result.add(new DataObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall)));
                 list.remove(posSmall);
                 time.remove(posSmall);
                 loc.remove(posSmall);
-                des.remove(posSmall);
+                classID.remove(posSmall);
+                hasName.remove(posSmall);
                 i = -1;
             }
         }
         if (list.size() > 0) {
-            result.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + des.get(0)));
+            result.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + list.get(0), classID.get(posSmall), hasName.get(posSmall)));
         }
         return result;
     }
@@ -335,14 +350,32 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         if (htmlRes == null || htmlRes.length() == 0)
             return;
 
-        for (DataObject course: result) {
-            if (htmlRes.contains(course.getmText1())){
+        CourseManager mCourseManager = new CourseManager(this.getContext());
+        ArrayList<DatabaseRow> courses = mCourseManager.getTable();
+        OneClassManager mOneClassMan = new OneClassManager((this.getContext()));
+        ArrayList<DatabaseRow> oneClass = mOneClassMan.getTable();
+
+        for (DataObject course : result) {
+            if (htmlRes.contains(course.getmText1())) {
                 int index = htmlRes.indexOf(course.getmText1());
                 String temp = htmlRes.substring(index);
-                temp = temp.substring(0,temp.indexOf("|"));
+                temp = temp.substring(0, temp.indexOf("|"));
                 course.setmText1(temp);
+
+                for (DatabaseRow r : oneClass) {
+                    OneClass c = (OneClass) r;
+                    OneClass backup = (OneClass) r;
+
+                    if (c.getCourseID() == course.getClassId()) {
+                        c.setType(temp);
+                        c.setHasName("true");
+                        mOneClassMan.updateRow(backup,c);
+                    }
+                }
             }
         }
+
+
         mAdapter = new RecyclerViewAdapter(result);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -352,20 +385,23 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         String types = "";
         for (DataObject data : result) {
             String temp = data.getmText1().substring(0, data.getmText1().indexOf(" "));
-            if (!types.contains(temp))
+            if (!types.contains(temp) && !data.getHasName())
                 types += " " + temp;
         }
 
-        String[] parts = types.split(" ");
-        for (String str : parts) {
-
-            getCourseInfo cInfo = new getCourseInfo(this.getContext()) {
-                @Override
-                public void onPostExecute(String result) {
-                    addClassName(result);
+        if (types != "") {
+            String[] parts = types.split(" ");
+            for (String str : parts) {
+                if (str.length() > 0) {
+                    getCourseInfo cInfo = new getCourseInfo(this.getContext()) {
+                        @Override
+                        public void onPostExecute(String result) {
+                            addClassName(result);
+                        }
+                    };
+                    cInfo.execute(str, "TEST");
                 }
-            };
-            cInfo.execute(str, "TEST");
+            }
         }
     }
 

@@ -89,6 +89,7 @@
     <string name="dibs_get_rooms_times">https://queensu.evanced.info/dibsAPI/reservations/</string>
     <string name="cal_get_eng_class_names">http://calendar.engineering.queensu.ca/content.php?filter%5B27%5D=</string>
     <string name="cal_get_eng_class_names_end">&amp;filter%5B29%5D=&amp;filter%5Bcourse_type%5D=-1&amp;filter%5Bkeyword%5D=&amp;filter%5B32%5D=1&amp;filter%5Bcpage%5D=1&amp;cur_cat_oid=2&amp;expand=&amp;navoid=50&amp;search_database=Filter#acalog_template_course_filter</string>
+    <string name="cal_get_comm_class_names">https://smith.queensu.ca/bcom/academic_calendar/browse_calendar/2014_15_before/curriculum/courses_instruction.php</string>
 
     <!-- other strings -->
     <string name="ellipses">&#8226;</string>

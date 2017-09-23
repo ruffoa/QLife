@@ -13,8 +13,7 @@ import engsoc.qlife.database.local.DatabaseRow;
 public class ILCRoomObj extends DatabaseRow {
 
     /**
-     * Created by Carson on 21/06/2017.
-     * Schema for phone database EmergencyContact table.
+     * Created by Alex Ruffo on 21/06/2017.
      */
     public static final String TABLE_NAME = "ILCRoomInfo";
 

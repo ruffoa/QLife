@@ -17,6 +17,7 @@ public class Course extends DatabaseRow {
     //column number each field ends up in
     public static final int TITLE_POS = 1;
     public static final int DESCRIPTION_POS = 2;
+
 //    public static final int ROOM_NUM_POS = 2;
 //    public static final int STIME_POS = 3;
 //    public static final int ETIME_POS = 4;
@@ -27,6 +28,7 @@ public class Course extends DatabaseRow {
     //fields in database
     private String title;
     private String description;
+    private boolean hasName;
 
     public Course(int id, String title) {
         super(id);
@@ -39,6 +41,12 @@ public class Course extends DatabaseRow {
         this.description = description;
     }
 
+    public Course(int id, String title, boolean hasName) {
+        super(id);
+        this.title = title;
+        this.description = hasName? "true" : "false";
+    }
+
 
     public String getTitle() {
         return title;
@@ -47,9 +55,15 @@ public class Course extends DatabaseRow {
     public void setTitle(String mTitle) {
         this.title = mTitle;
     }
+    public void setHasName(boolean hasName) {
+        this.hasName = hasName;
+    }
 
     public String getDesription() {
         return description;
+    }
+    public boolean getHasName() {
+        return hasName;
     }
 
     public void setDescription(String mDesc) {

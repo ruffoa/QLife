@@ -15,20 +15,6 @@ import java.util.logging.Logger;
 
 import engsoc.qlife.R;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Calendar;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * Created by Alex on 8/6/2017.
  */
@@ -36,7 +22,7 @@ import java.util.logging.Logger;
 public class getCourseInfo extends AsyncTask<String, Void, String> {
 
     /**
-     * Created by Carson on 21/06/2017.
+     * Created by Alex Ruffo on 23/09/2017.
      * Async task that downloads and parses the cloud database into the phone database.
      */
 
@@ -59,9 +45,13 @@ public class getCourseInfo extends AsyncTask<String, Void, String> {
 //            Calendar cal;
 //            cal = Calendar.getInstance();
             String courseType = info[0];
-
+            String htmlStr;
             //call php script on server that gets info from cloud database
-            String htmlStr = getHTML(mContext.getString(R.string.cal_get_eng_class_names) + courseType + mContext.getString(R.string.cal_get_eng_class_names_end), 5000);
+            if (courseType.contains("COMM"))
+                htmlStr = getHTML(mContext.getString(R.string.cal_get_comm_class_names), 5000);
+            else
+                htmlStr = getHTML(mContext.getString(R.string.cal_get_eng_class_names) + courseType + mContext.getString(R.string.cal_get_eng_class_names_end), 5000);
+
             return htmlStr;
 //            if (json != null) {
 //                return json;
