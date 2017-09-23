@@ -21,7 +21,7 @@
 
         <TextView
             style="@style/WelcomeSlideText"
-            android:text="@string/it_team"/>
+            android:text="@string/software_team"/>
 
     </LinearLayout>
 
