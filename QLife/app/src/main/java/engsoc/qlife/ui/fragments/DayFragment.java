@@ -135,7 +135,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         mCalendar.add(Calendar.DAY_OF_YEAR, numChange);
         mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
         mRecyclerView.setAdapter(mAdapter);
-        getClassTypes();
+//        getClassTypes();
 //        Calendar cal = Calendar.getInstance();
 //        Button todayBtn = (Button) mView.findViewById(R.id.today);
 //        if (mCalendar != cal)
@@ -313,23 +313,6 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
         mRecyclerView.setAdapter(mAdapter);
 
-        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (recyclerViewReadyCallback != null) {
-                    recyclerViewReadyCallback.onLayoutReady();
-                }
-                recyclerViewReadyCallback = null;
-            }
-        });
-
-        recyclerViewReadyCallback = new RecyclerViewReadyCallback() {
-            @Override
-            public void onLayoutReady() {
-                getClassTypes();
-            }
-        };
-
         Button nextButton = (Button) mView.findViewById(R.id.next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -346,64 +329,6 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 mTotalDaysChange += -1;
             }
         });
-    }
-
-
-    public void addClassName(String htmlRes) {
-        if (htmlRes == null || htmlRes.length() == 0)
-            return;
-
-        CourseManager mCourseManager = new CourseManager(this.getContext());
-        ArrayList<DatabaseRow> courses = mCourseManager.getTable();
-
-        for (DataObject course : result) {
-            if (htmlRes.contains(course.getmText1())) {
-                int index = htmlRes.indexOf(course.getmText1());
-                String temp = htmlRes.substring(index);
-                temp = temp.substring(0, temp.indexOf("|"));
-                course.setmText1(temp);
-
-                for (DatabaseRow r : courses) {
-                    Course c = (Course) r;
-                    Course backup = (Course) r;
-
-                    if (c.getId() == course.getClassId()) {
-                        c.setTitle(temp);
-                        c.setDescription("true");
-                        mCourseManager.updateRow(backup,c);
-                    }
-                }
-            }
-        }
-
-
-        mAdapter = new RecyclerViewAdapter(result);
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
-    public void getClassTypes() {
-
-        String types = "";
-        for (DataObject data : result) {
-            String temp = data.getmText1().substring(0, data.getmText1().indexOf(" "));
-            if (!types.contains(temp) && !data.getHasName())
-                types += " " + temp;
-        }
-
-        if (types != "") {
-            String[] parts = types.split(" ");
-            for (String str : parts) {
-                if (str.length() > 0) {
-                    getCourseInfo cInfo = new getCourseInfo(this.getContext()) {
-                        @Override
-                        public void onPostExecute(String result) {
-                            addClassName(result);
-                        }
-                    };
-                    cInfo.execute(str, "TEST");
-                }
-            }
-        }
     }
 
     @Override

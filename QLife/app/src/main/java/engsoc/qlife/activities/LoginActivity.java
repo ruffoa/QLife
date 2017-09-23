@@ -200,7 +200,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 } else    // the user never downloaded a schedule successfully, thus we should download the information immediately, and wait until it's complete before continuing
                     try {
-                        new DownloadICSFile(LoginActivity.this).execute(mIcsUrl).get();  // download the new schedule data in the background, this will be updated on next run, or when the day view is refreshed.
+                        new DownloadICSFile(LoginActivity.this).execute(mIcsUrl).get();  // download the new schedule data right now on the main thread
                     } catch (Exception e) {
                     }
             }
@@ -225,6 +225,7 @@ public class LoginActivity extends AppCompatActivity {
             if (mIcsUrl != null && mIcsUrl.contains(".ics")) {
                 try {
                     new DownloadICSFile(LoginActivity.this).execute(mIcsUrl).get();
+
                 } catch (Exception e) {
 
                 }
