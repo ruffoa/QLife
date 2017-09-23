@@ -1,5 +1,6 @@
 package engsoc.qlife.ui.fragments;
 
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,9 +15,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.annotation.Nullable;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.TextView;
 
+import engsoc.qlife.ICS.getCourseInfo;
 import engsoc.qlife.R;
 import engsoc.qlife.activities.MainTabActivity;
 import engsoc.qlife.database.local.DatabaseRow;
@@ -34,6 +37,7 @@ import engsoc.qlife.interfaces.IQLListFragmentWithChild;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Fragment that displays the classes for a given day. When a class is clicked, it starts
@@ -56,6 +60,13 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
     private TextView mDateText;
     private String mDateString;
     private Calendar mCalendar;
+    private ArrayList<DataObject> result = new ArrayList<DataObject>();
+
+    private RecyclerViewReadyCallback recyclerViewReadyCallback;
+
+    public interface RecyclerViewReadyCallback {
+        void onLayoutReady();
+    }
 
     @Nullable
     @Override
@@ -117,9 +128,11 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
     }
 
     public void changeDate(int numChange) {
+        result.clear();
         mCalendar.add(Calendar.DAY_OF_YEAR, numChange);
         mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
         mRecyclerView.setAdapter(mAdapter);
+        getClassTypes();
 //        Calendar cal = Calendar.getInstance();
 //        Button todayBtn = (Button) mView.findViewById(R.id.today);
 //        if (mCalendar != cal)
@@ -139,7 +152,6 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         List<String> loc = new ArrayList<>();
         List<String> time = new ArrayList<>();
         List<String> des = new ArrayList<>();
-        ArrayList<DataObject> result = new ArrayList<DataObject>();
 
         ArrayList<DatabaseRow> data = oneClassManager.getTable();
 
@@ -283,6 +295,23 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
         mRecyclerView.setAdapter(mAdapter);
 
+        mRecyclerView.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (recyclerViewReadyCallback != null) {
+                    recyclerViewReadyCallback.onLayoutReady();
+                }
+                recyclerViewReadyCallback = null;
+            }
+        });
+
+        recyclerViewReadyCallback = new RecyclerViewReadyCallback() {
+            @Override
+            public void onLayoutReady() {
+                getClassTypes();
+            }
+        };
+
         Button nextButton = (Button) mView.findViewById(R.id.next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -299,6 +328,45 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 mTotalDaysChange += -1;
             }
         });
+    }
+
+
+    public void addClassName(String htmlRes) {
+        if (htmlRes == null || htmlRes.length() == 0)
+            return;
+
+        for (DataObject course: result) {
+            if (htmlRes.contains(course.getmText1())){
+                int index = htmlRes.indexOf(course.getmText1());
+                String temp = htmlRes.substring(index);
+                temp = temp.substring(0,temp.indexOf("|"));
+                course.setmText1(temp);
+            }
+        }
+        mAdapter = new RecyclerViewAdapter(result);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    public void getClassTypes() {
+
+        String types = "";
+        for (DataObject data : result) {
+            String temp = data.getmText1().substring(0, data.getmText1().indexOf(" "));
+            if (!types.contains(temp))
+                types += " " + temp;
+        }
+
+        String[] parts = types.split(" ");
+        for (String str : parts) {
+
+            getCourseInfo cInfo = new getCourseInfo(this.getContext()) {
+                @Override
+                public void onPostExecute(String result) {
+                    addClassName(result);
+                }
+            };
+            cInfo.execute(str, "TEST");
+        }
     }
 
     @Override

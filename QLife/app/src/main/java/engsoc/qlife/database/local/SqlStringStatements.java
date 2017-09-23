@@ -21,7 +21,7 @@ public class SqlStringStatements {
 
     //create table statements
     public static final String CREATE_COURSES = "CREATE TABLE " + Course.TABLE_NAME + "(" +
-            Course.ID + " INTEGER PRIMARY KEY," + Course.COLUMN_TITLE + " TEXT);";
+            Course.ID + " INTEGER PRIMARY KEY," + Course.COLUMN_TITLE + " TEXT," + Course.COLUMN_DESCRIPTION + " TEXT);";
 
     public static final String CREATE_USERS = "CREATE TABLE " + User.TABLE_NAME + "(" +
             User.ID + " INTEGER PRIMARY KEY," + User.COLUMN_NETID + " TEXT," +

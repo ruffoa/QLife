@@ -181,7 +181,7 @@ public class LoginActivity extends AppCompatActivity {
                 addUserSession();
                 (new GetCloudDb(LoginActivity.this)).execute(); //get cloud db into phone db
                 getIcsFile();
-            } else {
+            } else {        // if the user has logged in before, see if the schedule is up to date
                 User userData = (User)mUserManager.getTable().get(0);
                 String date = userData.getDateInit();
                 if (!date.equals("")) { // if the user has previously downloaded a schedule
