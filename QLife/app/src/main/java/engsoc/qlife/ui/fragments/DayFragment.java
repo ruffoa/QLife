@@ -150,6 +150,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         TextView noClassMessage = (TextView) mView.findViewById(R.id.no_class_message);
         noClassMessage.setVisibility(View.GONE); //updates day view when go to new day - may have class
         OneClassManager oneClassManager = new OneClassManager(this.getContext());
+        CourseManager courseManager = new CourseManager(this.getContext());
 
         List<String> list = new ArrayList<String>();
         List<String> loc = new ArrayList<>();
@@ -180,20 +181,22 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
 
 
             if (year == calYear && month == calMon && calDay == day) { // if the day matches add the event
-                list.add(oneClass.getType());
+//                list.add(oneClass.getType());
                 loc.add(oneClass.getRoomNum());
                 time.add(oneClass.getStartTime() + "-" + oneClass.getEndTime());
                 classID.add(oneClass.getCourseID());
-//                DatabaseRow courseRow = courseManager.getRow(oneClass.getCourseID());
-//                Course course = (Course) courseRow;
-//                if (course.getDesription() != null)
-//                    hasName.add(course.getDesription().contains("true") ? true : false);
-//                else
-//                    hasName.add(false);
-                if (oneClass.getHasName() != null)
-                    hasName.add(oneClass.getHasName().contains("true") ? true : false);
+                DatabaseRow courseRow = courseManager.getRow(oneClass.getCourseID());
+                Course course = (Course) courseRow;
+                if (course.getDesription() != null)
+                    hasName.add(course.getDesription().contains("true") ? true : false);
                 else
                     hasName.add(false);
+                list.add(course.getTitle());
+
+//                if (oneClass.getHasName() != null)
+//                    hasName.add(oneClass.getHasName().contains("true") ? true : false);
+//                else
+//                    hasName.add(false);
 
                 eventsToday = true;
             }
@@ -352,8 +355,6 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
 
         CourseManager mCourseManager = new CourseManager(this.getContext());
         ArrayList<DatabaseRow> courses = mCourseManager.getTable();
-        OneClassManager mOneClassMan = new OneClassManager((this.getContext()));
-        ArrayList<DatabaseRow> oneClass = mOneClassMan.getTable();
 
         for (DataObject course : result) {
             if (htmlRes.contains(course.getmText1())) {
@@ -362,14 +363,14 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 temp = temp.substring(0, temp.indexOf("|"));
                 course.setmText1(temp);
 
-                for (DatabaseRow r : oneClass) {
-                    OneClass c = (OneClass) r;
-                    OneClass backup = (OneClass) r;
+                for (DatabaseRow r : courses) {
+                    Course c = (Course) r;
+                    Course backup = (Course) r;
 
-                    if (c.getCourseID() == course.getClassId()) {
-                        c.setType(temp);
-                        c.setHasName("true");
-                        mOneClassMan.updateRow(backup,c);
+                    if (c.getId() == course.getClassId()) {
+                        c.setTitle(temp);
+                        c.setDescription("true");
+                        mCourseManager.updateRow(backup,c);
                     }
                 }
             }
