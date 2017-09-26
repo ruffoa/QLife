@@ -188,9 +188,11 @@ public class RoomAvaliabilityInfoFragment extends Fragment {
 
         ArrayList<DataObject> result = new ArrayList<DataObject>();
         ArrayList<DataObject> list = new ArrayList<DataObject>();
+        Calendar cal = Calendar.getInstance();
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
 
-        for (int i = 0; i < 16; i++) {
-            result.add(new DataObject("From: " + (i + 7)+":" + 30,"To: " + (i + 8)+":" + 30));
+        for (int i = cal.get(Calendar.HOUR_OF_DAY) - 1; i < 23; i++) {
+            result.add(new DataObject("From: " + (i)+":" + 30,"To: " + (i + 1)+":" + 30));
         }
 
         if (roomAvaliabiliy != null && roomAvaliabiliy.length() > 0) {
@@ -237,17 +239,24 @@ public class RoomAvaliabilityInfoFragment extends Fragment {
                     String test = result.get(j).getmText1().substring(6);
                     int temptime = Integer.parseInt(test.substring(0,test.indexOf(":")));
 
-                    if (temptime > 12) {
+                    if (temptime >= 12) {
                         result.get(j).setmText1("From: " + (temptime - 12) + ":30 PM");
                         test = result.get(j).getmText2().substring(4);
                         int endtime = Integer.parseInt(test.substring(0,test.indexOf(":")));
                         result.get(j).setmText2("To: " + (endtime - 12) + ":30 PM");
                     }
-                    else if (temptime == 12)
+                    else if (temptime == 11)
                     {
                         test = result.get(j).getmText2().substring(4);
                         int endtime = Integer.parseInt(test.substring(0,test.indexOf(":")));
                         result.get(j).setmText2("To: " + (endtime - 12) + ":30 PM");
+                    }
+                    else
+                    {
+                        result.get(j).setmText1("From: " + (temptime) + ":30 AM");
+                        test = result.get(j).getmText2().substring(4);
+                        int endtime = Integer.parseInt(test.substring(0,test.indexOf(":")));
+                        result.get(j).setmText2("To: " + (endtime) + ":30 AM");
                     }
                 }
                 return result;

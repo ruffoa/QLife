@@ -292,11 +292,14 @@ public class ILCRoomInfoFragment extends Fragment {
                     int status = getDayAvaliability();
                     if (status == 0) {
                         result.add(new DataObject(room.getName(), "Is Avaliable Now", room.getRoomId(), true, "", room.getDescription()));
-                    } else if (status == 2)
+
+                    } else if (status == 2) // if the room was booked for the current time slot, but the slot is almost over (sHour == now - 1 && nowMin < 30)
                         result.add(new DataObject(room.getName(), "Is Avaliable at " + cal.get(Calendar.HOUR) + ":30", room.getRoomId(), true, "", room.getDescription()));
-                    else if (status == 4)
+
+                    else if (status == 4)   // if the room was booked for the current timeslot, but it is still before the timeslot starts (sHour == now && nowMin < 30)
                         result.add(new DataObject(room.getName(), "Is Avaliable Until " + cal.get(Calendar.HOUR) + ":30", room.getRoomId(), true, "", room.getDescription()));
-                    else if (status == 3)
+
+                    else if (status == 3)   // if the room is booked for the next time slot (sHour == now + 1)
                         result.add(new DataObject(room.getName(), "Is Avaliable Until " + (cal.get(Calendar.HOUR) + 1) + ":30", room.getRoomId(), true, "", room.getDescription()));
                 }
             }
@@ -354,26 +357,28 @@ public class ILCRoomInfoFragment extends Fragment {
 
                 int state = 0;
 
+                Calendar cal = Calendar.getInstance();
+                int now = cal.get(Calendar.HOUR_OF_DAY);
+                int nowMin = cal.get(Calendar.MINUTE);
+
                 for (int i = 0; i < arr.length(); i++) {
                     JSONObject roomInfo = arr.getJSONObject(i);
                     String start = roomInfo.getString("StartTime");
                     String end = roomInfo.getString("EndTime");
 
                     start = start.substring(start.indexOf("T") + 1);
+                    end = end.substring(end.indexOf("T") + 1);
 
                     int sHour = Integer.parseInt(start.substring(0, 2));
-                    Calendar cal = Calendar.getInstance();
-                    int now = cal.get(Calendar.HOUR_OF_DAY);
-                    int nowMin = cal.get(Calendar.MINUTE);
-
-                    if (sHour == now) {
+                    int eHour = Integer.parseInt(start.substring(0, 2));
+//                    if (sHour == now && nowMin < 30)            // if the room was booked for the current timeslot, but it is still before the timeslot starts
+//                        return 4;
+                    if (sHour == now || (sHour <= now && now <= eHour)) {
                         return 1;
-                    } else if (sHour == now - 1 && nowMin < 30)
+                    } else if (sHour == now - 1 && nowMin < 30) // if the room was booked for the current time slot, but the slot is almost over
                         state = 2;
-                    else if (sHour == now + 1)
+                    else if (sHour == now + 1)                  // if the room is booked for the next time slot
                         state = 3;
-                    else if (sHour == now && nowMin < 30)
-                        state = 4;
                 }
                 return state;
             } catch (JSONException e) {
