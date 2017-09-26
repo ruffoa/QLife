@@ -65,12 +65,6 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
     private Calendar mCalendar;
     private ArrayList<DataObject> result = new ArrayList<DataObject>();
 
-    private RecyclerViewReadyCallback recyclerViewReadyCallback;
-
-    public interface RecyclerViewReadyCallback {
-        void onLayoutReady();
-    }
-
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

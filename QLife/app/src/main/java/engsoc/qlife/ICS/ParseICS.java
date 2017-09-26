@@ -275,8 +275,6 @@ public class ParseICS {
         mOneClassManager = new OneClassManager(mContext);
         mCourseManager = new CourseManager(mContext);
         ArrayList<DatabaseRow> courses = mCourseManager.getTable();
-        ArrayList<DatabaseRow> classes = mOneClassManager.getTable();
-
 
         String types = "";
         for (DatabaseRow data : courses) {

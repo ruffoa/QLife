@@ -16,6 +16,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import engsoc.qlife.ICS.DownloadICSFile;
+import engsoc.qlife.ICS.ParseICS;
 import engsoc.qlife.R;
 import engsoc.qlife.database.GetCloudDb;
 import engsoc.qlife.database.local.DatabaseAccessor;
@@ -181,8 +182,9 @@ public class LoginActivity extends AppCompatActivity {
                 addUserSession();
                 (new GetCloudDb(LoginActivity.this)).execute(); //get cloud db into phone db
                 getIcsFile();
+
             } else {        // if the user has logged in before, see if the schedule is up to date
-                User userData = (User)mUserManager.getTable().get(0);
+                User userData = (User) mUserManager.getTable().get(0);
                 String date = userData.getDateInit();
                 if (!date.equals("")) { // if the user has previously downloaded a schedule
                     Calendar cal = Calendar.getInstance();  // initialize a calendar variable to today's date
@@ -200,7 +202,7 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 } else    // the user never downloaded a schedule successfully, thus we should download the information immediately, and wait until it's complete before continuing
                     try {
-                        new DownloadICSFile(LoginActivity.this).execute(mIcsUrl).get();  // download the new schedule data right now on the main thread
+                        getIcsFile();
                     } catch (Exception e) {
                     }
             }
@@ -219,13 +221,12 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         /**
-         * Method that starts an asynchronous task that downloads and parses the ICS file.
+         * Method that starts an *synchronous* task that downloads and parses the ICS file.
          */
         private void getIcsFile() {
             if (mIcsUrl != null && mIcsUrl.contains(".ics")) {
                 try {
                     new DownloadICSFile(LoginActivity.this).execute(mIcsUrl).get();
-
                 } catch (Exception e) {
 
                 }
