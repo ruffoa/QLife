@@ -261,10 +261,47 @@ public class ParseICS {
                 if (htmlRes.contains(c.getTitle())) {
                     int index = htmlRes.indexOf(c.getTitle());
                     String temp = htmlRes.substring(index);
-                    temp = temp.substring(0, temp.indexOf("|"));
+                    temp = temp.substring(0, temp.indexOf("|") - 1);
+                    if (temp.endsWith("FW"))
+                        temp = temp.substring(0, temp.indexOf("FW") - 2);
+                    else if (temp.endsWith("F/W"))
+                        temp = temp.substring(0, temp.indexOf("F/W") - 3);
+                    else if (temp.endsWith("W"))
+                        temp = temp.substring(0, temp.indexOf("W") - 1);
+                    else if (temp.endsWith("F"))
+                        temp = temp.substring(0, temp.indexOf("F") - 1);
+
                     c.setTitle(temp);
                     c.setDescription("true");
-                    mCourseManager.updateRow(backup,c);
+                    mCourseManager.updateRow(backup, c);
+                }
+            }
+        }
+    }
+
+    public void addClassDescription(String htmlRes, String classType) {
+        if (htmlRes == null || htmlRes.length() == 0)
+            return;
+
+        CourseManager mCourseManager = new CourseManager(mContext);
+        ArrayList<DatabaseRow> courses = mCourseManager.getTable();
+
+        for (DatabaseRow course : courses) {
+            Course c = (Course) course;
+            Course backup = c;
+            if (c.getTitle().contains(classType)) {
+
+                if (htmlRes.contains(c.getTitle())) {
+                    int index = htmlRes.indexOf("class=\"course-code\">" + c.getTitle());
+                    String temp = htmlRes.substring(index);
+                    index = temp.indexOf("class=\"course-desc\">") + 20;
+                    temp = temp.substring(index);
+
+                    temp = temp.substring(0, temp.indexOf("</span>"));
+                    temp = temp.substring(0, temp.indexOf(". (") + 1);
+
+                    c.setDescription(temp);
+                    mCourseManager.updateRow(backup, c);
                 }
             }
         }
@@ -280,7 +317,7 @@ public class ParseICS {
         for (DatabaseRow data : courses) {
             Course c = (Course) data;
             String temp = c.getTitle().substring(0, c.getTitle().indexOf(" "));
-            if (!types.contains(temp) && c.getDesription() != "true")
+            if (!types.contains(temp) && (c.getDesription() != "true" || c.getDesription().length() < 5))
                 types += " " + temp;
         }
 
@@ -295,6 +332,35 @@ public class ParseICS {
                         }
                     };
                     cInfo.execute(str, "TEST");
+                }
+            }
+        }
+    }
+
+    public void getCourseDescriptions() {
+        mOneClassManager = new OneClassManager(mContext);
+        mCourseManager = new CourseManager(mContext);
+        ArrayList<DatabaseRow> courses = mCourseManager.getTable();
+
+        String types = "";
+        for (DatabaseRow data : courses) {
+            Course c = (Course) data;
+            String temp = c.getTitle().substring(0, c.getTitle().indexOf(" "));
+            if (!types.contains(temp) && (c.getDesription() == null || (c.getDesription() != "true" && c.getDesription().length() < 8)))
+                types += " " + temp;
+        }
+
+        if (types != "") {
+            String[] parts = types.split(" ");
+            for (final String str : parts) {
+                if (str.length() > 0) {
+                    getCourseInfo cInfo = new getCourseInfo(this.mContext) {
+                        @Override
+                        public void onPostExecute(String result) {
+                            addClassDescription(result, str);
+                        }
+                    };
+                    cInfo.execute(str, "description");
                 }
             }
         }

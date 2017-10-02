@@ -35,7 +35,7 @@ import engsoc.qlife.interfaces.IQLMapView;
 
 public class EventInfoFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLMapView, IQLListItemDetailsFragment {
 
-    private String mEventTitle, mEventLoc, mDate;
+    private String mEventTitle, mEventLoc, mDate, mDescription;
     private Bundle mSavedInstanceState;
     private View myView;
     private MapView mMapView;
@@ -154,6 +154,8 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
             mEventTitle = bundle.getString(DayFragment.TAG_TITLE);
             mEventLoc = bundle.getString(DayFragment.TAG_LOC);
             mDate = bundle.getString(DayFragment.TAG_DATE);
+            mDescription = bundle.getString(DayFragment.TAG_DESC);
+
         }
 
         TextView eventDate = (TextView) myView.findViewById(R.id.EventDate);
@@ -162,5 +164,11 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
         eventLoc.setText(mEventLoc);
         TextView eventName = (TextView) myView.findViewById(R.id.EventName);
         eventName.setText(mEventTitle);
+
+        if (mDescription != null) {
+            TextView eventDescription = (TextView) myView.findViewById(R.id.EventDescription);
+            eventDescription.setText(mDescription);
+        }
+
     }
 }

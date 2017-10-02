@@ -196,7 +196,13 @@ public class LoginActivity extends AppCompatActivity {
                         cal.setTime(sdf.parse(date));   // try to parse the date that the user last got a schedule for
                         if (cal.after(lastWeek)) {      // if it has been more than a week since the data was downloaded...
                             new DownloadICSFile(LoginActivity.this).execute(mIcsUrl);  // download the new schedule data in the background, this will be updated on next run, or when the day view is refreshed.
+                            ParseICS parse = new ParseICS(getBaseContext());
+                            parse.getCourseDescriptions();
                         }
+                        getIcsFile();
+                        ParseICS parse = new ParseICS(getBaseContext());
+                        parse.getCourseDescriptions();
+
                     } catch (Exception e) {
 
                     }
@@ -230,6 +236,8 @@ public class LoginActivity extends AppCompatActivity {
                 } catch (Exception e) {
 
                 }
+                ParseICS parse = new ParseICS(getBaseContext());
+                parse.getCourseDescriptions();
             }
         }
     }

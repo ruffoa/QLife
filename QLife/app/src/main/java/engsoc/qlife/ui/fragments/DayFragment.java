@@ -42,6 +42,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+import static engsoc.qlife.ui.fragments.ILCRoomInfoFragment.TAG_DESC;
+
 /**
  * Fragment that displays the classes for a given day. When a class is clicked, it starts
  * EventInfoFragment that provides details about the class.
@@ -51,6 +53,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
     public static final String TAG_TITLE = "event_title";
     public static final String TAG_DATE = "date";
     public static final String TAG_LOC = "event_locat";
+    public static final String TAG_DESC = "event_description";
 
     private static int mInstances = 0;
     private static SparseIntArray mArray = new SparseIntArray();
@@ -150,7 +153,6 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         List<String> loc = new ArrayList<>();
         List<String> time = new ArrayList<>();
         List<Long> classID = new ArrayList<>();
-        List<Boolean> hasName = new ArrayList<>();
 
         ArrayList<DatabaseRow> data = oneClassManager.getTable();
 
@@ -181,12 +183,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 classID.add(oneClass.getCourseID());
                 DatabaseRow courseRow = courseManager.getRow(oneClass.getCourseID());
                 Course course = (Course) courseRow;
-                if (course.getDesription() != null)
-                    hasName.add(course.getDesription().contains("true") ? true : false);
-                else
-                    hasName.add(false);
                 list.add(course.getTitle());
-
 //                if (oneClass.getHasName() != null)
 //                    hasName.add(oneClass.getHasName().contains("true") ? true : false);
 //                else
@@ -262,17 +259,16 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                     amPMTime = (minHour) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
                 else amPMTime = time.get(posSmall) + " AM";
 
-                result.add(new DataObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall)));
+                result.add(new DataObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall)));
                 list.remove(posSmall);
                 time.remove(posSmall);
                 loc.remove(posSmall);
                 classID.remove(posSmall);
-                hasName.remove(posSmall);
                 i = -1;
             }
         }
         if (list.size() > 0) {
-            result.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + list.get(0), classID.get(posSmall), hasName.get(posSmall)));
+            result.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + list.get(0), classID.get(posSmall)));
         }
         return result;
     }
@@ -338,6 +334,8 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                     card.setTransitionName("transistion_event_info" + position);
                 }
 
+                CourseManager courseManager = new CourseManager(getContext());
+
                 String cardName = card.getTransitionName();
                 EventInfoFragment nextFrag = new EventInfoFragment();
 
@@ -345,6 +343,12 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 bundle.putString(TAG_TITLE, data.getmText1());
                 bundle.putString(TAG_LOC, data.getmText2());
                 bundle.putString(TAG_DATE, mDateString);
+
+                Course course = courseManager.getRow(data.getClassId());
+
+                if (course.getDesription() != null && course.getDesription() != "true" && course.getDesription().length() > 5)
+                    bundle.putString(TAG_DESC, course.getDesription());
+
                 nextFrag.setArguments(bundle);
 
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();

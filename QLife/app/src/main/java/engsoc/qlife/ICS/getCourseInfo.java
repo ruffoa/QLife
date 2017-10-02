@@ -46,17 +46,30 @@ public class getCourseInfo extends AsyncTask<String, Void, String> {
 //            cal = Calendar.getInstance();
             String courseType = info[0];
             String htmlStr;
+            String getDescFlag = info[1];
             //call php script on server that gets info from cloud database
             if (courseType.contains("COMM"))
                 htmlStr = getHTML(mContext.getString(R.string.cal_get_comm_class_names), 5000);
             else
                 htmlStr = getHTML(mContext.getString(R.string.cal_get_eng_class_names) + courseType + mContext.getString(R.string.cal_get_eng_class_names_end), 5000);
 
+            if (getDescFlag.contains("description")) {
+                if (courseType.contains("ELEC")) {
+                    htmlStr = getHTML(mContext.getString(R.string.cal_get_elec_core_course_descriptions), 5000);
+                }
+                else if (courseType.contains("CMPE")) {
+                    htmlStr = getHTML(mContext.getString(R.string.cal_get_cmpe_core_course_descriptions), 5000);
+                }
+            }
             return htmlStr;
-//            if (json != null) {
+
+            //            if (json != null) {
 //                return json;
 //            }
-        } catch (Exception e) {
+        } catch (
+                Exception e)
+
+        {
             Log.d("HELLOTHERE", "Error: " + e);
         }
         return null;
