@@ -6,4 +6,6 @@ package engsoc.qlife.utility;
  */
 public class Constants {
     public static final String CALENDAR_FILE = "cal.ics";
+    public static final String TV = "TV";
+    public static final String PROJECTOR = "projector";
 }
