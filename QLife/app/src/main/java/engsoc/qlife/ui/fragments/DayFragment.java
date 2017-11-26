@@ -1,9 +1,7 @@
 package engsoc.qlife.ui.fragments;
 
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.BoolRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -16,11 +14,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.support.annotation.Nullable;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.TextView;
 
-import engsoc.qlife.ICS.getCourseInfo;
 import engsoc.qlife.R;
 import engsoc.qlife.activities.MainTabActivity;
 import engsoc.qlife.database.local.DatabaseRow;
@@ -40,7 +36,6 @@ import engsoc.qlife.interfaces.IQLListFragmentWithChild;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Fragment that displays the classes for a given day. When a class is clicked, it starts
