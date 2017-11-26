@@ -12,8 +12,6 @@ import engsoc.qlife.database.local.courses.OneClass.OneClassManager;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
 import engsoc.qlife.ui.fragments.StudentToolsFragment;
-import engsoc.qlife.ui.recyclerview.DataObject;
-import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -290,7 +288,7 @@ public class ParseICS {
             String[] parts = types.split(" ");
             for (final String str : parts) {
                 if (str.length() > 0) {
-                    getCourseInfo cInfo = new getCourseInfo(this.mContext) {
+                    GetCourseInfo cInfo = new GetCourseInfo() {
                         @Override
                         public void onPostExecute(String result) {
                             addClassName(result, str);

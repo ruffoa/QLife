@@ -1,6 +1,5 @@
 package engsoc.qlife.ICS;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -13,61 +12,36 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import engsoc.qlife.R;
-
 /**
  * Created by Alex on 8/6/2017.
+ * Asynchronously gets course pages from public Queen's sites and parses out the course name.
  */
 
-public class getCourseInfo extends AsyncTask<String, Void, String> {
+public class GetCourseInfo extends AsyncTask<String, Void, String> {
+    private static final int TIMEOUT = 5000;
 
-    /**
-     * Created by Alex Ruffo on 23/09/2017.
-     * Async task that downloads and parses the cloud database into the phone database.
-     */
-
-    private static final String TAG_SUCCESS = "Success";
-
-    private Context mContext;
-
-    public getCourseInfo(Context context) {
-        mContext = context;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-    }
+    //url strings here so that context is not needed to get the string from strings.xml
+    private static final String GET_ENG_CLASS_NAMES = "http://calendar.engineering.queensu.ca/content.php?filter%5B27%5D=";
+    private static final String ENG_CLASS_FILTER = "&filter%5B29%5D=&filter%5Bcourse_type%5D=-1&filter%5Bkeyword%5D=&filter%5B32%5D=1&filter%5Bcpage%5D=1&cur_cat_oid=2&expand=&navoid=50&search_database=Filter#acalog_template_course_filter";
+    private static final String GET_COMM_CLASS_NAMES = "https://smith.queensu.ca/bcom/academic_calendar/browse_calendar/2014_15_before/curriculum/courses_instruction.php";
 
     @Override
     protected String doInBackground(String... info) {
         try {
-//            Calendar cal;
-//            cal = Calendar.getInstance();
             String courseType = info[0];
             String htmlStr;
             //call php script on server that gets info from cloud database
             if (courseType.contains("COMM"))
-                htmlStr = getHTML(mContext.getString(R.string.cal_get_comm_class_names), 5000);
+                htmlStr = getHTML(GET_COMM_CLASS_NAMES);
             else
-                htmlStr = getHTML(mContext.getString(R.string.cal_get_eng_class_names) + courseType + mContext.getString(R.string.cal_get_eng_class_names_end), 5000);
-
+                htmlStr = getHTML(GET_ENG_CLASS_NAMES + courseType + ENG_CLASS_FILTER);
             return htmlStr;
-//            if (json != null) {
-//                return json;
-//            }
         } catch (Exception e) {
-            Log.d("HELLOTHERE", "Error: " + e);
+            return null;
         }
-        return null;
     }
 
-    @Override
-    protected void onPostExecute(String result) {
-        super.onPostExecute(result);
-    }
-
-    private String getHTML(String url, int timeout) {
+    private String getHTML(String url) {
         HttpURLConnection con = null;
         try {
             URL u = new URL(url);
@@ -77,8 +51,8 @@ public class getCourseInfo extends AsyncTask<String, Void, String> {
             con.setRequestProperty("Connection", "close");
             con.setUseCaches(false);
             con.setAllowUserInteraction(false);
-            con.setConnectTimeout(timeout);
-            con.setReadTimeout(timeout);
+            con.setConnectTimeout(TIMEOUT);
+            con.setReadTimeout(TIMEOUT);
             con.connect();
             int status = con.getResponseCode();
             switch (status) {
@@ -109,23 +83,6 @@ public class getCourseInfo extends AsyncTask<String, Void, String> {
         }
         return null;
     }
-
-
-//    public JSONArray getRoomTimes(JSONArray json, int roomID) {
-//        try {
-//            Calendar cal;
-//            cal = Calendar.getInstance();
-//
-//            String jsonStr = getJSON(mContext.getString(R.string.dibs_get_rooms_times) + cal.get(Calendar.YEAR) + "-" + (cal.get(Calendar.MONTH) + 1) + "-" + cal.get(Calendar.DAY_OF_MONTH) + "-" + roomID, 5000);
-//            JSONArray json = new JSONArray(jsonStr);
-//            return json;
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//        return null;
-//    }
-
 }
 
 
