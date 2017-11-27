@@ -22,8 +22,8 @@ import android.widget.LinearLayout;
 import engsoc.qlife.R;
 import engsoc.qlife.database.dibs.getDibsRoomInfo;
 import engsoc.qlife.ui.recyclerview.DataObject;
-import engsoc.qlife.database.dibs.ILCRoomObj;
-import engsoc.qlife.database.dibs.ILCRoomObjManager;
+import engsoc.qlife.database.local.rooms.Room;
+import engsoc.qlife.database.local.rooms.RoomManager;
 import engsoc.qlife.database.dibs.getDibsApiInfo;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
@@ -59,7 +59,7 @@ public class ILCRoomInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_ilcroom_info, container, false);
 
-        ILCRoomObjManager roomInf = new ILCRoomObjManager(this.getContext());
+        RoomManager roomInf = new RoomManager(this.getContext());
         ArrayList<DatabaseRow> data = roomInf.getTable();
         if (data == null || data.size() == 0) {
             getDibsApiInfo dibs = new getDibsApiInfo(this.getContext());
@@ -100,7 +100,7 @@ public class ILCRoomInfoFragment extends Fragment {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     card.setTransitionName("transistion_event_info" + position);
                 }
-                ILCRoomObjManager roomInf = new ILCRoomObjManager(getContext());
+                RoomManager roomInf = new RoomManager(getContext());
                 ArrayList<DatabaseRow> info = roomInf.getTable();
 
                 String map = "";
@@ -108,7 +108,7 @@ public class ILCRoomInfoFragment extends Fragment {
 
                 if (data != null && info.size() > 0) {
                     for (DatabaseRow row : info) {
-                        ILCRoomObj room = (ILCRoomObj) row;
+                        Room room = (Room) row;
                         if (room.getRoomId() == data.getID()) {
                             map = room.getMapUrl();
                             pic = room.getPicUrl();
@@ -195,7 +195,7 @@ public class ILCRoomInfoFragment extends Fragment {
     private boolean onFABLongClick() {
         mProgressView.setVisibility(View.VISIBLE);
 
-        ILCRoomObjManager roomInf = new ILCRoomObjManager(this.getContext());
+        RoomManager roomInf = new RoomManager(this.getContext());
         ArrayList<DataObject> result = new ArrayList<>();
         ArrayList<DatabaseRow> data = roomInf.getTable();
         Calendar cal = Calendar.getInstance();
@@ -207,7 +207,7 @@ public class ILCRoomInfoFragment extends Fragment {
 
                 for (DatabaseRow row : data) {
                     getDibsRoomInfo dibs = new getDibsRoomInfo(this.getContext());
-                    ILCRoomObj room = (ILCRoomObj) row;
+                    Room room = (Room) row;
                     roomAvailability = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
                     int status = getDayAvailability();
                     if (status == 0) {
@@ -233,13 +233,13 @@ public class ILCRoomInfoFragment extends Fragment {
     }
 
     public ArrayList<DataObject> getDayEventData() {
-        ILCRoomObjManager roomInf = new ILCRoomObjManager(this.getContext());
+        RoomManager roomInf = new RoomManager(this.getContext());
         ArrayList<DataObject> result = new ArrayList<>();
         ArrayList<DatabaseRow> data = roomInf.getTable();
 
         if (data != null && data.size() > 0) {
             for (DatabaseRow row : data) {
-                ILCRoomObj room = (ILCRoomObj) row;
+                Room room = (Room) row;
                 boolean hasTV = room.getDescription().contains(Constants.TV) || room.getDescription().contains(Constants.PROJECTOR);
                 result.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), hasTV, ""));
             }

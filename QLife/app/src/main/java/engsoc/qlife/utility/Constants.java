@@ -9,4 +9,6 @@ public class Constants {
     public static final String TV = "TV";
     public static final String PROJECTOR = "projector";
     public static final String HTTP="http";
+
+    public static final int TIMEOUT = 5000;
 }

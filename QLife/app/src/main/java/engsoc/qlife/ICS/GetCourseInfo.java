@@ -12,13 +12,15 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import engsoc.qlife.utility.Constants;
+
+//TODO observer pattern
+
 /**
  * Created by Alex on 8/6/2017.
  * Asynchronously goes to course web pages and parses for the class title.
  */
 public class GetCourseInfo extends AsyncTask<String, Void, String> {
-    private static final int TIMEOUT = 5000;
-
     //url strings here so don't need context to call strings.xml
     private static final String GET_COMM_CLASS = "https://smith.queensu.ca/bcom/academic_calendar/browse_calendar/2014_15_before/curriculum/courses_instruction.php";
     private static final String GET_ENG_CLASS = "http://calendar.engineering.queensu.ca/content.php?filter%5B27%5D=";
@@ -51,8 +53,8 @@ public class GetCourseInfo extends AsyncTask<String, Void, String> {
             con.setRequestProperty("Connection", "close");
             con.setUseCaches(false);
             con.setAllowUserInteraction(false);
-            con.setConnectTimeout(TIMEOUT);
-            con.setReadTimeout(TIMEOUT);
+            con.setConnectTimeout(Constants.TIMEOUT);
+            con.setReadTimeout(Constants.TIMEOUT);
             con.connect();
             int status = con.getResponseCode();
             switch (status) {
