@@ -3,6 +3,8 @@ package engsoc.qlife.ui.fragments;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,16 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
-import engsoc.qlife.R;
-import engsoc.qlife.database.dibs.getDibsRoomInfo;
-import engsoc.qlife.ui.recyclerview.DataObject;
-import engsoc.qlife.database.local.rooms.Room;
-import engsoc.qlife.database.local.rooms.RoomManager;
-import engsoc.qlife.database.dibs.getDibsApiInfo;
-import engsoc.qlife.database.local.DatabaseRow;
-import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
-import engsoc.qlife.utility.Constants;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +29,17 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
+
+import engsoc.qlife.R;
+import engsoc.qlife.database.dibs.GetRooms;
+import engsoc.qlife.database.dibs.GetRoomBookings;
+import engsoc.qlife.database.local.DatabaseRow;
+import engsoc.qlife.database.local.rooms.Room;
+import engsoc.qlife.database.local.rooms.RoomManager;
+import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.ui.recyclerview.DataObject;
+import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
+import engsoc.qlife.utility.Constants;
 
 public class ILCRoomInfoFragment extends Fragment {
     public static final String TAG_TITLE = "room_title";
@@ -51,6 +54,7 @@ public class ILCRoomInfoFragment extends Fragment {
     private View mView;
     private String roomAvailability;
     private View mProgressView;
+    private ProgressDialog mProgressDialog;
 
     private ArrayList<DataObject> mRoomData;
 
@@ -62,7 +66,40 @@ public class ILCRoomInfoFragment extends Fragment {
         RoomManager roomInf = new RoomManager(this.getContext());
         ArrayList<DatabaseRow> data = roomInf.getTable();
         if (data == null || data.size() == 0) {
-            getDibsApiInfo dibs = new getDibsApiInfo(this.getContext());
+            final Context context = getContext();
+            GetRooms dibs = new GetRooms(new AsyncTaskObserver() {
+                @Override
+                public void onTaskCompleted(Object obj) {
+                    //expect null to be passed
+                    mProgressDialog.dismiss();
+                }
+
+                @Override
+                public void beforeTaskStarted() {
+                    mProgressDialog = new ProgressDialog(context);
+                    mProgressDialog.setMessage("Downloading cloud database. Please wait...");
+                    mProgressDialog.setIndeterminate(false);
+                    mProgressDialog.setCancelable(false);
+                    mProgressDialog.show();
+                }
+
+                @Override
+                public void duringTask(Object obj) {
+                    if (obj.getClass() == JSONArray.class) {
+                        JSONArray rooms = (JSONArray) obj;
+                        try {
+                            RoomManager tableManager = new RoomManager(context);
+                            for (int i = 0; i < rooms.length(); i++) {
+                                JSONObject roomInfo = rooms.getJSONObject(i);
+                                tableManager.insertRow(new Room(roomInfo.getInt(Room.COLUMN_ROOM_ID), roomInfo.getInt(Room.COLUMN_BUILDING_ID), roomInfo.getString(Room.COLUMN_DESCRIPTION),
+                                        roomInfo.getString(Room.COLUMN_MAP_URL), roomInfo.getString(Room.COLUMN_NAME), roomInfo.getString(Room.COLUMN_PIC_URL), roomInfo.getInt(Room.COLUMN_ROOM_ID)));
+                            }
+                        } catch (JSONException e) {
+                            Log.d("HELLOTHERE", "EMERG: " + e);
+                        }
+                    }
+                }
+            });
             try {
                 dibs.execute().get();
             } catch (InterruptedException | ExecutionException e) {
@@ -206,7 +243,7 @@ public class ILCRoomInfoFragment extends Fragment {
                 mProgressView.setVisibility(View.VISIBLE);
 
                 for (DatabaseRow row : data) {
-                    getDibsRoomInfo dibs = new getDibsRoomInfo(this.getContext());
+                    GetRoomBookings dibs = new GetRoomBookings();
                     Room room = (Room) row;
                     roomAvailability = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
                     int status = getDayAvailability();

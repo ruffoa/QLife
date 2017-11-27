@@ -25,6 +25,7 @@ import engsoc.qlife.database.local.courses.OneClass.OneClass;
 import engsoc.qlife.database.local.courses.OneClass.OneClassManager;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
+import engsoc.qlife.interfaces.AsyncTaskObserver;
 import engsoc.qlife.ui.fragments.StudentToolsFragment;
 import engsoc.qlife.utility.Constants;
 
@@ -32,7 +33,7 @@ import engsoc.qlife.utility.Constants;
  * Created by Alex on 1/18/2017.
  * Class to parse the ICS file.
  */
-class ParseICS {
+public class ParseICS {
     private final String TAG = StudentToolsFragment.class.getSimpleName();
     private OneClassManager mOneClassManager;
     private CourseManager mCourseManager;
@@ -67,7 +68,7 @@ class ParseICS {
         return mLines;
     }
 
-    void parseICSData() {
+    public void parseICSData() {
         UserManager mUserManager = new UserManager(this.mContext);
         ArrayList<DatabaseRow> userTable = mUserManager.getTable();
         mOneClassManager = new OneClassManager(mContext);
@@ -216,7 +217,7 @@ class ParseICS {
         }
     }
 
-    void getClassTypes() {
+    public void getClassTypes() {
         mOneClassManager = new OneClassManager(mContext);
         mCourseManager = new CourseManager(mContext);
         ArrayList<DatabaseRow> courses = mCourseManager.getTable();
@@ -233,12 +234,23 @@ class ParseICS {
         if (!types.isEmpty()) {
             for (final String str : types) {
                 if (str.length() > 0) {
-                    GetCourseInfo cInfo = new GetCourseInfo() {
+                    GetCourseInfo cInfo = new GetCourseInfo(new AsyncTaskObserver() {
                         @Override
-                        public void onPostExecute(String result) {
-                            addClassName(result, str);
+                        public void onTaskCompleted(Object obj) {
+                            if (obj.getClass() == String.class) {
+                                String result = (String) obj;
+                                addClassName(result, str);
+                            }
                         }
-                    };
+
+                        @Override
+                        public void beforeTaskStarted() {
+                        }
+
+                        @Override
+                        public void duringTask(Object obj) {
+                        }
+                    });
                     cInfo.execute(str, "TEST");
                 }
             }

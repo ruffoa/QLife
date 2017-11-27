@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -16,13 +17,21 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import engsoc.qlife.ICS.DownloadICSFile;
+import engsoc.qlife.ICS.ParseICS;
 import engsoc.qlife.R;
 import engsoc.qlife.database.GetCloudDb;
 import engsoc.qlife.database.local.DatabaseAccessor;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
+import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.utility.Constants;
+import engsoc.qlife.utility.UserLoginTask;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -37,6 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     private UserLoginTask mAuthTask = null;
     private View mProgressView;
     private View mLoginFormView;
+    private UserManager mUserManager;
 
     public static String mIcsUrl = "";
     public static String mUserEmail = "";
@@ -75,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
         UserManager mUserManager = new UserManager(getBaseContext());
         if (mUserManager.getTable().isEmpty()) {
             //not logged in, show software centre login screen
-            final WebView browser = (WebView) findViewById(R.id.webView);
+            final WebView browser = findViewById(R.id.webView);
             browser.getSettings().setSaveFormData(false); //disable autocomplete - more secure, keyboard popup blocks fields
             browser.getSettings().setJavaScriptEnabled(true); // needed to properly display page / scroll to chosen location
 
@@ -115,7 +125,58 @@ public class LoginActivity extends AppCompatActivity {
 
         // Show a progress spinner, and kick off a background task to perform the user login attempt.
         showProgress(true);
-        mAuthTask = new UserLoginTask(mUserEmail);
+        mAuthTask = new UserLoginTask(mUserEmail, new AsyncTaskObserver() {
+            @Override
+            public void onTaskCompleted(Object obj) {
+                if (obj instanceof String) {
+                    String netid = (String) obj;
+                    mAuthTask = null;
+                    showProgress(true);
+
+                    mUserManager = new UserManager(getApplicationContext());
+                    if (mUserManager.getTable().isEmpty()) {
+                        addUserSession(netid);
+                        (new GetCloudDb(LoginActivity.this)).execute(); //get cloud db into phone db
+                        getIcsFile();
+                    } else {        // if the user has logged in before, see if the schedule is up to date
+                        User userData = (User) mUserManager.getTable().get(0);
+                        String date = userData.getDateInit();
+
+
+                        if (!date.equals("")) { // if the user has previously downloaded a schedule
+                            Calendar cal = Calendar.getInstance();  // initialize a calendar variable to today's date
+                            Calendar lastWeek = Calendar.getInstance();
+                            lastWeek.add(Calendar.DAY_OF_YEAR, -7); // initialize a calendar variable to one week ago
+                            SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.ENGLISH);
+
+                            try {
+                                cal.setTime(sdf.parse(date));   // try to parse the date that the user last got a schedule for
+                                if (cal.after(lastWeek)) {      // if it has been more than a week since the data was downloaded...
+                                    getIcsFile();  // download the new schedule data in the background, this will be updated on next run, or when the day view is refreshed.
+                                }
+                            } catch (Exception e) {
+                                Log.d("HELLOTHERE", e.getMessage());
+
+                            }
+                        } else    // the user never downloaded a schedule successfully, thus we should download the information immediately, and wait until it's complete before continuing
+                            try {
+                                getIcsFile();  // download the new schedule data right now on the main thread
+                            } catch (Exception e) {
+                                Log.d("HELLOTHERE", e.getMessage());
+                            }
+                    }
+                    startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
+                }
+            }
+
+            @Override
+            public void beforeTaskStarted() {
+            }
+
+            @Override
+            public void duringTask(Object obj) {
+            }
+        });
         mAuthTask.execute((Void) null);
     }
 
@@ -152,83 +213,72 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * Class used to log the user in asynchronously. This login process is not actually asynchronous. This
-     * need to be refactored; however, early attempts have caused a strange crash.
+     * Method that adds the user and their information to the User table in the phone, logging them in.
      */
-    private class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    private void addUserSession(String netid) {
+        SimpleDateFormat df = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.CANADA);
+        String formattedDate = df.format(Calendar.getInstance().getTime());
+        User newUser = new User(1, netid, "", "", formattedDate, mIcsUrl); //ID of 1 as only ever 1 user logged in
+        mUserManager = new UserManager(LoginActivity.this);
+        mUserManager.insertRow(newUser);
+    }
 
-        private final String mNetid;
-        private UserManager mUserManager;
-
-        UserLoginTask(String email) {
-            //email right now is a url with netid inside, parsing for the netid
-            String[] strings = email.split("/");
-            this.mNetid = strings[strings.length - 1].split("@")[0];
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... params) {
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(final Boolean success) {
-            mAuthTask = null;
-            showProgress(true);
-
-            mUserManager = new UserManager(getApplicationContext());
-            if (mUserManager.getTable().isEmpty()) {
-                addUserSession();
-                (new GetCloudDb(LoginActivity.this)).execute(); //get cloud db into phone db
-                getIcsFile();
-            } else {        // if the user has logged in before, see if the schedule is up to date
-                User userData = (User)mUserManager.getTable().get(0);
-                String date = userData.getDateInit();
-                if (!date.equals("")) { // if the user has previously downloaded a schedule
-                    Calendar cal = Calendar.getInstance();  // initialize a calendar variable to today's date
-                    Calendar lastWeek = Calendar.getInstance();
-                    lastWeek.add(Calendar.DAY_OF_YEAR, -7); // initialize a calendar variable to one week ago
-                    SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.ENGLISH);
-
-                    try {
-                        cal.setTime(sdf.parse(date));   // try to parse the date that the user last got a schedule for
-                        if (cal.after(lastWeek)) {      // if it has been more than a week since the data was downloaded...
-                            new DownloadICSFile(LoginActivity.this).execute(mIcsUrl);  // download the new schedule data in the background, this will be updated on next run, or when the day view is refreshed.
-                        }
-                    } catch (Exception e) {
-
-                    }
-                } else    // the user never downloaded a schedule successfully, thus we should download the information immediately, and wait until it's complete before continuing
-                    try {
-                        new DownloadICSFile(LoginActivity.this).execute(mIcsUrl).get();  // download the new schedule data right now on the main thread
-                    } catch (Exception e) {
-                    }
-            }
-            startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
-        }
-
-        /**
-         * Method that adds the user and their information to the User table in the phone, logging them in.
-         */
-        private void addUserSession() {
-            SimpleDateFormat df = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.CANADA);
-            String formattedDate = df.format(Calendar.getInstance().getTime());
-            User newUser = new User(1, mNetid, "", "", formattedDate, mIcsUrl); //ID of 1 as only ever 1 user logged in
-            mUserManager = new UserManager(LoginActivity.this);
-            mUserManager.insertRow(newUser);
-        }
-
-        /**
-         * Method that starts an asynchronous task that downloads and parses the ICS file.
-         */
-        private void getIcsFile() {
-            if (mIcsUrl != null && mIcsUrl.contains(".ics")) {
-                try {
-                    new DownloadICSFile(LoginActivity.this).execute(mIcsUrl).get();
-
-                } catch (Exception e) {
-
+    /**
+     * Method that starts an asynchronous task that downloads and parses the ICS file.
+     */
+    private void getIcsFile() {
+        if (mIcsUrl != null && mIcsUrl.contains(".ics")) {
+            final Context context = getApplicationContext();
+            DownloadICSFile icsDownloader = new DownloadICSFile(new AsyncTaskObserver() {
+                @Override
+                public void onTaskCompleted(Object obj) {
                 }
+
+                @Override
+                public void beforeTaskStarted() {
+                }
+
+                @Override
+                public void duringTask(Object obj) {
+                    if (obj instanceof HttpURLConnection) {
+                        HttpURLConnection connection = (HttpURLConnection) obj;
+                        InputStream input = null;
+                        FileOutputStream output = null;
+                        try {
+                            // download the file
+                            input = connection.getInputStream();
+                            output = getApplicationContext().openFileOutput(Constants.CALENDAR_FILE, MODE_PRIVATE);
+
+                            byte data[] = new byte[4096]; //why 4096
+                            int count;
+                            while ((count = input.read(data)) != -1) {
+                                output.write(data, 0, count);
+                            }
+                        } catch (Exception e) {
+                            Log.d("HELLOTHERE", e.getMessage());
+                        } finally {
+                            //close streams, end connection
+                            try {
+                                if (output != null)
+                                    output.close();
+                                if (input != null)
+                                    input.close();
+                            } catch (IOException ignored) {
+                                Log.d("HELLOTHERE", ignored.getMessage());
+                            }
+                        }
+
+                        final ParseICS parser = new ParseICS(context);
+                        parser.parseICSData();
+                        parser.getClassTypes();
+                    }
+                }
+            });
+
+            try {
+                icsDownloader.execute(mIcsUrl).get();
+            } catch (Exception e) {
+                Log.d("HELLOTHERE", e.getMessage());
             }
         }
     }

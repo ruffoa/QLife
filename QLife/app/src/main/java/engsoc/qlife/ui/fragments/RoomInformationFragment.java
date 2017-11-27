@@ -26,7 +26,7 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 import engsoc.qlife.R;
-import engsoc.qlife.database.dibs.getDibsRoomInfo;
+import engsoc.qlife.database.dibs.GetRoomBookings;
 import engsoc.qlife.ui.recyclerview.DataObject;
 import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
 import engsoc.qlife.utility.Constants;
@@ -54,7 +54,7 @@ public class RoomInformationFragment extends Fragment {
             mRoomID = bundle.getInt(ILCRoomInfoFragment.TAG_ROOM_ID);
         }
 
-        getDibsRoomInfo dibs = new getDibsRoomInfo(this.getContext());
+        GetRoomBookings dibs = new GetRoomBookings();
         try {
             roomAvailability = dibs.execute(mRoomID, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
         } catch (InterruptedException | ExecutionException e) {
