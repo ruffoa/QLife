@@ -18,6 +18,8 @@ import java.util.logging.Logger;
  */
 public class GetCourseInfo extends AsyncTask<String, Void, String> {
     private static final int TIMEOUT = 5000;
+
+    //url strings here so don't need context to call strings.xml
     private static final String GET_COMM_CLASS = "https://smith.queensu.ca/bcom/academic_calendar/browse_calendar/2014_15_before/curriculum/courses_instruction.php";
     private static final String GET_ENG_CLASS = "http://calendar.engineering.queensu.ca/content.php?filter%5B27%5D=";
     private static final String FILTER_ENG_CLASS = "&filter%5B29%5D=&filter%5Bcourse_type%5D=-1&filter%5Bkeyword%5D=&filter%5B32%5D=1&filter%5Bcpage%5D=1&cur_cat_oid=2&expand=&navoid=50&search_database=Filter#acalog_template_course_filter";
@@ -33,12 +35,10 @@ public class GetCourseInfo extends AsyncTask<String, Void, String> {
                 htmlStr = getHTML(GET_COMM_CLASS);
             else
                 htmlStr = getHTML(GET_ENG_CLASS + courseType + FILTER_ENG_CLASS);
-
             return htmlStr;
         } catch (Exception e) {
-            Log.d("HELLOTHERE", "Error: " + e);
+            return null;
         }
-        return null;
     }
 
     private String getHTML(String url) {
