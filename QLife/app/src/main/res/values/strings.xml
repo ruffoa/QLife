@@ -88,6 +88,11 @@
     <string name="dibs_get_rooms">https://queensu.evanced.info/dibsAPI/rooms</string>
     <string name="dibs_get_rooms_times">https://queensu.evanced.info/dibsAPI/reservations/</string>
 
+    <!--ILC Room Strings-->
+    <string name="ilc_room">ILC ROOM&#160;</string>
+    <string name="current_availability">Current room availability for today&#160;</string>
+    <string name="future_availability">Current room availability for&#160;</string>
+
     <!-- other strings -->
     <string name="ellipses">&#8226;</string>
     <string name="init_database">Initializing Database</string>

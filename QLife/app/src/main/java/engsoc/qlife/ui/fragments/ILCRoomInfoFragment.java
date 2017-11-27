@@ -118,7 +118,7 @@ public class ILCRoomInfoFragment extends Fragment {
                 }
 
                 String cardName = card.getTransitionName();
-                RoomAvaliabilityInfoFragment nextFrag = new RoomAvaliabilityInfoFragment();
+                RoomInformationFragment nextFrag = new RoomInformationFragment();
 
                 Bundle bundle = new Bundle();
                 bundle.putString(TAG_TITLE, data.getmText1());
