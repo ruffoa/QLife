@@ -6,7 +6,6 @@ import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -21,19 +20,16 @@ import engsoc.qlife.ICS.ParseICS;
 import engsoc.qlife.R;
 import engsoc.qlife.database.GetCloudDb;
 import engsoc.qlife.database.local.DatabaseAccessor;
-import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
 import engsoc.qlife.interfaces.AsyncTaskObserver;
 import engsoc.qlife.utility.Constants;
-import engsoc.qlife.utility.UserLoginTask;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -41,37 +37,12 @@ import java.util.Locale;
  * A login screen that offers login to my.queensu.ca via netid/password SSO.
  */
 public class LoginActivity extends AppCompatActivity {
-
-    //Keep track of the login task to ensure we can cancel it if requested
-    private UserLoginTask mAuthTask = null;
     private View mProgressView;
     private View mLoginFormView;
     private UserManager mUserManager;
 
     public static String mIcsUrl = "";
     public static String mUserEmail = "";
-
-    /**
-     * Parses the html code to look for the ics file. Needed because
-     * there are multiple web pages sent through this activity when logging in.
-     *
-     * @param html String representation of the html code of a webpage.
-     */
-    public void tryProcessHtml(String html) {
-        if (html != null && html.contains("Class Schedule")) {
-            html = html.replaceAll("\n", "");
-            int index = html.indexOf("Class Schedule");
-            html = html.substring(index);
-            String indexing = "Your URL for the Class Schedule Subscription pilot service is ";
-            index = html.indexOf(indexing) + indexing.length();
-            String URL = html.substring(index, index + 200);
-            mIcsUrl = URL.substring(0, URL.indexOf(".ics") + 4);
-            index = URL.indexOf("/FU/") + 4;
-            mUserEmail = URL.substring(index, URL.indexOf("-", index + 1));
-            mUserEmail += "@queensu.ca";
-            attemptLogin();
-        }
-    }
 
     @Override
     @SuppressLint("SetJavaScriptEnabled")
@@ -114,70 +85,71 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
+     * Parses the html code to look for the ics file. Needed because
+     * there are multiple web pages sent through this activity when logging in.
+     *
+     * @param html String representation of the html code of a webpage.
+     */
+    public void tryProcessHtml(String html) {
+        if (html != null && html.contains("Class Schedule")) {
+            html = html.replaceAll("\n", "");
+            int index = html.indexOf("Class Schedule");
+            html = html.substring(index);
+            String indexing = "Your URL for the Class Schedule Subscription pilot service is ";
+            index = html.indexOf(indexing) + indexing.length();
+            String URL = html.substring(index, index + 200);
+            mIcsUrl = URL.substring(0, URL.indexOf(".ics") + 4);
+            index = URL.indexOf("/FU/") + 4;
+            mUserEmail = URL.substring(index, URL.indexOf("-", index + 1));
+            mUserEmail += "@queensu.ca";
+
+            attemptLogin();
+        }
+    }
+
+    /**
      * Attempts to sign in or register the account specified by the login form.
      * If there are form errors (invalid email, missing fields, etc.), the
      * errors are presented and no actual login attempt is made.
      */
     private void attemptLogin() {
-        if (mAuthTask != null) {
-            return;
-        }
-
-        // Show a progress spinner, and kick off a background task to perform the user login attempt.
         showProgress(true);
-        mAuthTask = new UserLoginTask(mUserEmail, new AsyncTaskObserver() {
-            @Override
-            public void onTaskCompleted(Object obj) {
-                if (obj instanceof String) {
-                    String netid = (String) obj;
-                    mAuthTask = null;
-                    showProgress(true);
+        String[] strings = mUserEmail.split("/");
+        String netid = strings[strings.length - 1].split("@")[0];
 
-                    mUserManager = new UserManager(getApplicationContext());
-                    if (mUserManager.getTable().isEmpty()) {
-                        addUserSession(netid);
-                        (new GetCloudDb(LoginActivity.this)).execute(); //get cloud db into phone db
-                        getIcsFile();
-                    } else {        // if the user has logged in before, see if the schedule is up to date
-                        User userData = (User) mUserManager.getTable().get(0);
-                        String date = userData.getDateInit();
+        mUserManager = new UserManager(getApplicationContext());
+        if (mUserManager.getTable().isEmpty()) {
+            addUserSession(netid);
+            (new GetCloudDb(LoginActivity.this)).execute(); //get cloud db into phone db
+            getIcsFile();
+        } else {        // if the user has logged in before, see if the schedule is up to date
+            User userData = (User) mUserManager.getTable().get(0);
+            String date = userData.getDateInit();
 
+            if (!date.isEmpty()) { // if the user has previously downloaded a schedule
+                Calendar cal = Calendar.getInstance();  // initialize a calendar variable to today's date
+                Calendar lastWeek = Calendar.getInstance();
+                lastWeek.add(Calendar.DAY_OF_YEAR, -7); // initialize a calendar variable to one week ago
+                SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.ENGLISH);
 
-                        if (!date.equals("")) { // if the user has previously downloaded a schedule
-                            Calendar cal = Calendar.getInstance();  // initialize a calendar variable to today's date
-                            Calendar lastWeek = Calendar.getInstance();
-                            lastWeek.add(Calendar.DAY_OF_YEAR, -7); // initialize a calendar variable to one week ago
-                            SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.ENGLISH);
-
-                            try {
-                                cal.setTime(sdf.parse(date));   // try to parse the date that the user last got a schedule for
-                                if (cal.after(lastWeek)) {      // if it has been more than a week since the data was downloaded...
-                                    getIcsFile();  // download the new schedule data in the background, this will be updated on next run, or when the day view is refreshed.
-                                }
-                            } catch (Exception e) {
-                                Log.d("HELLOTHERE", e.getMessage());
-
-                            }
-                        } else    // the user never downloaded a schedule successfully, thus we should download the information immediately, and wait until it's complete before continuing
-                            try {
-                                getIcsFile();  // download the new schedule data right now on the main thread
-                            } catch (Exception e) {
-                                Log.d("HELLOTHERE", e.getMessage());
-                            }
+                try {
+                    cal.setTime(sdf.parse(date));   // try to parse the date that the user last got a schedule for
+                    if (cal.after(lastWeek)) {      // if it has been more than a week since the data was downloaded...
+                        getIcsFile();  // download the new schedule data in the background, this will be updated on next run, or when the day view is refreshed.
                     }
-                    startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
+                } catch (Exception e) {
+                    Log.d("HELLOTHERE", e.getMessage());
+
                 }
-            }
-
-            @Override
-            public void beforeTaskStarted() {
-            }
-
-            @Override
-            public void duringTask(Object obj) {
-            }
-        });
-        mAuthTask.execute((Void) null);
+            } else    // the user never downloaded a schedule successfully, thus we should download
+                try {
+                    getIcsFile();  // download the new schedule data right now on the main thread
+                } catch (Exception e) {
+                    Log.d("HELLOTHERE", e.getMessage());
+                }
+        }
+        showProgress(false);
+        startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
     }
 
     /**
