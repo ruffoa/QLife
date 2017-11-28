@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -15,11 +16,25 @@ import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import engsoc.qlife.ICS.DownloadICSFile;
 import engsoc.qlife.ICS.ParseICS;
 import engsoc.qlife.R;
 import engsoc.qlife.database.GetCloudDb;
 import engsoc.qlife.database.local.DatabaseAccessor;
+import engsoc.qlife.database.local.buildings.Building;
+import engsoc.qlife.database.local.buildings.BuildingManager;
+import engsoc.qlife.database.local.cafeterias.Cafeteria;
+import engsoc.qlife.database.local.cafeterias.CafeteriaManager;
+import engsoc.qlife.database.local.contacts.emergency.EmergencyContact;
+import engsoc.qlife.database.local.contacts.emergency.EmergencyContactsManager;
+import engsoc.qlife.database.local.contacts.engineering.EngineeringContact;
+import engsoc.qlife.database.local.contacts.engineering.EngineeringContactsManager;
+import engsoc.qlife.database.local.food.Food;
+import engsoc.qlife.database.local.food.FoodManager;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
 import engsoc.qlife.interfaces.AsyncTaskObserver;
@@ -40,6 +55,7 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private UserManager mUserManager;
+    private ProgressDialog mProgressDialog;
 
     public static String mIcsUrl = "";
     public static String mUserEmail = "";
@@ -120,7 +136,31 @@ public class LoginActivity extends AppCompatActivity {
         mUserManager = new UserManager(getApplicationContext());
         if (mUserManager.getTable().isEmpty()) {
             addUserSession(netid);
-            (new GetCloudDb(LoginActivity.this)).execute(); //get cloud db into phone db
+            final Context context = this;
+            GetCloudDb getCloudDb = new GetCloudDb(new AsyncTaskObserver() {
+                @Override
+                public void onTaskCompleted(Object obj) {
+                    mProgressDialog.dismiss();
+                }
+
+                @Override
+                public void beforeTaskStarted() {
+                    mProgressDialog = new ProgressDialog(context);
+                    mProgressDialog.setMessage("Downloading cloud database. Please wait...");
+                    mProgressDialog.setIndeterminate(false);
+                    mProgressDialog.setCancelable(false);
+                    mProgressDialog.show();
+                }
+
+                @Override
+                public void duringTask(Object obj) {
+                    if (obj instanceof JSONObject) {
+                        JSONObject json = (JSONObject) obj;
+                        cloudToPhoneDB(json);
+                    }
+                }
+            });
+            getCloudDb.execute(); //get cloud db into phone db
             getIcsFile();
         } else {        // if the user has logged in before, see if the schedule is up to date
             User userData = (User) mUserManager.getTable().get(0);
@@ -252,6 +292,134 @@ public class LoginActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.d("HELLOTHERE", e.getMessage());
             }
+        }
+    }
+
+
+    /**
+     * Method that ties together methods that get specific parts of the cloud database JSON.
+     *
+     * @param json The JSONObject representing the cloud database.
+     */
+    private void cloudToPhoneDB(JSONObject json) {
+        emergencyContacts(json);
+        engineeringContacts(json);
+        buildings(json);
+        food(json);
+        cafeterias(json);
+    }
+
+    /**
+     * Method that retrieves and inserts the cloud emergency contact data into the phone database.
+     *
+     * @param json The JSONObject representing the cloud database.
+     */
+    private void emergencyContacts(JSONObject json) {
+        try {
+            JSONArray contacts = json.getJSONArray(EmergencyContact.TABLE_NAME);
+            EmergencyContactsManager tableManager = new EmergencyContactsManager(this);
+            for (int i = 0; i < contacts.length(); i++) {
+                JSONObject contact = contacts.getJSONObject(i);
+                tableManager.insertRow(new EmergencyContact(contact.getInt(EmergencyContact.ID), contact.getString(EmergencyContact.COLUMN_NAME),
+                        contact.getString(EmergencyContact.COLUMN_PHONE_NUMBER), contact.getString(EmergencyContact.COLUMN_DESCRIPTION)));
+            }
+        } catch (JSONException e) {
+            Log.d("HELLOTHERE", "EMERG: " + e);
+        }
+    }
+
+    /**
+     * Method that retrieves and inserts the cloud engineering contact data into the phone database.
+     *
+     * @param json The JSONObject representing the cloud database.
+     */
+    private void engineeringContacts(JSONObject json) {
+        try {
+            JSONArray contacts = json.getJSONArray(EngineeringContact.TABLE_NAME);
+            EngineeringContactsManager tableManager = new EngineeringContactsManager(this);
+            for (int i = 0; i < contacts.length(); i++) {
+                JSONObject contact = contacts.getJSONObject(i);
+                tableManager.insertRow(new EngineeringContact(contact.getInt(EngineeringContact.ID), contact.getString(EngineeringContact.COLUMN_NAME), contact.getString(EngineeringContact.COLUMN_EMAIL),
+                        contact.getString(EngineeringContact.COLUMN_POSITION), contact.getString(EngineeringContact.COLUMN_DESCRIPTION)));
+            }
+        } catch (JSONException e) {
+            Log.d("HELLOTHERE", "ENG: " + e);
+        }
+    }
+
+    /**
+     * Method that retrieves and inserts the cloud buildings data into the phone database.
+     *
+     * @param json The JSONObject representing the cloud database.
+     */
+    private void buildings(JSONObject json) {
+        try {
+            JSONArray buildings = json.getJSONArray(Building.TABLE_NAME);
+            BuildingManager manager = new BuildingManager(this);
+            for (int i = 0; i < buildings.length(); i++) {
+                JSONObject building = buildings.getJSONObject(i);
+                //getInt()>0 because SQL has 0/1 there, not real boolean
+                manager.insertRow(new Building(building.getInt(Building.ID), building.getString(Building.COLUMN_NAME), building.getString(Building.COLUMN_PURPOSE),
+                        building.getInt(Building.COLUMN_BOOK_ROOMS) > 0, building.getInt(Building.COLUMN_FOOD) > 0, building.getInt(Building.COLUMN_ATM) > 0,
+                        building.getDouble(Building.COLUMN_LAT), building.getDouble(Building.COLUMN_LON)));
+            }
+        } catch (JSONException e) {
+            Log.d("HELLOTHERE", "BUILDING: " + e);
+        }
+    }
+
+    /**
+     * Method that retrieves and inserts the cloud food data into the phone database.
+     *
+     * @param json The JSONObject representing the cloud database.
+     */
+    private void food(JSONObject json) {
+        try {
+            JSONArray food = json.getJSONArray(Food.TABLE_NAME);
+            FoodManager manager = new FoodManager(this);
+            for (int i = 0; i < food.length(); i++) {
+                JSONObject oneFood = food.getJSONObject(i);
+                //getInt()>0 because SQL has 0/1 there, not real boolean
+                manager.insertRow(new Food(oneFood.getInt(Food.ID), oneFood.getString(Food.COLUMN_NAME), oneFood.getInt(Food.COLUMN_BUILDING_ID),
+                        oneFood.getString(Food.COLUMN_INFORMATION), oneFood.getInt(Food.COLUMN_MEAL_PLAN) > 0, oneFood.getInt(Food.COLUMN_CARD) > 0,
+                        oneFood.getDouble(Food.COLUMN_MON_START_HOURS), oneFood.getDouble(Food.COLUMN_MON_STOP_HOURS), oneFood.getDouble(Food.COLUMN_TUE_START_HOURS),
+                        oneFood.getDouble(Food.COLUMN_TUE_STOP_HOURS), oneFood.getDouble(Food.COLUMN_WED_START_HOURS), oneFood.getDouble(Food.COLUMN_WED_STOP_HOURS),
+                        oneFood.getDouble(Food.COLUMN_THUR_START_HOURS), oneFood.getDouble(Food.COLUMN_THUR_STOP_HOURS), oneFood.getDouble(Food.COLUMN_FRI_START_HOURS),
+                        oneFood.getDouble(Food.COLUMN_FRI_STOP_HOURS), oneFood.getDouble(Food.COLUMN_SAT_START_HOURS),
+                        oneFood.getDouble(Food.COLUMN_SAT_STOP_HOURS), oneFood.getDouble(Food.COLUMN_SUN_START_HOURS), oneFood.getDouble(Food.COLUMN_SUN_STOP_HOURS)));
+            }
+        } catch (JSONException e) {
+            Log.d("HELLOTHERE", "FOOD: " + e);
+        }
+    }
+
+    /**
+     * Method that retrieves and inserts the cloud cafeteria data into the phone database.
+     *
+     * @param json The JSONObject representing the cloud database.
+     */
+    private void cafeterias(JSONObject json) {
+        try {
+            JSONArray cafs = json.getJSONArray(Cafeteria.TABLE_NAME);
+            CafeteriaManager manager = new CafeteriaManager(this);
+            for (int i = 0; i < cafs.length(); i++) {
+                JSONObject caf = cafs.getJSONObject(i);
+                manager.insertRow(new Cafeteria(caf.getInt(Cafeteria.ID), caf.getString(Cafeteria.COLUMN_NAME), caf.getInt(Cafeteria.COLUMN_BUILDING_ID),
+                        caf.getDouble(Cafeteria.COLUMN_WEEK_BREAKFAST_START), caf.getDouble(Cafeteria.COLUMN_WEEK_BREAKFAST_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_FRI_BREAKFAST_START), caf.getDouble(Cafeteria.COLUMN_FRI_BREAKFAST_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_SAT_BREAKFAST_START), caf.getDouble(Cafeteria.COLUMN_SAT_BREAKFAST_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_SUN_BREAKFAST_START), caf.getDouble(Cafeteria.COLUMN_SUN_BREAKFAST_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_WEEK_LUNCH_START), caf.getDouble(Cafeteria.COLUMN_WEEK_LUNCH_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_FRI_LUNCH_START), caf.getDouble(Cafeteria.COLUMN_FRI_LUNCH_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_SAT_LUNCH_START), caf.getDouble(Cafeteria.COLUMN_SAT_LUNCH_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_SUN_LUNCH_START), caf.getDouble(Cafeteria.COLUMN_SUN_LUNCH_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_WEEK_DINNER_START), caf.getDouble(Cafeteria.COLUMN_WEEK_DINNER_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_FRI_DINNER_START), caf.getDouble(Cafeteria.COLUMN_FRI_DINNER_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_SAT_DINNER_START), caf.getDouble(Cafeteria.COLUMN_SAT_DINNER_STOP),
+                        caf.getDouble(Cafeteria.COLUMN_SUN_DINNER_START), caf.getDouble(Cafeteria.COLUMN_SUN_DINNER_STOP)));
+            }
+        } catch (JSONException e) {
+            Log.d("HELLOTHERE", "CAF: " + e);
         }
     }
 }

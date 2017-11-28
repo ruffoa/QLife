@@ -1,8 +1,6 @@
 package engsoc.qlife.ui.fragments;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -20,16 +18,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 import engsoc.qlife.R;
 import engsoc.qlife.database.dibs.GetRoomBookings;
+import engsoc.qlife.interfaces.AsyncTaskObserver;
 import engsoc.qlife.ui.recyclerview.DataObject;
 import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
 import engsoc.qlife.utility.Constants;
+import engsoc.qlife.utility.DownloadImageTask;
 
 /**
  * Created by Alex on 8/21/2017.
@@ -97,7 +96,26 @@ public class RoomInformationFragment extends Fragment {
 
         if (mRoomPicUrl != null && mRoomPicUrl.length() > 4 && mRoomPicUrl.contains(Constants.HTTP)) {
             mImageView = view.findViewById(R.id.RoomPic);
-            new DownloadImageTask().execute(mRoomPicUrl);
+            DownloadImageTask downloadImage = new DownloadImageTask(new AsyncTaskObserver() {
+                @Override
+                public void onTaskCompleted(Object obj) {
+                    if (obj instanceof Bitmap) {
+                        Bitmap result = (Bitmap) obj;
+                        int recyclerHeight = mRecyclerView.getHeight();
+                        mImageView.setImageBitmap(result);
+                        mRecyclerView.getLayoutParams().height = recyclerHeight;
+                    }
+                }
+
+                @Override
+                public void beforeTaskStarted() {
+                }
+
+                @Override
+                public void duringTask(Object obj) {
+                }
+            });
+            downloadImage.execute(mRoomPicUrl);
         }
     }
 
@@ -154,33 +172,5 @@ public class RoomInformationFragment extends Fragment {
             }
         }
         return null;
-    }
-
-    /**
-     * Downloads the image URL for an ILC room.
-     * Not static, however no memory leaks. Follows Google's example Login inner AsyncTask.
-     */
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        @Override
-        protected Bitmap doInBackground(String... urls) {
-            String urlDisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urlDisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            int recyclerHeight = mRecyclerView.getHeight();
-            mImageView.setImageBitmap(result);
-            mRecyclerView.getLayoutParams().height = recyclerHeight;
-
-        }
     }
 }

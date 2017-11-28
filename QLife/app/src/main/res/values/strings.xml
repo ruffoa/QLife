@@ -83,7 +83,6 @@
     <string name="counselling_url">http://queensu.ca/studentwellness/counselling-services</string>
     <string name="career_url">http://careers.queensu.ca/students</string>
     <string name="suggestions_url">http://qtap.engsoc.queensu.ca/improvements_form.html</string>
-    <string name="db_get_database">http://qtap.engsoc.queensu.ca/database/get_database.php</string>
     <string name="suggestions_accepted_url">http://qtap.engsoc.queensu.ca/submit_improvement.php</string>
 
     <!--ILC Room Strings-->
