@@ -3,17 +3,11 @@ package engsoc.qlife.ICS;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import engsoc.qlife.interfaces.AsyncTaskObserver;
-import engsoc.qlife.utility.Constants;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by Alex on 1/29/2017.

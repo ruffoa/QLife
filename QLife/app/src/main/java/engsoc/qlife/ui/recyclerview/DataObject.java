@@ -2,8 +2,8 @@ package engsoc.qlife.ui.recyclerview;
 
 /**
  * Created by Alex Ruffo on 3/29/2017.
+ * Object used to send information between RecyclerView classes for ILC rooms.
  */
-
 public class DataObject {
     private String mText1;
     private String mText2;

@@ -1,6 +1,5 @@
 package engsoc.qlife.ui.recyclerview;
 
-import android.support.transition.Visibility;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,9 +28,9 @@ public class SectionedRecyclerView extends RecyclerView.Adapter<SectionedRecycle
 
         public DataObjectHolder(View itemView) {
             super(itemView);
-            label = (TextView) itemView.findViewById(R.id.SectionedTextView);
-            dateTime = (TextView) itemView.findViewById(R.id.SectionedTextView2);
-            header = (TextView) itemView.findViewById(R.id.textViewHeader);
+            label = itemView.findViewById(R.id.SectionedTextView);
+            dateTime = itemView.findViewById(R.id.SectionedTextView2);
+            header = itemView.findViewById(R.id.textViewHeader);
             itemView.setOnClickListener(this);
         }
 
@@ -97,6 +96,6 @@ public class SectionedRecyclerView extends RecyclerView.Adapter<SectionedRecycle
     }
 
     public interface MyClickListener {
-        public void onItemClick(int position, View v);
+        void onItemClick(int position, View v);
     }
 }

@@ -94,12 +94,13 @@ public class OneBuildingFragment extends Fragment implements IQLActionbarFragmen
     @Override
     public void addDataToViews() {
         ArrayList<String> foodNames = mArgs.getStringArrayList(BuildingsFragment.TAG_FOOD_NAMES);
+        StringBuilder foodBuilder = new StringBuilder();
         String foods = "";
         if (foodNames != null && !foodNames.isEmpty()) {
             for (String oneFood : foodNames) {
-                foods += oneFood + "\n";
+                foodBuilder.append(oneFood).append('\n');
             }
-            foods = foods.trim();//remove last \n
+            foods = foodBuilder.toString().trim();//remove last \n
         } else {
             mView.findViewById(R.id.food_title).setVisibility(View.GONE);
             mView.findViewById(R.id.food).setVisibility(View.GONE);
@@ -114,7 +115,7 @@ public class OneBuildingFragment extends Fragment implements IQLActionbarFragmen
 
     @Override
     public void setMapView() {
-        MapView mapView = (MapView) mView.findViewById(R.id.map);
+        MapView mapView = mView.findViewById(R.id.map);
         mapView.onCreate(mSavedInstanceState);
         mapView.onResume();
 

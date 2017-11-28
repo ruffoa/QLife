@@ -1,23 +1,13 @@
 package engsoc.qlife.utility;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
-import android.content.pm.PackageManager;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 
 import engsoc.qlife.R;
-import engsoc.qlife.activities.MapsActivity;
-import com.google.android.gms.maps.GoogleMap;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Carson on 01/08/2017.
@@ -32,7 +22,7 @@ public class Util {
     }
 
     public static void setDrawerItemSelected(Activity activity, int itemId, boolean isChecked) {
-        NavigationView navView = (NavigationView) activity.findViewById(R.id.drawer_layout).findViewById(R.id.nav_view);
+        NavigationView navView = activity.findViewById(R.id.drawer_layout).findViewById(R.id.nav_view);
         navView.getMenu().findItem(itemId).setChecked(isChecked);
     }
 
