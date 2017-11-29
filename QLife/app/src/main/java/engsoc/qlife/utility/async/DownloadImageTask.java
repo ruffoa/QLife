@@ -1,4 +1,4 @@
-package engsoc.qlife.utility;
+package engsoc.qlife.utility.async;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;

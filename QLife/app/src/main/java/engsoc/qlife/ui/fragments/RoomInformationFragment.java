@@ -28,7 +28,7 @@ import engsoc.qlife.interfaces.AsyncTaskObserver;
 import engsoc.qlife.ui.recyclerview.DataObject;
 import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
 import engsoc.qlife.utility.Constants;
-import engsoc.qlife.utility.DownloadImageTask;
+import engsoc.qlife.utility.async.DownloadImageTask;
 
 /**
  * Created by Alex on 8/21/2017.
@@ -53,7 +53,7 @@ public class RoomInformationFragment extends Fragment {
             mRoomID = bundle.getInt(ILCRoomInfoFragment.TAG_ROOM_ID);
         }
 
-        GetRoomBookings dibs = new GetRoomBookings();
+        GetRoomBookings dibs = new GetRoomBookings(null);
         try {
             roomAvailability = dibs.execute(mRoomID, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
         } catch (InterruptedException | ExecutionException e) {

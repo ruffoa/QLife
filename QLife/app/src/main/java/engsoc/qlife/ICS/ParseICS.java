@@ -237,7 +237,7 @@ public class ParseICS {
                     GetCourseInfo cInfo = new GetCourseInfo(new AsyncTaskObserver() {
                         @Override
                         public void onTaskCompleted(Object obj) {
-                            if (obj.getClass() == String.class) {
+                            if (obj != null && obj.getClass() == String.class) {
                                 String result = (String) obj;
                                 addClassName(result, str);
                             }
@@ -251,7 +251,7 @@ public class ParseICS {
                         public void duringTask(Object obj) {
                         }
                     });
-                    cInfo.execute(str, "TEST");
+                    cInfo.execute(str);
                 }
             }
         }

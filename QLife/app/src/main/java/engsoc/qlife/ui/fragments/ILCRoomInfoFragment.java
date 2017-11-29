@@ -243,7 +243,7 @@ public class ILCRoomInfoFragment extends Fragment {
                 mProgressView.setVisibility(View.VISIBLE);
 
                 for (DatabaseRow row : data) {
-                    GetRoomBookings dibs = new GetRoomBookings();
+                    GetRoomBookings dibs = new GetRoomBookings(null);
                     Room room = (Room) row;
                     roomAvailability = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
                     int status = getDayAvailability();
