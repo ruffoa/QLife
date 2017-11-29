@@ -119,6 +119,12 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         changeDate(mArray.get(mInstances, 0)); //account for day changed before moved fragments
     }
 
+    /**
+     * Helper method that sets the date of the day fragment. Used to adjust the shown day
+     * when the user comes back to this fragment from another one, after previously changing the day.
+     *
+     * @param numChange The number of days to change by. Negative numbers means go backwards in time.
+     */
     public void changeDate(int numChange) {
         result.clear();
         mCalendar.add(Calendar.DAY_OF_YEAR, numChange);

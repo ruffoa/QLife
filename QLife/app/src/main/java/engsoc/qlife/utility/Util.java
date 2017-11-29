@@ -21,11 +21,23 @@ public class Util {
         }
     }
 
+    /**
+     * Helper method that will set if a drawer item is set as checked or not.
+     *
+     * @param activity  The activity holding the drawer.
+     * @param itemId    The ID of the drawer item to change.
+     * @param isChecked Boolean flag, true checks the item, false un-checks the item.
+     */
     public static void setDrawerItemSelected(Activity activity, int itemId, boolean isChecked) {
         NavigationView navView = activity.findViewById(R.id.drawer_layout).findViewById(R.id.nav_view);
         navView.getMenu().findItem(itemId).setChecked(isChecked);
     }
 
+    /**
+     * Helper method that sets the back button to be displayed in an action bar.
+     *
+     * @param actionBar The actionbar that will have the back button displayed.
+     */
     public static void setBackButton(ActionBar actionBar) {
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -36,6 +48,13 @@ public class Util {
         menuInflater.inflate(menuId, menu);
     }
 
+    /**
+     * Helper method that gets the hours between two given times.
+     *
+     * @param startHour The starting time.
+     * @param endHour   The ending time.
+     * @return A String that says "start time 'to' end time".
+     */
     public static String getHours(double startHour, double endHour) {
         //check for closed all day flag
         if (startHour < 0) {
@@ -47,6 +66,12 @@ public class Util {
         return start + " to " + end;
     }
 
+    /**
+     * Helper method to getHours() that turns one time into h:mm format.
+     *
+     * @param hour The time to convert.
+     * @return String format of the time in h:mm am/pm format.
+     */
     private static String getOneTimeBoundary(double hour) {
         String sHour = "";
         if (hour < 1 || hour >= 13) { //24 hour time

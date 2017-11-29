@@ -19,7 +19,6 @@ import engsoc.qlife.utility.Constants;
  * Created by Carson on 2017-11-29.
  * Abstract class to be buffer between AsyncTask and tasks that download text.
  * Abstract the connection and text acquiring.
- * <p>
  * Two type parameters to fill in the types of the AsyncTask. The first type is
  * the parameter type sent to the backgroundTask() function. The second type
  * parameter is the type of units showing progress, which for QLife is always Void.

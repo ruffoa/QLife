@@ -29,7 +29,7 @@ public class DbHelper extends SQLiteOpenHelper {
      * @param context Context to create the DBHelper for.
      * @return returns the instance of DBHelper.
      */
-    public static DbHelper getInstance(Context context) {
+    static DbHelper getInstance(Context context) {
         if (mInstance == null) {
             //use application context so as to not accidentally leak application context in database.
             mInstance = new DbHelper(context.getApplicationContext());

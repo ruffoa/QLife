@@ -107,7 +107,6 @@ public class OneBuildingFragment extends Fragment implements IQLActionbarFragmen
 
         }
         ((TextView) mView.findViewById(R.id.food)).setText(foods);
-
         ((TextView) mView.findViewById(R.id.purpose)).setText(mArgs.getString(Building.COLUMN_PURPOSE));
         ((TextView) mView.findViewById(R.id.atm)).setText(mArgs.getBoolean(Building.COLUMN_ATM) ? "Yes" : "No");
         ((TextView) mView.findViewById(R.id.book_rooms)).setText(mArgs.getBoolean(Building.COLUMN_BOOK_ROOMS) ? "Yes" : "No");

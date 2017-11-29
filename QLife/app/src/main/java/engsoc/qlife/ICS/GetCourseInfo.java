@@ -10,7 +10,7 @@ import engsoc.qlife.utility.async.DownloadTextTask;
  */
 public class GetCourseInfo extends DownloadTextTask<String, String> {
 
-    public GetCourseInfo(AsyncTaskObserver observer) {
+    GetCourseInfo(AsyncTaskObserver observer) {
         super(observer);
     }
 
@@ -22,7 +22,7 @@ public class GetCourseInfo extends DownloadTextTask<String, String> {
             //call php script on server that gets info from cloud database
             if (val.contains("COMM"))
                 htmlStr = getText(Constants.GET_COMM_CLASS);
-            else
+            else //non eng/comm courses come here too, just get ignored
                 htmlStr = getText(Constants.GET_ENG_CLASS + val + Constants.FILTER_ENG_CLASS);
             return htmlStr;
         } catch (Exception e) {

@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
 
-        UserManager mUserManager = new UserManager(getBaseContext());
+        mUserManager = new UserManager(getBaseContext());
         if (mUserManager.getTable().isEmpty()) {
             //not logged in, show software centre login screen
             final WebView browser = findViewById(R.id.webView);
@@ -66,14 +66,12 @@ public class LoginActivity extends AppCompatActivity {
             browser.getSettings().setJavaScriptEnabled(true); // needed to properly display page / scroll to chosen location
 
             browser.setWebViewClient(new WebViewClient() {
-
                 @Override
                 public void onPageFinished(WebView view, String url) {
-                    if (browser.getUrl().contains("login.queensu.ca"))
-                        browser.loadUrl("javascript:document.getElementById('queensbody').scrollIntoView();");
+                    if (browser.getUrl().contains(Constants.QUEENS_LOGIN))
+                        browser.loadUrl(Constants.GET_QUEENS_BODY_JS);
 
-                    browser.evaluateJavascript("(function() { return ('<html>'+document." +
-                                    "getElementsByTagName('html')[0].innerHTML+'</html>'); })();",
+                    browser.evaluateJavascript(Constants.GET_HTML_TAGS_JS,
                             new ValueCallback<String>() {
                                 @Override
                                 public void onReceiveValue(String html) {
@@ -81,9 +79,8 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                             });
                 }
-
             });
-            browser.loadUrl("http://my.queensu.ca/software-centre");
+            browser.loadUrl(Constants.QUEENS_SOFTWARE_CENTRE);
         } else {
             attemptLogin();
         }

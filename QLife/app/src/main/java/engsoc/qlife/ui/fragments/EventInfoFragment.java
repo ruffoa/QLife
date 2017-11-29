@@ -103,7 +103,7 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
 
     @Override
     public void setMapView() {
-        mMapView = (MapView) myView.findViewById(R.id.event_map);
+        mMapView = myView.findViewById(R.id.event_map);
         mMapView.onCreate(mSavedInstanceState);
         mMapView.onResume();
 
@@ -156,11 +156,11 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
             mDate = bundle.getString(DayFragment.TAG_DATE);
         }
 
-        TextView eventDate = (TextView) myView.findViewById(R.id.EventDate);
+        TextView eventDate = myView.findViewById(R.id.EventDate);
         eventDate.setText(mDate);
-        TextView eventLoc = (TextView) myView.findViewById(R.id.EventLoc);
+        TextView eventLoc = myView.findViewById(R.id.EventLoc);
         eventLoc.setText(mEventLoc);
-        TextView eventName = (TextView) myView.findViewById(R.id.EventName);
+        TextView eventName = myView.findViewById(R.id.EventName);
         eventName.setText(mEventTitle);
     }
 }
