@@ -6,15 +6,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import engsoc.qlife.R;
-
 import java.util.ArrayList;
 
+import engsoc.qlife.R;
+
 /**
- * Created by Alex on 3/29/2017.
- * Class that defines the adapter for the DayFragment RecyclerView.
+ * Created by Alex Ruffo on 8/30/2017.
+ *  * Class that defines the adapter for the ILCRoomInfoFragment RecyclerView that allows for sectioned elements.
  */
-public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.DataObjectHolder> {
+
+public class SectionedRecyclerView extends RecyclerView.Adapter<SectionedRecyclerView.DataObjectHolder> {
     private ArrayList<DataObject> mDataset;
     private static MyClickListener myClickListener;
 
@@ -23,11 +24,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             .OnClickListener {
         TextView label;
         TextView dateTime;
+        TextView header;
 
         public DataObjectHolder(View itemView) {
             super(itemView);
-            label = itemView.findViewById(R.id.textView);
-            dateTime = itemView.findViewById(R.id.textView2);
+            label = itemView.findViewById(R.id.SectionedTextView);
+            dateTime = itemView.findViewById(R.id.SectionedTextView2);
+            header = itemView.findViewById(R.id.textViewHeader);
             itemView.setOnClickListener(this);
         }
 
@@ -37,27 +40,34 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         }
     }
 
-    public void setOnItemClickListener(MyClickListener myClickListener) {
-        RecyclerViewAdapter.myClickListener = myClickListener;
+    public void setOnItemClickListener(SectionedRecyclerView.MyClickListener myClickListener) {
+        SectionedRecyclerView.myClickListener = myClickListener;
     }
 
-    public RecyclerViewAdapter(ArrayList<DataObject> myDataset) {
+    public SectionedRecyclerView(ArrayList<DataObject> myDataset) {
         mDataset = myDataset;
     }
 
     @Override
-    public DataObjectHolder onCreateViewHolder(ViewGroup parent,
-                                               int viewType) {
+    public SectionedRecyclerView.DataObjectHolder onCreateViewHolder(ViewGroup parent,
+                                                                   int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.day_events_card, parent, false);
+                .inflate(R.layout.sectioned_recyclerview_card, parent, false);
 
-        return new DataObjectHolder(view);
+        return new SectionedRecyclerView.DataObjectHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(DataObjectHolder holder, int position) {
+    public void onBindViewHolder(SectionedRecyclerView.DataObjectHolder holder, int position) {
         holder.label.setText(mDataset.get(position).getmText1());
         holder.dateTime.setText(mDataset.get(position).getmText2());
+        if (mDataset.get(position).getHeader() != null && mDataset.get(position).getHeader().length() > 0) {
+            holder.header.setText(mDataset.get(position).getHeader());
+            holder.header.setVisibility(View.VISIBLE);
+        }
+        else
+            holder.header.setVisibility(View.GONE);
+
     }
 
     public void addItem(DataObject dataObj, int index) {
@@ -81,7 +91,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return mDataset.size();
     }
 
-    public DataObject getItem(int id){return mDataset.get(id); }
+    public DataObject getItem(int id) {
+        return mDataset.get(id);
+    }
 
     public interface MyClickListener {
         void onItemClick(int position, View v);

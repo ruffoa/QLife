@@ -63,10 +63,10 @@ public class StartupActivity extends AppCompatActivity {
                 R.layout.welcome_slide5
         };
 
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mDotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
-        mButtonSkip = (Button) findViewById(R.id.btn_skip);
-        mButtonNext = (Button) findViewById(R.id.btn_next);
+        mViewPager = findViewById(R.id.view_pager);
+        mDotsLayout = findViewById(R.id.layoutDots);
+        mButtonSkip = findViewById(R.id.btn_skip);
+        mButtonNext = findViewById(R.id.btn_next);
         MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter();
         mViewPager.setAdapter(myViewPagerAdapter);
         mViewPager.addOnPageChangeListener(mViewPagerPageChangeListener);
@@ -185,9 +185,12 @@ public class StartupActivity extends AppCompatActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = mLayoutInflater.inflate(mLayouts[position], container, false);
-            container.addView(view);
-            return view;
+            if (mLayoutInflater != null) {
+                View view = mLayoutInflater.inflate(mLayouts[position], container, false);
+                container.addView(view);
+                return view;
+            }
+            return null;
         }
 
         @Override

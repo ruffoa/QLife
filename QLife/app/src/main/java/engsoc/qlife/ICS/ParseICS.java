@@ -1,17 +1,7 @@
 package engsoc.qlife.ICS;
 
 import android.content.Context;
-import android.content.res.AssetManager;
 import android.util.Log;
-
-import engsoc.qlife.database.local.DatabaseRow;
-import engsoc.qlife.database.local.courses.Course.Course;
-import engsoc.qlife.database.local.courses.Course.CourseManager;
-import engsoc.qlife.database.local.courses.OneClass.OneClass;
-import engsoc.qlife.database.local.courses.OneClass.OneClassManager;
-import engsoc.qlife.database.local.users.User;
-import engsoc.qlife.database.local.users.UserManager;
-import engsoc.qlife.ui.fragments.StudentToolsFragment;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -28,13 +18,23 @@ import java.util.Locale;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
 
+import engsoc.qlife.database.local.DatabaseRow;
+import engsoc.qlife.database.local.courses.Course.Course;
+import engsoc.qlife.database.local.courses.Course.CourseManager;
+import engsoc.qlife.database.local.courses.OneClass.OneClass;
+import engsoc.qlife.database.local.courses.OneClass.OneClassManager;
+import engsoc.qlife.database.local.users.User;
+import engsoc.qlife.database.local.users.UserManager;
+import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.ui.fragments.StudentToolsFragment;
+import engsoc.qlife.utility.Constants;
+
 /**
  * Created by Alex on 1/18/2017.
  * Class to parse the ICS file.
  */
 public class ParseICS {
-
-    private String TAG = StudentToolsFragment.class.getSimpleName();
+    private final String TAG = StudentToolsFragment.class.getSimpleName();
     private OneClassManager mOneClassManager;
     private CourseManager mCourseManager;
 
@@ -44,110 +44,68 @@ public class ParseICS {
         this.mContext = context;
     }
 
-    public List<String> readLine(String path) {
+    /**
+     * Method that opens and reads the ics file in the phone memory.
+     *
+     * @return List of Strings that contain each line of the ics file.
+     */
+    private List<String> readDownloadFile() {
         List<String> mLines = new ArrayList<>();
-        AssetManager am = mContext.getAssets();
-
         try {
-            InputStream is = am.open(path);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            String line;
-
-            while ((line = reader.readLine()) != null)
-                mLines.add(line);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return mLines;
-    }
-
-    public List<String> readDownloadFile(String path) {
-        List<String> mLines = new ArrayList<>();
-
-        String ret = "";
-
-        try {
-            InputStream inputStream = mContext.openFileInput(path);
+            InputStream inputStream = mContext.openFileInput(Constants.CALENDAR_FILE);
 
             if (inputStream != null) {
                 InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
                 BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder(); //TODO what is stringbuilder used for
+                String receiveString;
 
                 while ((receiveString = bufferedReader.readLine()) != null) {
                     mLines.add(receiveString);
                 }
 
                 inputStream.close();
-                ret = stringBuilder.toString();
             }
         } catch (FileNotFoundException e) {
             Log.e(TAG, "File not found: " + e.toString());
         } catch (IOException e) {
             Log.e(TAG, "Can not read file: " + e.toString());
         }
-        Log.e(TAG, "Done: " + ret);
         return mLines;
     }
 
     public void parseICSData() {
-        UserManager mUserManager = new UserManager(this.mContext);
-        ArrayList<DatabaseRow> userTable = mUserManager.getTable();
+        UserManager userManager = new UserManager(this.mContext);
+        ArrayList<DatabaseRow> userTable = userManager.getTable();
         mOneClassManager = new OneClassManager(mContext);
         mCourseManager = new CourseManager(mContext);
 
-        boolean isInit = true;
-
-        // see if user has initialized database yet, and if the database is up to date
-        /*for (int i = 0; i < user.size(); i++) {
-
-            if (!user.get(i).getDateInit().isEmpty()) {
-                String rTime = user.get(i).getDateInit();
-                int yr = Integer.parseInt(rTime.substring(0, 4));
-                int mon = Integer.parseInt(rTime.substring(5, 7));
-                int day = Integer.parseInt(rTime.substring(8, 10));
-
-                Calendar c = Calendar.getInstance();
-                c.set(yr, mon, day);
-                c.add(Calendar.DATE, 7);
-                Calendar endDate = Calendar.getInstance();
-
-                if (c.after(endDate)) {
-                    isInit = true;
-                }
-            }
-        }*/
-
-        if (mOneClassManager.getTable().isEmpty() || !isInit) {
+        if (mOneClassManager.getTable().isEmpty()) {
             mOneClassManager.deleteTable(OneClass.TABLE_NAME);
 
             boolean isEvent = false;
-            String sTime = "", eTime = "", loc = "", name = "", rTime = "";
+            String loc = "", name = "";
             int hour = 0, minute = 0, year = 0;
-            int shour = 0, sminute = 0, sday = 0, smonth = 0;
+            int sHour = 0, sMinute = 0, sDay = 0, sMonth = 0;
             boolean repeatWeekly = false;
             String rDayStr = "", rMonStr = "", rYrStr = "";
 
-            List<String> lines = readDownloadFile("cal.ics");
-
+            List<String> lines = readDownloadFile();
             int test = 1;
 
             for (String string : lines) {
-
                 if (string.contains("BEGIN:VEVENT")) {
                     isEvent = true;
                 } else if (string.contains("END:VEVENT")) {
                     isEvent = false;
 
-                    String tempTime = Integer.toString(shour) + ":" + Integer.toString(sminute);
+                    String tempTime = Integer.toString(sHour) + ":" + Integer.toString(sMinute);
                     String tempEndTime = Integer.toString(hour) + ":" + Integer.toString(minute);
 
                     Course course = new Course(mCourseManager.getTable().size() + 1, name);
                     mCourseManager.insertRow(course);
 
                     OneClass one = new OneClass(mOneClassManager.getTable().size() + 1,
-                            name, loc, tempTime, tempEndTime, Integer.toString(sday), Integer.toString(smonth), Integer.toString(year));
+                            name, loc, tempTime, tempEndTime, Integer.toString(sDay), Integer.toString(sMonth), Integer.toString(year));
                     one.setBuildingID(15);       // TODO delete later, this is temporary
                     one.setCourseID(test);
                     mOneClassManager.insertRow(one);
@@ -171,23 +129,22 @@ public class ParseICS {
                         Calendar cal2 = new GregorianCalendar(pdt);
                         Calendar cal = new GregorianCalendar(pdt);
 
-                        cal.set(year, smonth - 1, sday);
+                        cal.set(year, sMonth - 1, sDay);
 
                         cal2.set(Integer.parseInt(rYrStr), Integer.parseInt(rMonStr) - 1, Integer.parseInt(rDayStr) + 1);
 
                         Date endDate = cal2.getTime();
                         Date date1;
-
                         cal.add(Calendar.DATE, 7);
                         date1 = cal.getTime();
 
                         while (date1.before(endDate)) {
-                            sday = cal.get(Calendar.DAY_OF_MONTH);
-                            smonth = cal.get(Calendar.MONTH);
+                            sDay = cal.get(Calendar.DAY_OF_MONTH);
+                            sMonth = cal.get(Calendar.MONTH);
                             year = cal.get(Calendar.YEAR);
 
                             one = new OneClass(mOneClassManager.getTable().size() + 1,
-                                    name, loc, tempTime, tempEndTime, Integer.toString(sday), Integer.toString(smonth + 1), Integer.toString(year));
+                                    name, loc, tempTime, tempEndTime, Integer.toString(sDay), Integer.toString(sMonth + 1), Integer.toString(year));
                             one.setBuildingID(15);       // delete later, this is temporary
                             one.setCourseID(test);
                             mOneClassManager.insertRow(one);
@@ -196,14 +153,13 @@ public class ParseICS {
                         }
                     }
                     repeatWeekly = false;
-                    test += 1;
+                    test++;
 
                 } else if (string.contains(("RRULE:FREQ=WEEKLY;"))) {
                     repeatWeekly = true;
 
                     if (string.contains("UNTIL=")) {
-                        rTime = string.replaceAll("[^0-9]", "");
-
+                        String rTime = string.replaceAll("[^0-9]", "");
                         rDayStr = rTime.substring(6, 8);
                         rMonStr = rTime.substring(4, 6);
                         rYrStr = rTime.substring(0, 4);
@@ -213,14 +169,14 @@ public class ParseICS {
                     if (string.contains("LOCATION"))
                         loc = string.substring(9);
                     else if (string.contains("DTSTART")) {
-                        sTime = string.replaceAll("[^0-9]", "");
-                        shour = Integer.parseInt(sTime.substring(8, 10));
-                        sminute = Integer.parseInt(sTime.substring(10, 12));
-                        sday = Integer.parseInt(sTime.substring(6, 8));
-                        smonth = Integer.parseInt(sTime.substring(4, 6));
+                        String sTime = string.replaceAll("[^0-9]", "");
+                        sHour = Integer.parseInt(sTime.substring(8, 10));
+                        sMinute = Integer.parseInt(sTime.substring(10, 12));
+                        sDay = Integer.parseInt(sTime.substring(6, 8));
+                        sMonth = Integer.parseInt(sTime.substring(4, 6));
                         year = Integer.parseInt(sTime.substring(0, 4));
                     } else if (string.contains("DTEND")) {
-                        eTime = string.replaceAll("[^0-9]", "");
+                        String eTime = string.replaceAll("[^0-9]", "");
                         hour = Integer.parseInt(eTime.substring(8, 10));
                         minute = Integer.parseInt(eTime.substring(10, 12));
 
@@ -240,7 +196,75 @@ public class ParseICS {
             String uURL = user.getIcsURL();
 
             User nUser = new User(1, uNetID, uName, uLastName, formattedDate, uURL); //only one user ever logged in, so ID is 1
-            mUserManager.updateRow(user, nUser);
+            userManager.updateRow(user, nUser);
+        }
+    }
+
+    /**
+     * Method that sets the name of a class in the database.
+     *
+     * @param htmlRes The HTML of the page that contains the name of the class
+     * @param classType The type of class - for example, APSC.
+     */
+    private void addClassName(String htmlRes, String classType) {
+        if (htmlRes == null || htmlRes.length() == 0)
+            return;
+
+        CourseManager mCourseManager = new CourseManager(mContext);
+        ArrayList<DatabaseRow> courses = mCourseManager.getTable();
+
+        for (DatabaseRow course : courses) {
+            Course c = (Course) course;
+            if (c.getTitle().contains(classType) && htmlRes.contains(c.getTitle())) {
+                int index = htmlRes.indexOf(c.getTitle());
+                String className = htmlRes.substring(index);
+                className = className.substring(0, className.indexOf("|"));
+                Course backup = c;
+
+                c.setTitle(className);
+                c.setDescription("true");
+                mCourseManager.updateRow(backup, c);
+            }
+        }
+    }
+
+    public void getClassTypes() {
+        mOneClassManager = new OneClassManager(mContext);
+        mCourseManager = new CourseManager(mContext);
+        ArrayList<DatabaseRow> courses = mCourseManager.getTable();
+        ArrayList<String> types = new ArrayList<>();
+
+        for (DatabaseRow data : courses) {
+            Course c = (Course) data;
+            String temp = c.getTitle().substring(0, c.getTitle().indexOf(" "));
+            if (!types.contains(temp) && !("true".equals(c.getDesription())))
+                //string builder not used, as string becomes too long for the builder
+                types.add(temp);
+        }
+
+        if (!types.isEmpty()) {
+            for (final String str : types) {
+                if (str.length() > 0) {
+                    GetCourseInfo cInfo = new GetCourseInfo(new AsyncTaskObserver() {
+                        @Override
+                        public void onTaskCompleted(Object obj) {
+                            if (obj != null && obj.getClass() == String.class) {
+                                String result = (String) obj;
+                                addClassName(result, str);
+                            }
+                        }
+
+                        @Override
+                        public void beforeTaskStarted() {
+                        }
+
+                        @Override
+                        public void duringTask(Object obj) {
+                        }
+                    });
+                    cInfo.execute(str);
+                }
+            }
         }
     }
 }

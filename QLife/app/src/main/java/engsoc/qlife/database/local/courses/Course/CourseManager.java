@@ -26,6 +26,7 @@ public class CourseManager extends DatabaseManager {
             Course course = (Course) row;
             ContentValues values = new ContentValues();
             values.put(Course.COLUMN_TITLE, course.getTitle());
+            values.put(Course.COLUMN_DESCRIPTION, course.getDesription());
             getDatabase().insert(Course.TABLE_NAME, null, values);
         }
     }
@@ -36,7 +37,7 @@ public class CourseManager extends DatabaseManager {
         //try with resources - automatically closes cursor whether or not its completed normally
         try (Cursor cursor = getDatabase().query(Course.TABLE_NAME, null, null, null, null, null, null)) {
             while (cursor.moveToNext()) {
-                Course course = new Course(cursor.getInt(Course.ID_POS), cursor.getString(Course.TITLE_POS));
+                Course course = new Course(cursor.getInt(Course.ID_POS), cursor.getString(Course.TITLE_POS), cursor.getString(Course.DESCRIPTION_POS));
                 courses.add(course);
             }
             cursor.close();
@@ -51,7 +52,7 @@ public class CourseManager extends DatabaseManager {
         try (Cursor cursor = getDatabase().query(Course.TABLE_NAME, null, selection, selectionArgs, null, null, null)) {
             Course course = null;
             if (cursor != null && cursor.moveToNext()) {
-                course = new Course(cursor.getInt(Course.ID_POS), cursor.getString(Course.TITLE_POS));
+                course = new Course(cursor.getInt(Course.ID_POS), cursor.getString(Course.TITLE_POS), cursor.getString(Course.DESCRIPTION_POS));
                 cursor.close();
             }
             return course;
@@ -65,6 +66,7 @@ public class CourseManager extends DatabaseManager {
             Course newCourse = (Course) newRow;
             ContentValues values = new ContentValues();
             values.put(Course.COLUMN_TITLE, newCourse.getTitle());
+            values.put(Course.COLUMN_DESCRIPTION, newCourse.getDesription());
             String selection = Course.ID + " LIKE ?";
             String selectionArgs[] = {String.valueOf(oldCourse.getId())};
             getDatabase().update(Course.TABLE_NAME, values, selection, selectionArgs);

@@ -32,7 +32,6 @@ import java.util.HashMap;
  * OneFoodFragment that provides details about the food place.
  */
 public class FoodFragment extends ListFragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragmentWithChild {
-
     public static final String TAG_DB_ID = "DB_ID";
     public static final String TAG_BUILDING_NAME = "BUILDING_NAME";
 
@@ -86,19 +85,8 @@ public class FoodFragment extends ListFragment implements IQLActionbarFragment, 
         ArrayList<HashMap<String, String>> foodList = new ArrayList<>();
         ArrayList<DatabaseRow> food = mFoodManager.getTable();
         mBuildingManager = new BuildingManager(getContext());
-
         for (DatabaseRow row : food) {
-            Food oneFood = (Food) row;
-            HashMap<String, String> map = new HashMap<>();
-            map.put(Food.COLUMN_NAME, oneFood.getName());
-            map.put(Food.COLUMN_BUILDING_ID, String.valueOf(oneFood.getBuildingID()));
-            map.put(TAG_BUILDING_NAME, mBuildingManager.getRow(oneFood.getBuildingID()).getName()); //Building.COLUMN_NAME is the same as Food's
-            String takesMeal = oneFood.isMealPlan() ? "Yes" : "No";
-            map.put(Food.COLUMN_MEAL_PLAN, takesMeal);
-            String takesCard = oneFood.isCard() ? "Yes" : "No";
-            map.put(Food.COLUMN_CARD, takesCard);
-            map.put(TAG_DB_ID, String.valueOf(oneFood.getId()));
-            foodList.add(map);
+            foodList.add(packFoodMap(row));
         }
 
         ListAdapter adapter = new SimpleAdapter(getActivity().getApplicationContext(), foodList,
@@ -162,5 +150,22 @@ public class FoodFragment extends ListFragment implements IQLActionbarFragment, 
         args.putDouble(Food.COLUMN_SUN_START_HOURS, food.getSunStartHours());
         args.putDouble(Food.COLUMN_SUN_STOP_HOURS, food.getSunStopHours());
         return args;
+    }
+
+    /**
+     * Helper method that packs a hash-map with key and value for a piece of Food information.
+     *
+     * @param row The Food information to pack for.
+     */
+    private HashMap<String, String> packFoodMap(DatabaseRow row) {
+        Food oneFood = (Food) row;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(Food.COLUMN_NAME, oneFood.getName());
+        map.put(Food.COLUMN_BUILDING_ID, String.valueOf(oneFood.getBuildingID()));
+        map.put(TAG_BUILDING_NAME, mBuildingManager.getRow(oneFood.getBuildingID()).getName()); //Building.COLUMN_NAME is the same as Food's
+        map.put(Food.COLUMN_MEAL_PLAN, oneFood.isMealPlan() ? "Yes" : "No");
+        map.put(Food.COLUMN_CARD, oneFood.isCard() ? "Yes" : "No");
+        map.put(TAG_DB_ID, String.valueOf(oneFood.getId()));
+        return map;
     }
 }

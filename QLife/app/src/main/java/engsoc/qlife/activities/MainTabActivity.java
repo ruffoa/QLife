@@ -46,21 +46,21 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_tab);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        mDrawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        mDrawer = findViewById(R.id.drawer_layout);
 
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
         mFragManager = getSupportFragmentManager();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         displayView(R.id.nav_day); //start at calendar view
 
         User u = (new UserManager(this)).getRow(1); //only ever one person in database
         View header = navigationView.getHeaderView(0);// get the existing headerView
-        TextView name = (TextView) header.findViewById(R.id.navHeaderAccountName);
+        TextView name = header.findViewById(R.id.navHeaderAccountName);
         name.setText(u.getNetid());
     }
 

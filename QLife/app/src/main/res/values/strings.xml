@@ -83,10 +83,12 @@
     <string name="counselling_url">http://queensu.ca/studentwellness/counselling-services</string>
     <string name="career_url">http://careers.queensu.ca/students</string>
     <string name="suggestions_url">http://qtap.engsoc.queensu.ca/improvements_form.html</string>
-    <string name="db_get_database">http://qtap.engsoc.queensu.ca/database/get_database.php</string>
     <string name="suggestions_accepted_url">http://qtap.engsoc.queensu.ca/submit_improvement.php</string>
-    <string name="dibs_get_rooms">https://queensu.evanced.info/dibsAPI/rooms</string>
-    <string name="dibs_get_rooms_times">https://queensu.evanced.info/dibsAPI/reservations/</string>
+
+    <!--ILC Room Strings-->
+    <string name="ilc_room">ILC ROOM&#160;</string>
+    <string name="current_availability">Current room availability for today&#160;</string>
+    <string name="future_availability">Current room availability for&#160;</string>
 
     <!-- other strings -->
     <string name="ellipses">&#8226;</string>
@@ -119,7 +121,4 @@ Shout out to the 2016-17 Engineering Society Software Development Team for start
 
     <string name="ask_suggestions">If you liked the app, please use the button below to review it on the Play Store!\n\nIf you have any suggestions for improvements, please feel free to email
     doit@engsoc.queensu.ca or submit a suggestion using the button below!</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
