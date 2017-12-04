@@ -221,7 +221,7 @@ public class ParseICS {
                 className = className.substring(0, className.indexOf("|"));
                 Course backup = c;
 
-                c.setCode(className);
+                c.setName(className);
                 c.setSetName(true);
                 mCourseManager.updateRow(backup, c);
             }
