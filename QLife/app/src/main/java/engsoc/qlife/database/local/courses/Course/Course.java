@@ -4,70 +4,74 @@ import engsoc.qlife.database.local.DatabaseRow;
 
 /**
  * Created by Carson on 19/01/2017.
- * Defines the schema for the Courses table. Currently holds a field for the class title,
+ * Defines the schema for the Courses table. Currently holds a field for the class code,
  * room number, class time and ID.
  * **Note** Each lecture/lab/studio needs an entry, so 'Course' is a misnomer.
  */
 public class Course extends DatabaseRow {
     //table schema
     public static final String TABLE_NAME = "courses";
-    public static final String COLUMN_TITLE = "title";
-    public static final String COLUMN_DESCRIPTION = "description";
+    public static final String COLUMN_CODE = "code";
+    public static final String COLUMN_NAME = "Name";
+    public static final String COLUMN_SET_NAME = "set_name";
 
     //column number each field ends up in
-    public static final int TITLE_POS = 1;
-    public static final int DESCRIPTION_POS = 2;
-
-//    public static final int ROOM_NUM_POS = 2;
-//    public static final int STIME_POS = 3;
-//    public static final int ETIME_POS = 4;
-//    public static final int DAY_POS = 5;
-//    public static final int MONTH_POS = 6;
-//    public static final int YEAR_POS = 7;
+    public static final int CODE_POS = 1;
+    public static final int NAME_POS = 2;
+    public static final int SET_NAME_POS = 3;
 
     //fields in database
-    private String title;
-    private String description;
-    private boolean hasName;
+    private String code;
+    private String name;
+    private boolean setName;
 
-    public Course(int id, String title) {
+    public Course(long id, String code, String name, boolean setName) {
         super(id);
-        this.title = title;
+        this.code = code;
+        this.name = name;
+        this.setName = setName;
     }
 
-    public Course(int id, String title, String description) {
+    public Course(int id, String code) {
         super(id);
-        this.title = title;
-        this.description = description;
+        this.code = code;
+        setName = false;
     }
 
-    public Course(int id, String title, boolean hasName) {
+    public Course(int id, String code, String name) {
         super(id);
-        this.title = title;
-        this.description = hasName? "true" : "false";
+        this.code = code;
+        this.name = name;
+        setName = true;
     }
 
-
-    public String getTitle() {
-        return title;
+    public Course(int id, String code, boolean setName) {
+        super(id);
+        this.code = code;
+        this.setName = setName;
     }
 
-    public void setTitle(String mTitle) {
-        this.title = mTitle;
-    }
-    public void setHasName(boolean hasName) {
-        this.hasName = hasName;
+    public String getCode() {
+        return code;
     }
 
-    public String getDesription() {
-        return description;
-    }
-    public boolean getHasName() {
-        return hasName;
+    public void setCode(String code) {
+        this.code = code;
     }
 
-    public void setDescription(String mDesc) {
-        this.description = mDesc;
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isSetName() {
+        return setName;
+    }
+
+    public void setSetName(boolean setName) {
+        this.setName = setName;
+    }
 }

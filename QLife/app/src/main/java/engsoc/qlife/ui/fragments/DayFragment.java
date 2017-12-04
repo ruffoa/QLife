@@ -43,9 +43,10 @@ import engsoc.qlife.utility.Util;
  */
 public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragmentWithChild {
 
-    public static final String TAG_TITLE = "event_title";
+    public static final String TAG_CODE = "event_code";
+    public static final String TAG_NAME = "event_name";
     public static final String TAG_DATE = "date";
-    public static final String TAG_LOC = "event_locat";
+    public static final String TAG_LOC = "event_location";
 
     private static int mInstances = 0;
     private static SparseIntArray mArray = new SparseIntArray();
@@ -139,6 +140,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         CourseManager courseManager = new CourseManager(this.getContext());
 
         List<String> list = new ArrayList<>();
+        List<String> detailsList = new ArrayList<>();
         List<String> loc = new ArrayList<>();
         List<String> time = new ArrayList<>();
         List<Long> classID = new ArrayList<>();
@@ -172,11 +174,9 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 classID.add(oneClass.getCourseID());
                 DatabaseRow courseRow = courseManager.getRow(oneClass.getCourseID());
                 Course course = (Course) courseRow;
-                if (course.getDesription() != null)
-                    hasName.add(course.getDesription().contains("true"));
-                else
-                    hasName.add(false);
-                list.add(course.getTitle());
+                hasName.add(course.isSetName());
+                list.add(course.getCode());
+                detailsList.add(course.getName());
                 eventsToday = true;
             }
         }
@@ -196,8 +196,9 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         for (int i = 0; i < list.size(); i++) {
 
             if ("Nothing is happening today".equals(list.get(i))) {
-                result.add(new DataObject(list.get(i), f.toString()));
+                result.add(new DataObject(list.get(i), f.toString(), detailsList.get(i)));
                 list.remove(i);
+                detailsList.remove(i);
                 i -= 1;
 
             } else {
@@ -247,17 +248,19 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                     amPMTime = (minHour) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
                 else amPMTime = time.get(posSmall) + " AM";
 
-                result.add(new DataObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall)));
+                result.add(new DataObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall), detailsList.get(posSmall)));
                 list.remove(posSmall);
                 time.remove(posSmall);
                 loc.remove(posSmall);
                 classID.remove(posSmall);
                 hasName.remove(posSmall);
+                detailsList.remove(posSmall);
                 i = -1;
             }
         }
         if (list.size() > 0) {
-            result.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + list.get(0), classID.get(posSmall), hasName.get(posSmall)));
+            result.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + list.get(0),
+                    classID.get(posSmall), hasName.get(posSmall), detailsList.get(0)));
         }
         return result;
     }
@@ -325,9 +328,9 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
 
                 String cardName = card.getTransitionName();
                 EventInfoFragment nextFrag = new EventInfoFragment();
-
                 Bundle bundle = new Bundle();
-                bundle.putString(TAG_TITLE, data.getmText1());
+                bundle.putString(TAG_CODE, data.getmText1());
+                bundle.putString(TAG_NAME, data.getmText3());
                 bundle.putString(TAG_LOC, data.getmText2());
                 bundle.putString(TAG_DATE, mDateString);
                 nextFrag.setArguments(bundle);

@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.SimpleTimeZone;
 import java.util.TimeZone;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.courses.Course.Course;
@@ -203,7 +205,7 @@ public class ParseICS {
     /**
      * Method that sets the name of a class in the database.
      *
-     * @param htmlRes The HTML of the page that contains the name of the class
+     * @param htmlRes   The HTML of the page that contains the name of the class
      * @param classType The type of class - for example, APSC.
      */
     private void addClassName(String htmlRes, String classType) {
@@ -215,17 +217,33 @@ public class ParseICS {
 
         for (DatabaseRow course : courses) {
             Course c = (Course) course;
-            if (c.getTitle().contains(classType) && htmlRes.contains(c.getTitle())) {
-                int index = htmlRes.indexOf(c.getTitle());
-                String className = htmlRes.substring(index);
-                className = className.substring(0, className.indexOf("|"));
+            if (c.getCode().contains(classType) && htmlRes.contains(c.getCode())) {
+                int index = htmlRes.indexOf(c.getCode());
+                String className = parseClassName(htmlRes.substring(index));
                 Course backup = c;
 
-                c.setTitle(className);
-                c.setDescription("true");
+                c.setName(className);
+                c.setSetName(true);
                 mCourseManager.updateRow(backup, c);
             }
         }
+    }
+
+    /**
+     * Helper method that parses out useless information from a class name.
+     *
+     * @param className The full class name to be stripped down.
+     * @return The stripped version of the class name.
+     */
+    private String parseClassName(String className) {
+        Pattern pattern = Pattern.compile("[A-Z]+ [0-9]+ "); //matches '<discipline> <course code> '
+        Matcher matcher = pattern.matcher(className);
+        if (matcher.find()) {
+            className = className.substring(matcher.end(), className.indexOf(" |") - 2); //remove ' F(or W) | <credits>' at end as well
+        } else {
+            className = className.substring(0, className.length() - 2);
+        }
+        return className;
     }
 
     public void getClassTypes() {
@@ -236,8 +254,8 @@ public class ParseICS {
 
         for (DatabaseRow data : courses) {
             Course c = (Course) data;
-            String temp = c.getTitle().substring(0, c.getTitle().indexOf(" "));
-            if (!types.contains(temp) && !("true".equals(c.getDesription())))
+            String temp = c.getCode().substring(0, c.getCode().indexOf(" "));
+            if (!types.contains(temp) && !c.isSetName())
                 //string builder not used, as string becomes too long for the builder
                 types.add(temp);
         }

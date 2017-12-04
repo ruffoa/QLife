@@ -57,6 +57,7 @@ public class OneClass extends DatabaseRow {
         this.month = month;
         this.year = year;
     }
+
     public OneClass(int id, String type, String roomNum, String startTime, String endTime, String day, String month, String year, String hasName) {
         super(id);
         this.type = type;
@@ -82,9 +83,11 @@ public class OneClass extends DatabaseRow {
     public void setBuildingID(long buildingID) {
         this.buildingID = buildingID;
     }
+
     public void setHasName(String hasName) {
         this.hasName = hasName;
     }
+
     public String getHasName() {
         return hasName;
     }
@@ -92,14 +95,15 @@ public class OneClass extends DatabaseRow {
     public String getType() {
         return type;
     }
+
     public void setType(String type) {
-        this.type =  type;
+        this.type = type;
     }
 
     public long getBuildingID() {
         return buildingID;
     }
-    
+
     public String getRoomNum() {
         return roomNum;
     }
