@@ -167,7 +167,7 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
         if (mDetails != null) {
             eventDetails.setText(mDetails);
         } else {
-            eventDate.setVisibility(View.GONE);
+            eventDetails.setVisibility(View.GONE);
         }
     }
 }

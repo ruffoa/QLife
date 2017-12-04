@@ -27,13 +27,12 @@
                 android:id="@+id/EventDetails"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp" />
+                android:layout_marginTop="5dp"/>
 
             <TextView
                 android:id="@+id/EventDate"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/title_class"
                 android:textSize="25sp" />
 
             <TextView
