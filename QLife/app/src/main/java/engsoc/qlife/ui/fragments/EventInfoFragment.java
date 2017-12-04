@@ -164,6 +164,10 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
         TextView eventName = myView.findViewById(R.id.EventName);
         eventName.setText(mEventTitle);
         TextView eventDetails = myView.findViewById(R.id.EventDetails);
-        eventDetails.setText(mDetails);
+        if (mDetails != null) {
+            eventDetails.setText(mDetails);
+        } else {
+            eventDate.setVisibility(View.GONE);
+        }
     }
 }

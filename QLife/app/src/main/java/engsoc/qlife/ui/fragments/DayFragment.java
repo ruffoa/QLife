@@ -259,7 +259,8 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
             }
         }
         if (list.size() > 0) {
-            result.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + list.get(0), classID.get(posSmall), hasName.get(posSmall), detailsList.get(0)));
+            result.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + list.get(0),
+                    classID.get(posSmall), hasName.get(posSmall), detailsList.get(0)));
         }
         return result;
     }
