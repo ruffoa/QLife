@@ -59,7 +59,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
     private TextView mDateText;
     private String mDateString;
     private Calendar mCalendar;
-    private ArrayList<DataObject> result = new ArrayList<>();
+    private ArrayList<DataObject> mResult = new ArrayList<>();
 
     @Nullable
     @Override
@@ -127,7 +127,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
      * @param numChange The number of days to change by. Negative numbers means go backwards in time.
      */
     public void changeDate(int numChange) {
-        result.clear();
+        mResult.clear();
         mCalendar.add(Calendar.DAY_OF_YEAR, numChange);
         mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
         mRecyclerView.setAdapter(mAdapter);
@@ -183,7 +183,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
 
         if (!eventsToday) {
             noClassMessage.setVisibility(View.VISIBLE);
-            return result;
+            return mResult;
         }
 
         int startHour;
@@ -196,7 +196,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         for (int i = 0; i < list.size(); i++) {
 
             if ("Nothing is happening today".equals(list.get(i))) {
-                result.add(new DataObject(list.get(i), f.toString(), detailsList.get(i)));
+                mResult.add(new DataObject(list.get(i), f.toString(), detailsList.get(i)));
                 list.remove(i);
                 detailsList.remove(i);
                 i -= 1;
@@ -248,7 +248,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                     amPMTime = (minHour) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
                 else amPMTime = time.get(posSmall) + " AM";
 
-                result.add(new DataObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall), detailsList.get(posSmall)));
+                mResult.add(new DataObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall), detailsList.get(posSmall)));
                 list.remove(posSmall);
                 time.remove(posSmall);
                 loc.remove(posSmall);
@@ -259,10 +259,10 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
             }
         }
         if (list.size() > 0) {
-            result.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + list.get(0),
+            mResult.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + list.get(0),
                     classID.get(posSmall), hasName.get(posSmall), detailsList.get(0)));
         }
-        return result;
+        return mResult;
     }
 
     @Override
@@ -309,6 +309,17 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
             public void onClick(View view) {
                 changeDate(-1);
                 mTotalDaysChange += -1;
+            }
+        });
+        Button todayButton = mView.findViewById(R.id.today);
+        todayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mResult.clear();
+                mCalendar = Calendar.getInstance(); //current date
+                mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
+                mRecyclerView.setAdapter(mAdapter);
+                mTotalDaysChange = 0;
             }
         });
     }
