@@ -215,14 +215,14 @@ public class ParseICS {
 
         for (DatabaseRow course : courses) {
             Course c = (Course) course;
-            if (c.getTitle().contains(classType) && htmlRes.contains(c.getTitle())) {
-                int index = htmlRes.indexOf(c.getTitle());
+            if (c.getCode().contains(classType) && htmlRes.contains(c.getCode())) {
+                int index = htmlRes.indexOf(c.getCode());
                 String className = htmlRes.substring(index);
                 className = className.substring(0, className.indexOf("|"));
                 Course backup = c;
 
-                c.setTitle(className);
-                c.setDescription("true");
+                c.setCode(className);
+                c.setSetName(true);
                 mCourseManager.updateRow(backup, c);
             }
         }
@@ -236,8 +236,8 @@ public class ParseICS {
 
         for (DatabaseRow data : courses) {
             Course c = (Course) data;
-            String temp = c.getTitle().substring(0, c.getTitle().indexOf(" "));
-            if (!types.contains(temp) && !("true".equals(c.getDesription())))
+            String temp = c.getCode().substring(0, c.getCode().indexOf(" "));
+            if (!types.contains(temp) && !c.isSetName())
                 //string builder not used, as string becomes too long for the builder
                 types.add(temp);
         }

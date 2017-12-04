@@ -172,11 +172,8 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 classID.add(oneClass.getCourseID());
                 DatabaseRow courseRow = courseManager.getRow(oneClass.getCourseID());
                 Course course = (Course) courseRow;
-                if (course.getDesription() != null)
-                    hasName.add(course.getDesription().contains("true"));
-                else
-                    hasName.add(false);
-                list.add(course.getTitle());
+                hasName.add(course.isSetName());
+                list.add(course.getCode());
                 eventsToday = true;
             }
         }

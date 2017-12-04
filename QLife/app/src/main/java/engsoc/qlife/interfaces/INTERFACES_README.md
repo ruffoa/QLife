@@ -6,7 +6,7 @@ to remember to complete specific functionality.
 
 ## IQLActionbarFragment
 
-For a fragment that needs to change its activity's Actionbar title.
+For a fragment that needs to change its activity's Actionbar code.
 
 ## IQLActivityHasOptionsMenu
 

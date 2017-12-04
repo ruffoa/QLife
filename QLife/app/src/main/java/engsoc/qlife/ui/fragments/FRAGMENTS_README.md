@@ -12,7 +12,7 @@ implement IQLDrawerItem.
 
 ## BuildingsFragment
 
-This fragment shows a list of Queen's buildings; each card has a building's name, description and if it has food available.
+This fragment shows a list of Queen's buildings; each card has a building's name, name and if it has food available.
 
 Clicking on a card will send the user to OneBuildingFragment.
 
@@ -50,7 +50,7 @@ It queries the phone database for the full OneClass table in order to populate t
 
 ## EmergContactsFragment
 
-This fragment shows a list of Queen's emergency contacts; the name a description and a telephone number.
+This fragment shows a list of Queen's emergency contacts; the name a name and a telephone number.
 
 This fragment is accessed from StudentToolsFragment.
 
@@ -60,7 +60,7 @@ It queries the phone database for the full EmergContacts table in order to popul
 
 ## EngContactsFragment
 
-This fragment shows a list of Queen's engineering contacts; the name, position, email and description.
+This fragment shows a list of Queen's engineering contacts; the name, position, email and name.
 
 This fragment is accessed from StudentToolsFragment.
 
@@ -104,7 +104,7 @@ This fragment is accessed from the drawer layout.
 ## OneBuildingFragment
 
 This fragment shows the details of a building; the name, food establishments, if it has an ATM/bookable
-rooms, a description and a Google map with a marker at the building location.
+rooms, a name and a Google map with a marker at the building location.
 
 Clicking on a card in BuildingsFragment will access this fragment.
 
