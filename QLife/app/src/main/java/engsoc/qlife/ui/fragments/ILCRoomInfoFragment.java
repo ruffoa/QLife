@@ -8,10 +8,8 @@ import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -32,8 +30,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import engsoc.qlife.R;
-import engsoc.qlife.database.dibs.GetRooms;
 import engsoc.qlife.database.dibs.GetRoomBookings;
+import engsoc.qlife.database.dibs.GetRooms;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.rooms.Room;
 import engsoc.qlife.database.local.rooms.RoomManager;
@@ -49,10 +47,7 @@ import engsoc.qlife.utility.Util;
 public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragment {
     public static final String TAG_TITLE = "room_title";
     public static final String TAG_PIC = "pic";
-    public static final String TAG_MAP = "map";
-    public static final String TAG_DESC = "room_description";
     public static final String TAG_ROOM_ID = "room_id";
-    public static final String TAG_DATE = "date";
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -60,7 +55,6 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
     private String roomAvailability;
     private View mProgressView;
     private ProgressDialog mProgressDialog;
-
     private ArrayList<DataObject> mRoomData;
 
     @Nullable
@@ -106,31 +100,25 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
                 RoomManager roomInf = new RoomManager(getContext());
                 ArrayList<DatabaseRow> info = roomInf.getTable();
 
-                String map = "";
                 String pic = "";
-
                 if (data != null && info.size() > 0) {
                     for (DatabaseRow row : info) {
                         Room room = (Room) row;
                         if (room.getRoomId() == data.getID()) {
-                            map = room.getMapUrl();
                             pic = room.getPicUrl();
                             break;
                         }
                     }
                 }
+                Bundle bundle = new Bundle();
+                if (data != null) {
+                    bundle.putString(TAG_TITLE, data.getmText1());
+                    bundle.putInt(TAG_ROOM_ID, data.getID());
+                }
+                bundle.putString(TAG_PIC, pic);
 
                 String cardName = card.getTransitionName();
                 RoomInformationFragment nextFrag = new RoomInformationFragment();
-
-                Bundle bundle = new Bundle();
-                bundle.putString(TAG_TITLE, data.getmText1());
-                bundle.putString(TAG_DESC, data.getDescription());
-                bundle.putString(TAG_MAP, map);
-                bundle.putString(TAG_PIC, pic);
-                bundle.putString(TAG_DATE, Calendar.getInstance().toString());
-                bundle.putInt(TAG_ROOM_ID, data.getID());
-
                 nextFrag.setArguments(bundle);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().addToBackStack(null)
@@ -143,6 +131,9 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         return mView;
     }
 
+    /**
+     * Shows all ILC rooms, sorted by small, medium and large.
+     */
     private void showRooms() {
         ArrayList<DataObject> small = new ArrayList<>();
         ArrayList<DataObject> med = new ArrayList<>();
@@ -224,7 +215,7 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    public ArrayList<DataObject> getDayEventData() {
+    private ArrayList<DataObject> getDayEventData() {
         RoomManager roomInf = new RoomManager(this.getContext());
         ArrayList<DataObject> result = new ArrayList<>();
         ArrayList<DatabaseRow> data = roomInf.getTable();
@@ -241,7 +232,7 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         return null;
     }
 
-    public int getDayAvailability() {
+    private int getDayAvailability() {
         if (roomAvailability != null && roomAvailability.length() > 0) {
             try {
                 JSONArray arr = new JSONArray(roomAvailability);

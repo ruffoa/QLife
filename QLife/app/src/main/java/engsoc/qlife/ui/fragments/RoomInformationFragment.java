@@ -35,9 +35,8 @@ import engsoc.qlife.utility.async.DownloadImageTask;
  * Fragment that shows when each room is available.
  */
 public class RoomInformationFragment extends Fragment {
-    private String mRoomName, mRoomDescription, mRoomPicUrl;
+    private String mRoomName, mRoomPicUrl;
     private int mRoomID;
-    private RecyclerView.Adapter mAdapter;
     private String roomAvailability;
     private Calendar cal = Calendar.getInstance();
     private RecyclerView mRecyclerView;
@@ -48,7 +47,6 @@ public class RoomInformationFragment extends Fragment {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             mRoomName = bundle.getString(ILCRoomInfoFragment.TAG_TITLE);
-            mRoomDescription = bundle.getString(ILCRoomInfoFragment.TAG_DESC);
             mRoomPicUrl = bundle.getString(ILCRoomInfoFragment.TAG_PIC);
             mRoomID = bundle.getInt(ILCRoomInfoFragment.TAG_ROOM_ID);
         }
@@ -61,13 +59,13 @@ public class RoomInformationFragment extends Fragment {
         }
 
         View v = inflater.inflate(R.layout.fragment_room_avaliability_info, container, false);
-        mRecyclerView = v.findViewById(R.id.avaliabilityRecyclerView);
+        mRecyclerView = v.findViewById(R.id.availabilityRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.setNestedScrollingEnabled(false); //this is to allow for entire card scrolling
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new RecyclerViewAdapter(getDayAvailability());
-        mRecyclerView.setAdapter(mAdapter);
+        RecyclerView.Adapter adapter = new RecyclerViewAdapter(getDayAvailability());
+        mRecyclerView.setAdapter(adapter);
 
         return v;
     }
@@ -76,23 +74,10 @@ public class RoomInformationFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         TextView roomName = view.findViewById(R.id.RoomName);
         roomName.setText(mRoomName);
-        TextView roomDesc = view.findViewById(R.id.RoomDescription);
-        roomDesc.setText(mRoomDescription);
-        TextView roomLoc = view.findViewById(R.id.RoomLoc);
-        String roomLocText = getString(R.string.ilc_room) + mRoomName;
-        roomLoc.setText(roomLocText);
-
-        if (mAdapter.getItemCount() > 0) {
-            TextView dateAvailability = view.findViewById(R.id.RoomAvaliabilityDate);
-            if (Calendar.getInstance() == cal)
-                dateAvailability.setText(getString(R.string.current_availability));
-            else {
-                CharSequence date = DateFormat.format("EEEE, MMMM d, yyyy", cal.getTime());
-                String mDateString = date.toString();
-                String dateAvailabilityText = getString(R.string.future_availability) + mDateString;
-                dateAvailability.setText(dateAvailabilityText);
-            }
-        }
+        TextView dateAvailability = view.findViewById(R.id.RoomAvailabilityDate);
+        CharSequence date = DateFormat.format("EEEE, MMMM d, yyyy", cal.getTime());
+        String availText = getString(R.string.current_availability) + date.toString();
+        dateAvailability.setText(availText);
 
         if (mRoomPicUrl != null && mRoomPicUrl.length() > 4 && mRoomPicUrl.contains(Constants.HTTP)) {
             mImageView = view.findViewById(R.id.RoomPic);
@@ -119,6 +104,12 @@ public class RoomInformationFragment extends Fragment {
         }
     }
 
+    /**
+     * Displays the availability of the given ILC room. Currently puts each available hour slot
+     * as a card in a recycler view.
+     *
+     * @return An array of objects that hold the room's available slots.
+     */
     private ArrayList<DataObject> getDayAvailability() {
         ArrayList<DataObject> result = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
