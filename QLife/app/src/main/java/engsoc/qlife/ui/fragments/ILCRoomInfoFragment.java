@@ -38,11 +38,15 @@ import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.rooms.Room;
 import engsoc.qlife.database.local.rooms.RoomManager;
 import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.interfaces.IQLActionbarFragment;
+import engsoc.qlife.interfaces.IQLDrawerItem;
+import engsoc.qlife.interfaces.IQLListFragment;
 import engsoc.qlife.ui.recyclerview.DataObject;
 import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
 import engsoc.qlife.utility.Constants;
+import engsoc.qlife.utility.Util;
 
-public class ILCRoomInfoFragment extends Fragment {
+public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragment {
     public static final String TAG_TITLE = "room_title";
     public static final String TAG_PIC = "pic";
     public static final String TAG_MAP = "map";
@@ -63,60 +67,16 @@ public class ILCRoomInfoFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_ilcroom_info, container, false);
-
-        RoomManager roomInf = new RoomManager(this.getContext());
-        ArrayList<DatabaseRow> data = roomInf.getTable();
         mProgressView = mView.findViewById(R.id.ilcRoomInf_progress);
-        if (data == null || data.size() == 0) {
-            final Context context = getContext();
-            GetRooms dibs = new GetRooms(new AsyncTaskObserver() {
-                @Override
-                public void onTaskCompleted(Object obj) {
-                    //expect null to be passed
-                    showProgress(false);
-                    mProgressDialog.dismiss();
-                }
-
-                @Override
-                public void beforeTaskStarted() {
-                    showProgress(true);
-                    mProgressDialog = new ProgressDialog(context);
-                    mProgressDialog.setMessage("Downloading cloud database. Please wait...");
-                    mProgressDialog.setIndeterminate(false);
-                    mProgressDialog.setCancelable(false);
-                    mProgressDialog.show();
-                }
-
-                @Override
-                public void duringTask(Object obj) {
-                    if (obj.getClass() == JSONArray.class) {
-                        JSONArray rooms = (JSONArray) obj;
-                        try {
-                            RoomManager tableManager = new RoomManager(context);
-                            for (int i = 0; i < rooms.length(); i++) {
-                                JSONObject roomInfo = rooms.getJSONObject(i);
-                                tableManager.insertRow(new Room(roomInfo.getInt(Room.COLUMN_ROOM_ID), roomInfo.getInt(Room.COLUMN_BUILDING_ID), roomInfo.getString(Room.COLUMN_DESCRIPTION),
-                                        roomInfo.getString(Room.COLUMN_MAP_URL), roomInfo.getString(Room.COLUMN_NAME), roomInfo.getString(Room.COLUMN_PIC_URL), roomInfo.getInt(Room.COLUMN_ROOM_ID)));
-                            }
-                        } catch (JSONException e) {
-                            Log.d("HELLOTHERE", "EMERG: " + e);
-                        }
-                    }
-                }
-            });
-            try {
-                dibs.execute().get();
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-
         mRecyclerView = mView.findViewById(R.id.ilcRoomInfoRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new SectionedRecyclerView(getDayEventData());
         mRecyclerView.setAdapter(mAdapter);
+
+        setActionbarTitle();
+        inflateListView();
 
         Button showAvailability = mView.findViewById(R.id.available);
         showAvailability.setOnClickListener(new View.OnClickListener() {
@@ -183,14 +143,6 @@ public class ILCRoomInfoFragment extends Fragment {
         return mView;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        ActionBar actionbar = ((AppCompatActivity) getActivity()).getSupportActionBar();
-        if (actionbar != null) {
-            actionbar.setTitle(getString(R.string.fragment_ilc_rooms));
-        }
-    }
-
     private void showRooms() {
         ArrayList<DataObject> small = new ArrayList<>();
         ArrayList<DataObject> med = new ArrayList<>();
@@ -236,7 +188,7 @@ public class ILCRoomInfoFragment extends Fragment {
         });
     }
 
-    private boolean showAvailability() {
+    private void showAvailability() {
         mProgressView.setVisibility(View.VISIBLE);
 
         RoomManager roomInf = new RoomManager(this.getContext());
@@ -265,15 +217,11 @@ public class ILCRoomInfoFragment extends Fragment {
 
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-            return false;
         }
 
         showProgress(false);
-
         mAdapter = new SectionedRecyclerView(result);
         mRecyclerView.setAdapter(mAdapter);
-
-        return true;
     }
 
     public ArrayList<DataObject> getDayEventData() {
@@ -322,5 +270,81 @@ public class ILCRoomInfoFragment extends Fragment {
             }
         }
         return 0;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        selectDrawer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        deselectDrawer();
+    }
+
+    @Override
+    public void deselectDrawer() {
+        Util.setDrawerItemSelected(getActivity(), R.id.nav_rooms, false);
+    }
+
+    @Override
+    public void selectDrawer() {
+        Util.setDrawerItemSelected(getActivity(), R.id.nav_rooms, true);
+    }
+
+    @Override
+    public void inflateListView() {
+        RoomManager roomInf = new RoomManager(this.getContext());
+        ArrayList<DatabaseRow> data = roomInf.getTable();
+        if (data == null || data.size() == 0) {
+            final Context context = getContext();
+            GetRooms dibs = new GetRooms(new AsyncTaskObserver() {
+                @Override
+                public void onTaskCompleted(Object obj) {
+                    //expect null to be passed
+                    showProgress(false);
+                    mProgressDialog.dismiss();
+                }
+
+                @Override
+                public void beforeTaskStarted() {
+                    showProgress(true);
+                    mProgressDialog = new ProgressDialog(context);
+                    mProgressDialog.setMessage("Downloading cloud database. Please wait...");
+                    mProgressDialog.setIndeterminate(false);
+                    mProgressDialog.setCancelable(false);
+                    mProgressDialog.show();
+                }
+
+                @Override
+                public void duringTask(Object obj) {
+                    if (obj.getClass() == JSONArray.class) {
+                        JSONArray rooms = (JSONArray) obj;
+                        try {
+                            RoomManager tableManager = new RoomManager(context);
+                            for (int i = 0; i < rooms.length(); i++) {
+                                JSONObject roomInfo = rooms.getJSONObject(i);
+                                tableManager.insertRow(new Room(roomInfo.getInt(Room.COLUMN_ROOM_ID), roomInfo.getInt(Room.COLUMN_BUILDING_ID), roomInfo.getString(Room.COLUMN_DESCRIPTION),
+                                        roomInfo.getString(Room.COLUMN_MAP_URL), roomInfo.getString(Room.COLUMN_NAME), roomInfo.getString(Room.COLUMN_PIC_URL), roomInfo.getInt(Room.COLUMN_ROOM_ID)));
+                            }
+                        } catch (JSONException e) {
+                            Log.d("HELLOTHERE", "EMERG: " + e);
+                        }
+                    }
+                }
+            });
+            try {
+                dibs.execute().get();
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void setActionbarTitle() {
+        Util.setActionbarTitle(getString(R.string.fragment_ilc_rooms), (AppCompatActivity) getActivity());
     }
 }
