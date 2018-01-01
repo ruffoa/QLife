@@ -18,7 +18,7 @@
     <string name="fragment_student_tools">Student Tools</string>
     <string name="fragment_emerg_contacts">Emergency Contacts</string>
     <string name="fragment_eng_contacts">Engineering Contacts</string>
-    <string name="fragment_ilc_rooms">ILC Room Info</string>
+    <string name="fragment_ilc_rooms">ILC Rooms</string>
 
     <!--Short text in app-->
     <string name="brought_by">Brought to you by</string>
