@@ -58,6 +58,8 @@
     <string name="play_again">Play Again</string>
     <string name="next">NEXT</string>
     <string name="today">TODAY</string>
+    <string name="available">AVAILABLE</string>
+    <string name="all">ALL</string>
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
     <string name="counselling_services">Counselling Services</string>

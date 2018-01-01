@@ -19,6 +19,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 
 import org.json.JSONArray;
@@ -65,17 +66,20 @@ public class ILCRoomInfoFragment extends Fragment {
 
         RoomManager roomInf = new RoomManager(this.getContext());
         ArrayList<DatabaseRow> data = roomInf.getTable();
+        mProgressView = mView.findViewById(R.id.ilcRoomInf_progress);
         if (data == null || data.size() == 0) {
             final Context context = getContext();
             GetRooms dibs = new GetRooms(new AsyncTaskObserver() {
                 @Override
                 public void onTaskCompleted(Object obj) {
                     //expect null to be passed
+                    showProgress(false);
                     mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void beforeTaskStarted() {
+                    showProgress(true);
                     mProgressDialog = new ProgressDialog(context);
                     mProgressDialog.setMessage("Downloading cloud database. Please wait...");
                     mProgressDialog.setIndeterminate(false);
@@ -113,17 +117,19 @@ public class ILCRoomInfoFragment extends Fragment {
         mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new SectionedRecyclerView(getDayEventData());
         mRecyclerView.setAdapter(mAdapter);
-        mProgressView = mView.findViewById(R.id.ilcRoomInf_progress);
 
-        FloatingActionButton myFab = mView.findViewById(R.id.sortRoomsFab);
-        myFab.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                onFABClick();
+        Button showAvailability = mView.findViewById(R.id.available);
+        showAvailability.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showAvailability();
             }
         });
-        myFab.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-                return onFABLongClick();
+        Button showAll = mView.findViewById(R.id.all);
+        showAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showRooms();
             }
         });
 
@@ -173,6 +179,7 @@ public class ILCRoomInfoFragment extends Fragment {
                         .commit();
             }
         });
+        showRooms();
         return mView;
     }
 
@@ -184,7 +191,7 @@ public class ILCRoomInfoFragment extends Fragment {
         }
     }
 
-    private void onFABClick() {
+    private void showRooms() {
         ArrayList<DataObject> small = new ArrayList<>();
         ArrayList<DataObject> med = new ArrayList<>();
         ArrayList<DataObject> large = new ArrayList<>();
@@ -229,7 +236,7 @@ public class ILCRoomInfoFragment extends Fragment {
         });
     }
 
-    private boolean onFABLongClick() {
+    private boolean showAvailability() {
         mProgressView.setVisibility(View.VISIBLE);
 
         RoomManager roomInf = new RoomManager(this.getContext());
