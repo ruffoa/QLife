@@ -20,7 +20,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorPrimary"
                 android:textSize="40sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:layout_gravity="center"/>
 
             <ImageView
                 android:id="@+id/RoomPic"
@@ -29,18 +30,22 @@
                 android:contentDescription="@string/ilc_room_pic"
                 android:scaleType="fitXY" />
 
-            <TextView
-                android:id="@+id/RoomAvailabilityDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp" />
+            <TableLayout
+                android:id="@+id/availability_table"
+                style="@style/TableLayout">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/availabilityRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:scrollbars="none" />
+                <TextView
+                    android:id="@+id/RoomAvailabilityDate"
+                    style="@style/TableTextView"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/NoAvailability"
+                    style="@style/TableTextView"
+                    android:text="@string/no_rooms_available"
+                    android:visibility="gone" />
+            </TableLayout>
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

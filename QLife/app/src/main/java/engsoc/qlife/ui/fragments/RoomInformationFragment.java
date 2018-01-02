@@ -4,19 +4,20 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -26,7 +27,6 @@ import engsoc.qlife.R;
 import engsoc.qlife.database.dibs.GetRoomBookings;
 import engsoc.qlife.interfaces.AsyncTaskObserver;
 import engsoc.qlife.ui.recyclerview.DataObject;
-import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.async.DownloadImageTask;
 
@@ -39,7 +39,7 @@ public class RoomInformationFragment extends Fragment {
     private int mRoomID;
     private String roomAvailability;
     private Calendar cal = Calendar.getInstance();
-    private RecyclerView mRecyclerView;
+    private View mView;
     private ImageView mImageView;
 
     @Override
@@ -58,16 +58,9 @@ public class RoomInformationFragment extends Fragment {
             e.printStackTrace();
         }
 
-        View v = inflater.inflate(R.layout.fragment_room_avaliability_info, container, false);
-        mRecyclerView = v.findViewById(R.id.availabilityRecyclerView);
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setNestedScrollingEnabled(false); //this is to allow for entire card scrolling
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        mRecyclerView.setLayoutManager(layoutManager);
-        RecyclerView.Adapter adapter = new RecyclerViewAdapter(getDayAvailability());
-        mRecyclerView.setAdapter(adapter);
-
-        return v;
+        mView = inflater.inflate(R.layout.fragment_room_avaliability_info, container, false);
+        setTable();
+        return mView;
     }
 
     @Override
@@ -86,9 +79,7 @@ public class RoomInformationFragment extends Fragment {
                 public void onTaskCompleted(Object obj) {
                     if (obj instanceof Bitmap) {
                         Bitmap result = (Bitmap) obj;
-                        int recyclerHeight = mRecyclerView.getHeight();
                         mImageView.setImageBitmap(result);
-                        mRecyclerView.getLayoutParams().height = recyclerHeight;
                     }
                 }
 
@@ -102,6 +93,67 @@ public class RoomInformationFragment extends Fragment {
             });
             downloadImage.execute(mRoomPicUrl);
         }
+    }
+
+    private void setTable() {
+        TableLayout table = mView.findViewById(R.id.availability_table);
+        ArrayList<DataObject> availability = getDayAvailability();
+        if (availability == null || availability.isEmpty()) {
+            mView.findViewById(R.id.NoAvailability).setVisibility(View.VISIBLE);
+        } else {
+            mView.findViewById(R.id.NoAvailability).setVisibility(View.GONE);
+            //know at least one available slot, can get it
+            String firstStart = availability.get(0).getmText1();
+            String firstEnd = availability.get(0).getmText2();
+
+            if (availability.size() == 1) {
+                //only one slot, don't try to combine multiple
+                TextView textView = new TextView(getContext());
+                String text = firstStart + " " + firstEnd;
+                textView.setText(text);
+                TableRow newRow = new TableRow(getContext());
+                newRow.addView(textView);
+                table.addView(newRow);
+            } else {
+                //try to combine overlapping available slots
+                String start = firstStart;
+                String end = firstEnd;
+                for (int i = 1; i < availability.size(); i++) {
+                    String nextStart = availability.get(i).getmText1();
+                    String nextEnd = availability.get(i).getmText2();
+                    if (!sameTime(end, nextStart)) {
+                        //don't overlap, add start/end and move along
+                        TextView textView = new TextView(getContext());
+                        String text = start + " " + end;
+                        textView.setText(text);
+                        TableRow newRow = new TableRow(getContext());
+                        newRow.addView(textView);
+                        table.addView(newRow);
+                        start = nextStart;
+                        end = nextEnd;
+                    } else {
+                        //overlap, so don't add row and move along
+                        end = nextEnd;
+                    }
+                    if (i == availability.size() - 1) {
+                        //at end of loop, print out current slot (next start/end)
+                        TextView textView = new TextView(getContext());
+                        String text = start + " " + end;
+                        textView.setText(text);
+                        TableRow newRow = new TableRow(getContext());
+                        newRow.addView(textView);
+                        table.addView(newRow);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean sameTime(String s1, String s2) {
+        //times are after the first space, so check they are equal after the first space
+        s1 = s1.substring(s1.indexOf(' ') + 1);
+        s2 = s2.substring(s2.indexOf(' ') + 1);
+        return s1.equals(s2);
     }
 
     /**
