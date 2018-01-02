@@ -24,7 +24,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         TextView label;
         TextView dateTime;
 
-        public DataObjectHolder(View itemView) {
+        DataObjectHolder(View itemView) {
             super(itemView);
             label = itemView.findViewById(R.id.textView);
             dateTime = itemView.findViewById(R.id.textView2);

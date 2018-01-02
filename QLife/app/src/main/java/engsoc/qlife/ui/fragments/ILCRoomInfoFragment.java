@@ -76,14 +76,14 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         showAvailability.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showAvailability();
+                showAvailableRooms();
             }
         });
         Button showAll = mView.findViewById(R.id.all);
         showAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showRooms();
+                showAllRooms();
             }
         });
 
@@ -127,14 +127,14 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
                         .commit();
             }
         });
-        showRooms();
+        showAllRooms();
         return mView;
     }
 
     /**
      * Shows all ILC rooms, sorted by small, medium and large.
      */
-    private void showRooms() {
+    private void showAllRooms() {
         ArrayList<DataObject> small = new ArrayList<>();
         ArrayList<DataObject> med = new ArrayList<>();
         ArrayList<DataObject> large = new ArrayList<>();
@@ -179,7 +179,7 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         });
     }
 
-    private void showAvailability() {
+    private void showAvailableRooms() {
         mProgressView.setVisibility(View.VISIBLE);
 
         RoomManager roomInf = new RoomManager(this.getContext());
@@ -196,13 +196,9 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
                     GetRoomBookings dibs = new GetRoomBookings(null);
                     Room room = (Room) row;
                     roomAvailability = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
-                    int status = getDayAvailability();
-                    if (status == 0) {
-                        result.add(new DataObject(room.getName(), "Is Avaliable Now", room.getRoomId(), true, "", room.getDescription()));
-                    } else if (status == 2)
-                        result.add(new DataObject(room.getName(), "Is Avaliable at " + cal.get(Calendar.HOUR) + ":30", room.getRoomId(), true, "", room.getDescription()));
-                    else if (status == 3)
-                        result.add(new DataObject(room.getName(), "Is Avaliable Until " + (cal.get(Calendar.HOUR) + 1) + ":30", room.getRoomId(), true, "", room.getDescription()));
+                    if (currentlyAvailable()) {
+                        result.add(new DataObject(room.getName(), null, room.getRoomId(), true, "", room.getDescription()));
+                    }
                 }
             }
 
@@ -232,11 +228,10 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         return null;
     }
 
-    private int getDayAvailability() {
+    private boolean currentlyAvailable() {
         if (roomAvailability != null && roomAvailability.length() > 0) {
             try {
                 JSONArray arr = new JSONArray(roomAvailability);
-                int state = 0;
 
                 for (int i = 0; i < arr.length(); i++) {
                     JSONObject roomInfo = arr.getJSONObject(i);
@@ -248,19 +243,15 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
                     int now = cal.get(Calendar.HOUR_OF_DAY);
                     int nowMin = cal.get(Calendar.MINUTE);
 
-                    if (sHour == now) {
-                        return 1;
-                    } else if (sHour == now - 1 && nowMin < 30)
-                        state = 2;
-                    else if (sHour == now + 1)
-                        state = 3;
+                    if (sHour == now || (sHour == now - 1 && nowMin < 30)) {
+                        return false;
+                    }
                 }
-                return state;
             } catch (JSONException e) {
                 Log.d("HELLOTHERE", e.getMessage());
             }
         }
-        return 0;
+        return true;
     }
 
     @Override
