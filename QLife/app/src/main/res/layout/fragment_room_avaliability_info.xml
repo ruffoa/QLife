@@ -10,18 +10,14 @@
         android:scrollbars="none">
 
         <LinearLayout
+            android:id="@+id/room_availability"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/RoomName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/colorPrimary"
-                android:textSize="40sp"
-                android:textStyle="bold"
-                android:layout_gravity="center"/>
+                style="@style/TitleTextView" />
 
             <ImageView
                 android:id="@+id/RoomPic"
@@ -30,22 +26,21 @@
                 android:contentDescription="@string/ilc_room_pic"
                 android:scaleType="fitXY" />
 
-            <TableLayout
-                android:id="@+id/availability_table"
-                style="@style/TableLayout">
+            <TextView
+                android:id="@+id/RoomAvailabilityDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:paddingTop="15dp"
+                android:textSize="15sp"
+                android:textColor="@android:color/black"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/RoomAvailabilityDate"
-                    style="@style/TableTextView"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/NoAvailability"
-                    style="@style/TableTextView"
-                    android:text="@string/no_rooms_available"
-                    android:visibility="gone" />
-            </TableLayout>
+            <TextView
+                android:id="@+id/NoAvailability"
+                style="@style/TableTextView"
+                android:text="@string/no_rooms_available"
+                android:visibility="gone" />
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>
