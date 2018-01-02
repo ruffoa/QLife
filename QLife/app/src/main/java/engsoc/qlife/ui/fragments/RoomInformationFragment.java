@@ -25,15 +25,17 @@ import java.util.concurrent.ExecutionException;
 import engsoc.qlife.R;
 import engsoc.qlife.database.dibs.GetRoomBookings;
 import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.interfaces.IQLDrawerItem;
 import engsoc.qlife.ui.recyclerview.DataObject;
 import engsoc.qlife.utility.Constants;
+import engsoc.qlife.utility.Util;
 import engsoc.qlife.utility.async.DownloadImageTask;
 
 /**
  * Created by Alex on 8/21/2017.
  * Fragment that shows when each room is available.
  */
-public class RoomInformationFragment extends Fragment {
+public class RoomInformationFragment extends Fragment implements IQLDrawerItem {
     private String mRoomName, mRoomPicUrl;
     private int mRoomID;
     private String roomAvailability;
@@ -172,16 +174,16 @@ public class RoomInformationFragment extends Fragment {
      * @return An array of objects that hold the room's available slots.
      */
     private ArrayList<DataObject> getDayAvailability() {
-        ArrayList<DataObject> result = new ArrayList<>();
+        ArrayList<DataObject> availability = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            result.add(new DataObject((i + 7) + ":" + 30, (i + 8) + ":" + 30));
+            availability.add(new DataObject((i + 7) + ":" + 30, (i + 8) + ":" + 30));
         }
 
         if (roomAvailability != null && roomAvailability.length() > 0) {
             try {
                 JSONArray arr = new JSONArray(roomAvailability);
-
                 for (int i = 0; i < arr.length(); i++) {
+                    //find times room is booked
                     JSONObject roomInfo = arr.getJSONObject(i);
                     String start = roomInfo.getString("StartTime");
                     String end = roomInfo.getString("EndTime");
@@ -189,49 +191,71 @@ public class RoomInformationFragment extends Fragment {
                     start = start.substring(start.indexOf("T") + 1);
                     end = end.substring(end.indexOf("T") + 1);
 
-                    for (int j = 0; j < result.size(); j++) {
-                        String test = result.get(j).getmText1().substring(6);
-                        int startTime = Integer.parseInt(test.substring(0, test.indexOf(":")));
+                    //remove booked times from available times
+                    for (int j = 0; j < availability.size(); j++) {
+                        String startTime = availability.get(j).getmText1();
+                        int startHour = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
 
-                        if (Integer.parseInt(start.substring(0, 2)) == startTime) {
-                            result.remove(j);
+                        if (Integer.parseInt(start.substring(0, 2)) == startHour) {
+                            availability.remove(j);
                             if (j > 0)
                                 j--;
-                        } else if (Integer.parseInt(start.substring(0, 2)) < startTime && Integer.parseInt(end.substring(0, 2)) > startTime) {
-                            result.remove(j);
+                        } else if (Integer.parseInt(start.substring(0, 2)) < startHour && Integer.parseInt(end.substring(0, 2)) > startHour) {
+                            availability.remove(j);
                             if (j > 0)
                                 j--;
                         }
                     }
                 }
 
-                for (int j = 0; j < result.size(); j++) {
+                //set AM/PM on start and end times
+                for (int j = 0; j < availability.size(); j++) {
                     //get hour of start time - use to set AM/PM
-                    String startTime = result.get(j).getmText1();
+                    String startTime = availability.get(j).getmText1();
                     int tempTime = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
 
-                    //set start/end time with PM
                     if (tempTime > 12) {
-                        result.get(j).setmText1((tempTime - 12) + ":30 PM");
+                        availability.get(j).setmText1((tempTime - 12) + ":30 PM");
                     }
                     if (tempTime >= 12) {
-                        startTime = result.get(j).getmText2();
+                        startTime = availability.get(j).getmText2();
                         int endTime = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
-                        result.get(j).setmText2((endTime - 12) + ":30 PM");
+                        availability.get(j).setmText2((endTime - 12) + ":30 PM");
                     }
-                    //set start/end time with AM
                     if (tempTime <= 11) {
-                        result.get(j).setmText1(startTime + " AM");
+                        availability.get(j).setmText1(startTime + " AM");
                     }
                     if (tempTime < 11) {
-                        result.get(j).setmText2(result.get(j).getmText2() + " AM");
+                        availability.get(j).setmText2(availability.get(j).getmText2() + " AM");
                     }
                 }
-                return result;
+                return availability;
             } catch (JSONException e) {
                 Log.d("HELLOTHERE", e.getMessage());
             }
         }
         return null;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        selectDrawer();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        deselectDrawer();
+    }
+
+    @Override
+    public void deselectDrawer() {
+        Util.setDrawerItemSelected(getActivity(), R.id.nav_rooms, false);
+    }
+
+    @Override
+    public void selectDrawer() {
+        Util.setDrawerItemSelected(getActivity(), R.id.nav_rooms, true);
     }
 }
