@@ -185,14 +185,38 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
                     Room room = (Room) row;
                     mRoomAvailability = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
                     if (currentlyAvailable()) {
-                        mAllAvailableRooms.add(new DataObject(room.getName(), null, room.getRoomId(), true, "", room.getDescription()));
+                        mAllAvailableRooms.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), true, "", room.getDescription()));
                     }
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
+        ArrayList<DataObject> small = new ArrayList<>();
+        ArrayList<DataObject> med = new ArrayList<>();
+        ArrayList<DataObject> large = new ArrayList<>();
+        ArrayList<DataObject> other = new ArrayList<>();
 
+        for (DataObject obj : mAllAvailableRooms) {
+            if (Pattern.compile(Pattern.quote("small"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
+                small.add(obj);
+            else if (Pattern.compile(Pattern.quote("medium"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
+                med.add(obj);
+            else if (Pattern.compile(Pattern.quote("large"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
+                large.add(obj);
+            else other.add(obj);
+        }
+
+        mAllAvailableRooms.clear(); //remove rooms so they can be re-added in proper order
+        small.get(0).setHeader("Small Group Rooms");
+        med.get(0).setHeader("Medium Group Rooms");
+        large.get(0).setHeader("Large Group Rooms");
+        other.get(0).setHeader("Un-categorized Rooms");
+
+        mAllAvailableRooms.addAll(small);
+        mAllAvailableRooms.addAll(med);
+        mAllAvailableRooms.addAll(large);
+        mAllAvailableRooms.addAll(other);
         mAdapter = new SectionedRecyclerView(mAllAvailableRooms);
         mRecyclerView.setAdapter(mAdapter);
     }
