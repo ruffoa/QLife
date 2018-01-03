@@ -46,18 +46,18 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
     public static final String TAG_PIC = "pic";
     public static final String TAG_ROOM_ID = "room_id";
 
-    private static boolean mReturning = false;
-    private static boolean mShowingAll = true;
+    private boolean mReturning = false;
+    private boolean mShowingAll = true;
 
-    private Button showAvailability;
-    private Button showAll;
+    private Button mAvailableButton;
+    private Button mAllButton;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private View mView;
 
-    private String roomAvailability;
-    private ArrayList<DataObject> mRoomData;
-    private ArrayList<DataObject> result = new ArrayList<>();
+    private String mRoomAvailability;
+    private ArrayList<DataObject> mRoomData = new ArrayList<>();
+    private ArrayList<DataObject> mAllAvailableRooms = new ArrayList<>();
 
     @Nullable
     @Override
@@ -73,25 +73,25 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         setActionbarTitle();
         inflateListView();
 
-        showAvailability = mView.findViewById(R.id.available);
-        showAll = mView.findViewById(R.id.all);
-        showAvailability.setOnClickListener(new View.OnClickListener() {
+        mAvailableButton = mView.findViewById(R.id.available);
+        mAllButton = mView.findViewById(R.id.all);
+        mAvailableButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //toggle selected
                 mShowingAll = false;
-                showAll.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
-                showAvailability.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
+                mAllButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
+                mAvailableButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
                 showAvailableRooms();
             }
         });
-        showAll.setOnClickListener(new View.OnClickListener() {
+        mAllButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //toggle selected
                 mShowingAll = true;
-                showAvailability.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
-                showAll.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
+                mAvailableButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
+                mAllButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
                 showAllRooms();
             }
         });
@@ -183,9 +183,9 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
                 for (DatabaseRow row : data) {
                     GetRoomBookings dibs = new GetRoomBookings(null);
                     Room room = (Room) row;
-                    roomAvailability = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
+                    mRoomAvailability = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
                     if (currentlyAvailable()) {
-                        result.add(new DataObject(room.getName(), null, room.getRoomId(), true, "", room.getDescription()));
+                        mAllAvailableRooms.add(new DataObject(room.getName(), null, room.getRoomId(), true, "", room.getDescription()));
                     }
                 }
             }
@@ -193,7 +193,7 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
             e.printStackTrace();
         }
 
-        mAdapter = new SectionedRecyclerView(result);
+        mAdapter = new SectionedRecyclerView(mAllAvailableRooms);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -215,9 +215,9 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
     }
 
     private boolean currentlyAvailable() {
-        if (roomAvailability != null && roomAvailability.length() > 0) {
+        if (mRoomAvailability != null && mRoomAvailability.length() > 0) {
             try {
-                JSONArray arr = new JSONArray(roomAvailability);
+                JSONArray arr = new JSONArray(mRoomAvailability);
 
                 for (int i = 0; i < arr.length(); i++) {
                     JSONObject roomInfo = arr.getJSONObject(i);
@@ -248,17 +248,18 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         if (mReturning) {
             //check for available/all shown before and restore that state
             if (mShowingAll)
-                showAll.performClick();
+                mAllButton.performClick();
             else {
                 mShowingAll = false;
-                showAll.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
-                showAvailability.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
-                mAdapter = new SectionedRecyclerView(result);
+                mAllButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
+                mAvailableButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
+                mAdapter = new SectionedRecyclerView(mAllAvailableRooms);
                 mRecyclerView.setAdapter(mAdapter);
             }
         } else {
             //show all rooms
-            showAll.performClick();
+            getDayEventData();
+            mAllButton.performClick();
         }
     }
 
