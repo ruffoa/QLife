@@ -104,16 +104,18 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!--sections for introduction screen -->
-    <string name="slide_1_title">Welcome to QLife!</string>
-    <string name="slide_1_desc">The one app for all of your Queen\'s needs</string>
-    <string name="slide_2_title">Class Schedule</string>
-    <string name="slide_2_desc">See when your classes are</string>
-    <string name="slide_3_title">Campus Info</string>
-    <string name="slide_4_title">Information in the Cloud</string>
-    <string name="slide_4_desc">Your information is downloaded when you login. After logging in, you don\'t need an Internet connection!</string>
-    <string name="slide_3_desc">Easily check building hours, food locations and more</string>
-    <string name="slide_5_title">Queens Food</string>
-    <string name="slide_5_desc">Easily pay with QLife at any roomNum on campus</string>
+    <string name="slide_welcome_title">Welcome to QLife!</string>
+    <string name="slide_welcome_text">The one app for all of your Queen\'s needs</string>
+    <string name="slide_schedule_title">Class Schedule</string>
+    <string name="slide_schedule_text">See when your classes are</string>
+    <string name="slide_campus_title">Campus Info</string>
+    <string name="slide_cloud_title">Information in the Cloud</string>
+    <string name="slide_cloud_text">Your information is downloaded when you login. After logging in, you don\'t need an Internet connection!</string>
+    <string name="slide_campus_text">Easily check building hours, food locations and more</string>
+    <string name="slide_food_title">Queens Food</string>
+    <string name="slide_food_text">Easily pay with QLife at any roomNum on campus</string>
+    <string name="slide_rooms_title">ILC Rooms</string>
+    <string name="slide_rooms_text">Find information on rooms and see which are currently available! (You will need internet for this)</string>
 
     <!--paragraphs in app-->
     <string name="about_app">Welcome to QLife, thanks for downloading!\n\n
