@@ -247,9 +247,10 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         //check if coming back to fragment on a back press
         if (mReturning) {
             //check for available/all shown before and restore that state
-            if (mShowingAll)
+            if (mShowingAll) {
+                mAllAvailableRooms.clear();
                 mAllButton.performClick();
-            else {
+            } else {
                 mShowingAll = false;
                 mAllButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
                 mAvailableButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
@@ -258,6 +259,7 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
             }
         } else {
             //show all rooms
+            mAllAvailableRooms.clear();
             getDayEventData();
             mAllButton.performClick();
         }
