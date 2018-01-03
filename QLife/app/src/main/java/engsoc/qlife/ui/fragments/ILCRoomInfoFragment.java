@@ -1,9 +1,5 @@
 package engsoc.qlife.ui.fragments;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
@@ -50,19 +46,23 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
     public static final String TAG_PIC = "pic";
     public static final String TAG_ROOM_ID = "room_id";
 
+    private static boolean mReturning = false;
+    private static boolean mShowingAll = true;
+
+    private Button showAvailability;
+    private Button showAll;
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private View mView;
+
     private String roomAvailability;
-    private View mProgressView;
-    private ProgressDialog mProgressDialog;
     private ArrayList<DataObject> mRoomData;
+    private ArrayList<DataObject> result = new ArrayList<>();
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_ilcroom_info, container, false);
-        mProgressView = mView.findViewById(R.id.ilcRoomInf_progress);
         mRecyclerView = mView.findViewById(R.id.ilcRoomInfoRecyclerView);
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext());
@@ -73,13 +73,13 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         setActionbarTitle();
         inflateListView();
 
-        final Button showAvailability = mView.findViewById(R.id.available);
-        final Button showAll = mView.findViewById(R.id.all);
-        showAll.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark))); //start with all shown
+        showAvailability = mView.findViewById(R.id.available);
+        showAll = mView.findViewById(R.id.all);
         showAvailability.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //toggle selected
+                mShowingAll = false;
                 showAll.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
                 showAvailability.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
                 showAvailableRooms();
@@ -89,6 +89,7 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
             @Override
             public void onClick(View view) {
                 //toggle selected
+                mShowingAll = true;
                 showAvailability.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
                 showAll.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
                 showAllRooms();
@@ -135,7 +136,6 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
                         .commit();
             }
         });
-        showAllRooms();
         return mView;
     }
 
@@ -173,33 +173,13 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         mRecyclerView.setAdapter(mAdapter);
     }
 
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-    private void showProgress(final boolean show) {
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-        mProgressView.animate().setDuration(shortAnimTime).alpha(
-                show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            }
-        });
-    }
-
     private void showAvailableRooms() {
-        mProgressView.setVisibility(View.VISIBLE);
-
         RoomManager roomInf = new RoomManager(this.getContext());
-        ArrayList<DataObject> result = new ArrayList<>();
         ArrayList<DatabaseRow> data = roomInf.getTable();
         Calendar cal = Calendar.getInstance();
 
         try {
             if (data != null && data.size() > 0) {
-                showProgress(true);
-                mProgressView.setVisibility(View.VISIBLE);
-
                 for (DatabaseRow row : data) {
                     GetRoomBookings dibs = new GetRoomBookings(null);
                     Room room = (Room) row;
@@ -209,12 +189,10 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
                     }
                 }
             }
-
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
 
-        showProgress(false);
         mAdapter = new SectionedRecyclerView(result);
         mRecyclerView.setAdapter(mAdapter);
     }
@@ -266,12 +244,35 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
     public void onResume() {
         super.onResume();
         selectDrawer();
+        //check if coming back to fragment on a back press
+        if (mReturning) {
+            //check for available/all shown before and restore that state
+            if (mShowingAll)
+                showAll.performClick();
+            else {
+                mShowingAll = false;
+                showAll.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
+                showAvailability.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
+                mAdapter = new SectionedRecyclerView(result);
+                mRecyclerView.setAdapter(mAdapter);
+            }
+        } else {
+            //show all rooms
+            showAll.performClick();
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
         deselectDrawer();
+        mReturning = true; //will come back on a back button press - will be overridden by onDestroy if necessary
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mReturning = false; //won't come back to this instance
     }
 
     @Override
@@ -293,19 +294,10 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
             GetRooms dibs = new GetRooms(new AsyncTaskObserver() {
                 @Override
                 public void onTaskCompleted(Object obj) {
-                    //expect null to be passed
-                    showProgress(false);
-                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void beforeTaskStarted() {
-                    showProgress(true);
-                    mProgressDialog = new ProgressDialog(context);
-                    mProgressDialog.setMessage("Downloading cloud database. Please wait...");
-                    mProgressDialog.setIndeterminate(false);
-                    mProgressDialog.setCancelable(false);
-                    mProgressDialog.show();
                 }
 
                 @Override
