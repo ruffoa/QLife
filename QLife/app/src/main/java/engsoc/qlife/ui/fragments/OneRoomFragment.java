@@ -35,10 +35,10 @@ import engsoc.qlife.utility.async.DownloadImageTask;
  * Created by Alex on 8/21/2017.
  * Fragment that shows when each room is available.
  */
-public class RoomInformationFragment extends Fragment implements IQLDrawerItem {
+public class OneRoomFragment extends Fragment implements IQLDrawerItem {
     private String mRoomName, mRoomPicUrl;
     private int mRoomID;
-    private String roomAvailability;
+    private String mBookedRooms;
     private Calendar cal = Calendar.getInstance();
     private View mView;
     private ImageView mImageView;
@@ -47,14 +47,14 @@ public class RoomInformationFragment extends Fragment implements IQLDrawerItem {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            mRoomName = bundle.getString(ILCRoomInfoFragment.TAG_TITLE);
-            mRoomPicUrl = bundle.getString(ILCRoomInfoFragment.TAG_PIC);
-            mRoomID = bundle.getInt(ILCRoomInfoFragment.TAG_ROOM_ID);
+            mRoomName = bundle.getString(RoomsFragment.TAG_TITLE);
+            mRoomPicUrl = bundle.getString(RoomsFragment.TAG_PIC);
+            mRoomID = bundle.getInt(RoomsFragment.TAG_ROOM_ID);
         }
 
         GetRoomBookings dibs = new GetRoomBookings(null);
         try {
-            roomAvailability = dibs.execute(mRoomID, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
+            mBookedRooms = dibs.execute(mRoomID, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
@@ -100,26 +100,26 @@ public class RoomInformationFragment extends Fragment implements IQLDrawerItem {
      * Adds the available room times to the fragment.
      */
     private void setAvailableTimes() {
-        ArrayList<DataObject> availability = getDayAvailability();
-        if (availability == null || availability.isEmpty()) {
+        ArrayList<DataObject> availableTimes = getDayAvailability();
+        if (availableTimes == null || availableTimes.isEmpty()) {
             mView.findViewById(R.id.NoAvailability).setVisibility(View.VISIBLE);
         } else {
             mView.findViewById(R.id.NoAvailability).setVisibility(View.GONE);
             //know at least one available slot, can get it
-            String firstStart = availability.get(0).getmText1();
-            String firstEnd = availability.get(0).getmText2();
+            String firstStart = availableTimes.get(0).getmText1();
+            String firstEnd = availableTimes.get(0).getmText2();
 
-            if (availability.size() == 1) {
+            if (availableTimes.size() == 1) {
                 //only one slot, don't try to combine multiple
                 addAvailableTime(firstStart, firstEnd);
             } else {
                 //try to combine overlapping available slots
                 String start = firstStart;
                 String end = firstEnd;
-                for (int i = 1; i < availability.size(); i++) {
-                    String nextStart = availability.get(i).getmText1();
-                    String nextEnd = availability.get(i).getmText2();
-                    if (isSameTime(end, nextStart)) {
+                for (int i = 1; i < availableTimes.size(); i++) {
+                    String nextStart = availableTimes.get(i).getmText1();
+                    String nextEnd = availableTimes.get(i).getmText2();
+                    if (end.equals(nextStart)) {
                         //overlap, so don't add row and move along
                         end = nextEnd;
                     } else {
@@ -128,7 +128,7 @@ public class RoomInformationFragment extends Fragment implements IQLDrawerItem {
                         start = nextStart;
                         end = nextEnd;
                     }
-                    if (i == availability.size() - 1) {
+                    if (i == availableTimes.size() - 1) {
                         //at end of loop, print out current slot (next start/end)
                         addAvailableTime(start, end);
                     }
@@ -153,21 +153,6 @@ public class RoomInformationFragment extends Fragment implements IQLDrawerItem {
     }
 
     /**
-     * Function that determines if two availability Strings have the same time.
-     * The availability strings have From or To with them, so this is needed.
-     *
-     * @param s1 String one. Usually the starting time.
-     * @param s2 String two. Usually the ending time.
-     * @return True if the two have the same time, else false.
-     */
-    private boolean isSameTime(String s1, String s2) {
-        //times are after the first space, so check they are equal after the first space
-        s1 = s1.substring(s1.indexOf(' ') + 1);
-        s2 = s2.substring(s2.indexOf(' ') + 1);
-        return s1.equals(s2);
-    }
-
-    /**
      * Displays the availability of the given ILC room. Currently puts each available hour slot
      * as a card in a recycler view.
      *
@@ -179,9 +164,9 @@ public class RoomInformationFragment extends Fragment implements IQLDrawerItem {
             availability.add(new DataObject((i + 7) + ":" + 30, (i + 8) + ":" + 30));
         }
 
-        if (roomAvailability != null && roomAvailability.length() > 0) {
+        if (mBookedRooms != null && mBookedRooms.length() > 0) {
             try {
-                JSONArray arr = new JSONArray(roomAvailability);
+                JSONArray arr = new JSONArray(mBookedRooms);
                 for (int i = 0; i < arr.length(); i++) {
                     //find times room is booked
                     JSONObject roomInfo = arr.getJSONObject(i);

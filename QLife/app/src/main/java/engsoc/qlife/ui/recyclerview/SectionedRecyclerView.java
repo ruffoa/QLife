@@ -12,7 +12,7 @@ import engsoc.qlife.R;
 
 /**
  * Created by Alex Ruffo on 8/30/2017.
- * * Class that defines the adapter for the ILCRoomInfoFragment RecyclerView that allows for sectioned elements.
+ * * Class that defines the adapter for the RoomsFragment RecyclerView that allows for sectioned elements.
  */
 
 public class SectionedRecyclerView extends RecyclerView.Adapter<SectionedRecyclerView.DataObjectHolder> {

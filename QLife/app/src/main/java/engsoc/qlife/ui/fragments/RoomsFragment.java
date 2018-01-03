@@ -41,7 +41,7 @@ import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.Util;
 
-public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragment {
+public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragment {
     public static final String TAG_TITLE = "room_title";
     public static final String TAG_PIC = "pic";
     public static final String TAG_ROOM_ID = "room_id";
@@ -127,7 +127,7 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
                 bundle.putString(TAG_PIC, pic);
 
                 String cardName = card.getTransitionName();
-                RoomInformationFragment nextFrag = new RoomInformationFragment();
+                OneRoomFragment nextFrag = new OneRoomFragment();
                 nextFrag.setArguments(bundle);
                 FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
                 fragmentManager.beginTransaction().addToBackStack(null)
