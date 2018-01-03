@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -72,17 +73,24 @@ public class ILCRoomInfoFragment extends Fragment implements IQLActionbarFragmen
         setActionbarTitle();
         inflateListView();
 
-        Button showAvailability = mView.findViewById(R.id.available);
+        final Button showAvailability = mView.findViewById(R.id.available);
+        final Button showAll = mView.findViewById(R.id.all);
+        showAll.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark))); //start with all shown
         showAvailability.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //toggle selected
+                showAll.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
+                showAvailability.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
                 showAvailableRooms();
             }
         });
-        Button showAll = mView.findViewById(R.id.all);
         showAll.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                //toggle selected
+                showAvailability.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
+                showAll.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
                 showAllRooms();
             }
         });
