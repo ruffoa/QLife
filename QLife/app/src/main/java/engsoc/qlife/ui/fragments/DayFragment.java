@@ -2,6 +2,7 @@ package engsoc.qlife.ui.fragments;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -13,27 +14,28 @@ import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.annotation.Nullable;
 import android.widget.Button;
 import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 import engsoc.qlife.R;
 import engsoc.qlife.activities.MainTabActivity;
 import engsoc.qlife.database.local.DatabaseRow;
-import engsoc.qlife.interfaces.OnHomePressedListener;
-import engsoc.qlife.utility.HomeButtonListener;
-import engsoc.qlife.utility.Util;
-import engsoc.qlife.ui.recyclerview.DataObject;
-import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
+import engsoc.qlife.database.local.courses.Course.Course;
+import engsoc.qlife.database.local.courses.Course.CourseManager;
 import engsoc.qlife.database.local.courses.OneClass.OneClass;
 import engsoc.qlife.database.local.courses.OneClass.OneClassManager;
 import engsoc.qlife.interfaces.IQLActionbarFragment;
 import engsoc.qlife.interfaces.IQLDrawerItem;
 import engsoc.qlife.interfaces.IQLListFragmentWithChild;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import engsoc.qlife.interfaces.OnHomePressedListener;
+import engsoc.qlife.ui.recyclerview.DataObject;
+import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
+import engsoc.qlife.utility.HomeButtonListener;
+import engsoc.qlife.utility.Util;
 
 /**
  * Fragment that displays the classes for a given day. When a class is clicked, it starts
@@ -41,9 +43,10 @@ import java.util.List;
  */
 public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragmentWithChild {
 
-    public static final String TAG_TITLE = "event_title";
+    public static final String TAG_CODE = "event_code";
+    public static final String TAG_NAME = "event_name";
     public static final String TAG_DATE = "date";
-    public static final String TAG_LOC = "event_locat";
+    public static final String TAG_LOC = "event_location";
 
     private static int mInstances = 0;
     private static SparseIntArray mArray = new SparseIntArray();
@@ -56,6 +59,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
     private TextView mDateText;
     private String mDateString;
     private Calendar mCalendar;
+    private ArrayList<DataObject> mResult = new ArrayList<>();
 
     @Nullable
     @Override
@@ -63,7 +67,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         mView = inflater.inflate(R.layout.fragment_day, container, false);
         setActionbarTitle();
 
-        mDateText = (TextView) mView.findViewById(R.id.date);
+        mDateText = mView.findViewById(R.id.date);
         mCalendar = Calendar.getInstance();
         inflateListView();
         onListItemChosen(null); //this is special case that doesn't need view - RecyclerView not ListView here
@@ -116,22 +120,31 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         changeDate(mArray.get(mInstances, 0)); //account for day changed before moved fragments
     }
 
+    /**
+     * Helper method that sets the date of the day fragment. Used to adjust the shown day
+     * when the user comes back to this fragment from another one, after previously changing the day.
+     *
+     * @param numChange The number of days to change by. Negative numbers means go backwards in time.
+     */
     public void changeDate(int numChange) {
+        mResult.clear();
         mCalendar.add(Calendar.DAY_OF_YEAR, numChange);
         mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
         mRecyclerView.setAdapter(mAdapter);
     }
 
     public ArrayList<DataObject> getDayEventData(Calendar calendar) {
-        TextView noClassMessage = (TextView) mView.findViewById(R.id.no_class_message);
+        TextView noClassMessage = mView.findViewById(R.id.no_class_message);
         noClassMessage.setVisibility(View.GONE); //updates day view when go to new day - may have class
         OneClassManager oneClassManager = new OneClassManager(this.getContext());
+        CourseManager courseManager = new CourseManager(this.getContext());
 
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
+        List<String> detailsList = new ArrayList<>();
         List<String> loc = new ArrayList<>();
         List<String> time = new ArrayList<>();
-        List<String> des = new ArrayList<>();
-        ArrayList<DataObject> result = new ArrayList<DataObject>();
+        List<Long> classID = new ArrayList<>();
+        List<Boolean> hasName = new ArrayList<>();
 
         ArrayList<DatabaseRow> data = oneClassManager.getTable();
 
@@ -156,18 +169,21 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
 
 
             if (year == calYear && month == calMon && calDay == day) { // if the day matches add the event
-                list.add(oneClass.getType());
                 loc.add(oneClass.getRoomNum());
                 time.add(oneClass.getStartTime() + "-" + oneClass.getEndTime());
-                des.add(oneClass.getType());
-
+                classID.add(oneClass.getCourseID());
+                DatabaseRow courseRow = courseManager.getRow(oneClass.getCourseID());
+                Course course = (Course) courseRow;
+                hasName.add(course.isSetName());
+                list.add(course.getCode());
+                detailsList.add(course.getName());
                 eventsToday = true;
             }
         }
 
         if (!eventsToday) {
             noClassMessage.setVisibility(View.VISIBLE);
-            return result;
+            return mResult;
         }
 
         int startHour;
@@ -179,9 +195,10 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
         int endMin = 0;
         for (int i = 0; i < list.size(); i++) {
 
-            if (list.get(i) == ("Nothing is happening today")) {
-                result.add(new DataObject(list.get(i), f.toString()));
+            if ("Nothing is happening today".equals(list.get(i))) {
+                mResult.add(new DataObject(list.get(i), f.toString(), detailsList.get(i)));
                 list.remove(i);
+                detailsList.remove(i);
                 i -= 1;
 
             } else {
@@ -222,22 +239,30 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 String amPMTime;
                 if (minHour > 12)
                     amPMTime = (minHour - 12) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
+                else if (minHour < 12 && endHour >= 12)
+                    if (endHour == 12)
+                        amPMTime = (minHour) + ":" + minMin + " AM-" + (endHour) + ":" + endMin + " PM";
+                    else
+                        amPMTime = (minHour) + ":" + minMin + " AM-" + (endHour - 12) + ":" + endMin + " PM";
                 else if (endHour > 12)
                     amPMTime = (minHour) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
                 else amPMTime = time.get(posSmall) + " AM";
 
-                result.add(new DataObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall)));
+                mResult.add(new DataObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall), detailsList.get(posSmall)));
                 list.remove(posSmall);
                 time.remove(posSmall);
                 loc.remove(posSmall);
-                des.remove(posSmall);
+                classID.remove(posSmall);
+                hasName.remove(posSmall);
+                detailsList.remove(posSmall);
                 i = -1;
             }
         }
         if (list.size() > 0) {
-            result.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + des.get(0)));
+            mResult.add(new DataObject(list.get(0), time.get(0) + " at: " + loc.get(0) + " description: " + list.get(0),
+                    classID.get(posSmall), hasName.get(posSmall), detailsList.get(0)));
         }
-        return result;
+        return mResult;
     }
 
     @Override
@@ -263,14 +288,14 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
             mCalendar.set(Calendar.YEAR, getArguments().getInt(MonthFragment.TAG_YEAR));
         }
 
-        mRecyclerView = (RecyclerView) mView.findViewById(R.id.my_recycler_view);
+        mRecyclerView = mView.findViewById(R.id.my_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext());
         mRecyclerView.setLayoutManager(layoutManager);
         mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
         mRecyclerView.setAdapter(mAdapter);
 
-        Button nextButton = (Button) mView.findViewById(R.id.next);
+        Button nextButton = mView.findViewById(R.id.next);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -278,12 +303,23 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                 mTotalDaysChange += 1;
             }
         });
-        Button prevButton = (Button) mView.findViewById(R.id.prev);
+        Button prevButton = mView.findViewById(R.id.prev);
         prevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 changeDate(-1);
                 mTotalDaysChange += -1;
+            }
+        });
+        Button todayButton = mView.findViewById(R.id.today);
+        todayButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mResult.clear();
+                mCalendar = Calendar.getInstance(); //current date
+                mAdapter = new RecyclerViewAdapter(getDayEventData(mCalendar));
+                mRecyclerView.setAdapter(mAdapter);
+                mTotalDaysChange = 0;
             }
         });
     }
@@ -296,16 +332,16 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
             public void onItemClick(int position, View v) {
                 DataObject data = ((RecyclerViewAdapter) mAdapter).getItem(position);
 
-                CardView card = (CardView) mView.findViewById(R.id.card_view);
+                CardView card = mView.findViewById(R.id.card_view);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     card.setTransitionName("transistion_event_info" + position);
                 }
 
                 String cardName = card.getTransitionName();
                 EventInfoFragment nextFrag = new EventInfoFragment();
-
                 Bundle bundle = new Bundle();
-                bundle.putString(TAG_TITLE, data.getmText1());
+                bundle.putString(TAG_CODE, data.getmText1());
+                bundle.putString(TAG_NAME, data.getmText3());
                 bundle.putString(TAG_LOC, data.getmText2());
                 bundle.putString(TAG_DATE, mDateString);
                 nextFrag.setArguments(bundle);

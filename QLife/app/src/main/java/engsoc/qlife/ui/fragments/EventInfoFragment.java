@@ -35,7 +35,7 @@ import engsoc.qlife.interfaces.IQLMapView;
 
 public class EventInfoFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLMapView, IQLListItemDetailsFragment {
 
-    private String mEventTitle, mEventLoc, mDate;
+    private String mEventTitle, mEventLoc, mDate, mDetails;
     private Bundle mSavedInstanceState;
     private View myView;
     private MapView mMapView;
@@ -103,7 +103,7 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
 
     @Override
     public void setMapView() {
-        mMapView = (MapView) myView.findViewById(R.id.event_map);
+        mMapView = myView.findViewById(R.id.event_map);
         mMapView.onCreate(mSavedInstanceState);
         mMapView.onResume();
 
@@ -151,16 +151,23 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
     public void addDataToViews() {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            mEventTitle = bundle.getString(DayFragment.TAG_TITLE);
+            mEventTitle = bundle.getString(DayFragment.TAG_CODE);
+            mDetails = bundle.getString(DayFragment.TAG_NAME);
             mEventLoc = bundle.getString(DayFragment.TAG_LOC);
             mDate = bundle.getString(DayFragment.TAG_DATE);
         }
 
-        TextView eventDate = (TextView) myView.findViewById(R.id.EventDate);
+        TextView eventDate = myView.findViewById(R.id.EventDate);
         eventDate.setText(mDate);
-        TextView eventLoc = (TextView) myView.findViewById(R.id.EventLoc);
+        TextView eventLoc = myView.findViewById(R.id.EventLoc);
         eventLoc.setText(mEventLoc);
-        TextView eventName = (TextView) myView.findViewById(R.id.EventName);
+        TextView eventName = myView.findViewById(R.id.EventName);
         eventName.setText(mEventTitle);
+        TextView eventDetails = myView.findViewById(R.id.EventDetails);
+        if (mDetails != null) {
+            eventDetails.setText(mDetails);
+        } else {
+            eventDetails.setVisibility(View.GONE);
+        }
     }
 }

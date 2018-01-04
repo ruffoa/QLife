@@ -18,10 +18,11 @@
     <string name="fragment_student_tools">Student Tools</string>
     <string name="fragment_emerg_contacts">Emergency Contacts</string>
     <string name="fragment_eng_contacts">Engineering Contacts</string>
+    <string name="fragment_ilc_rooms">ILC Rooms</string>
 
     <!--Short text in app-->
     <string name="brought_by">Brought to you by</string>
-    <string name="it_team">Queen\'s Engineering Society IT Team</string>
+    <string name="software_team">Queen\'s Engineering Society Software Development Team</string>
     <string name="current_user">Current User:</string>
     <string name="login_date">Last Login:</string>
     <string name="has_food">Building has food: </string>
@@ -56,6 +57,9 @@
     <!--Button text-->
     <string name="play_again">Play Again</string>
     <string name="next">NEXT</string>
+    <string name="today">TODAY</string>
+    <string name="available">AVAILABLE</string>
+    <string name="all">ALL</string>
     <string name="skip">SKIP</string>
     <string name="start">GOT IT</string>
     <string name="counselling_services">Counselling Services</string>
@@ -82,8 +86,13 @@
     <string name="counselling_url">http://queensu.ca/studentwellness/counselling-services</string>
     <string name="career_url">http://careers.queensu.ca/students</string>
     <string name="suggestions_url">http://qtap.engsoc.queensu.ca/improvements_form.html</string>
-    <string name="db_get_database">http://qtap.engsoc.queensu.ca/database/get_database.php</string>
     <string name="suggestions_accepted_url">http://qtap.engsoc.queensu.ca/submit_improvement.php</string>
+
+    <!--ILC Room Strings-->
+    <string name="ilc_room">ILC ROOM&#160;</string>
+    <string name="current_availability">Availability for &#160;</string>
+    <string name="ilc_room_pic">Room picture</string>
+    <string name="no_rooms_available">No rooms are available</string>
 
     <!-- other strings -->
     <string name="ellipses">&#8226;</string>
@@ -95,16 +104,18 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <!--sections for introduction screen -->
-    <string name="slide_1_title">Welcome to QLife!</string>
-    <string name="slide_1_desc">The one app for all of your Queen\'s needs</string>
-    <string name="slide_2_title">Class Schedule</string>
-    <string name="slide_2_desc">See when your classes are</string>
-    <string name="slide_3_title">Campus Info</string>
-    <string name="slide_4_title">Information in the Cloud</string>
-    <string name="slide_4_desc">Your information is downloaded when you login. After logging in, you don\'t need an Internet connection!</string>
-    <string name="slide_3_desc">Easily check building hours, food locations and more</string>
-    <string name="slide_5_title">Queens Food</string>
-    <string name="slide_5_desc">Easily pay with QLife at any roomNum on campus</string>
+    <string name="slide_welcome_title">Welcome to QLife!</string>
+    <string name="slide_welcome_text">The one app for all of your Queen\'s needs</string>
+    <string name="slide_schedule_title">Class Schedule</string>
+    <string name="slide_schedule_text">See when your classes are</string>
+    <string name="slide_campus_title">Campus Info</string>
+    <string name="slide_cloud_title">Information in the Cloud</string>
+    <string name="slide_cloud_text">Your information is downloaded when you login. After logging in, you don\'t need an Internet connection!</string>
+    <string name="slide_campus_text">Easily check building hours, food locations and more</string>
+    <string name="slide_food_title">Queens Food</string>
+    <string name="slide_food_text">Easily pay with QLife at any roomNum on campus</string>
+    <string name="slide_rooms_title">ILC Rooms</string>
+    <string name="slide_rooms_text">Find information on rooms and see which are currently available! (You will need internet for this)</string>
 
     <!--paragraphs in app-->
     <string name="about_app">Welcome to QLife, thanks for downloading!\n\n
@@ -112,7 +123,7 @@ When you login to Solus, your class calendar is downloaded and added to the app.
 If you swipe from the left side, a menu opens up with information about Queens and the campus. You can also choose the month view, where you can pick a specific day to view your class schedule.\n\n
 Your class calendar and other information isn\'t updated unless you log out and log back in again. To log out, go to the settings page. On this page you can also see the date your calendar was last synced.\n\n
 Don\'t worry about your data! Only your NetID is automatically stored in the phone, and all data is in an encrypted location only accessible from this app. Also, when you logout, your information is deleted.\n\n
-Shout out to the 2016-17 Engineering Society IT Team for starting this project! It\'s not a finished product, so if have any ideas on how to improve it please use the Review page!</string>
+Shout out to the 2016-17 Engineering Society Software Development Team for starting this project! It\'s not a finished product, so if have any ideas on how to improve it please use the Review page!</string>
 
     <string name="ask_suggestions">If you liked the app, please use the button below to review it on the Play Store!\n\nIf you have any suggestions for improvements, please feel free to email
     doit@engsoc.queensu.ca or submit a suggestion using the button below!</string>

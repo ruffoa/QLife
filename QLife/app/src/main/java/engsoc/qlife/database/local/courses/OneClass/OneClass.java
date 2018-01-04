@@ -21,6 +21,7 @@ public class OneClass extends DatabaseRow {
     public static final String COLUMN_MONTH = "month";
     public static final String COLUMN_YEAR = "year";
     public static final String COLUMN_COURSE_ID = "courseID";
+    public static final String COLUMN_HAS_NAME = "hasName";
 
     //column number each field ends up in
     public static final int CLASS_TYPE_POS = 1;
@@ -32,6 +33,7 @@ public class OneClass extends DatabaseRow {
     public static final int MONTH_POS = 7;
     public static final int YEAR_POS = 8;
     public static final int COURSE_ID_POS = 9;
+    public static final int COURSE_HAS_NAME_POS = 10;
 
     //fields in database
     private String type;
@@ -43,6 +45,7 @@ public class OneClass extends DatabaseRow {
     private String month;
     private String year;
     private long courseID;
+    private String hasName;
 
     public OneClass(int id, String type, String roomNum, String startTime, String endTime, String day, String month, String year) {
         super(id);
@@ -54,6 +57,19 @@ public class OneClass extends DatabaseRow {
         this.month = month;
         this.year = year;
     }
+
+    public OneClass(int id, String type, String roomNum, String startTime, String endTime, String day, String month, String year, String hasName) {
+        super(id);
+        this.type = type;
+        this.roomNum = roomNum;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.day = day;
+        this.month = month;
+        this.year = year;
+        this.hasName = hasName;
+    }
+
 
     //getters and setters
     public long getCourseID() {
@@ -68,14 +84,26 @@ public class OneClass extends DatabaseRow {
         this.buildingID = buildingID;
     }
 
+    public void setHasName(String hasName) {
+        this.hasName = hasName;
+    }
+
+    public String getHasName() {
+        return hasName;
+    }
+
     public String getType() {
         return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public long getBuildingID() {
         return buildingID;
     }
-    
+
     public String getRoomNum() {
         return roomNum;
     }

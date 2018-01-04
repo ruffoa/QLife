@@ -34,6 +34,11 @@
                     android:id="@+id/nav_food"
                     android:icon="@mipmap/ic_food"
                     android:title="@string/food"/>
+                <item
+                    android:id="@+id/nav_rooms"
+                    android:icon="@mipmap/ic_booking"
+                    android:title="@string/fragment_ilc_rooms"/>
+
             </menu>
         </item>
         <item android:title="@string/information_section">

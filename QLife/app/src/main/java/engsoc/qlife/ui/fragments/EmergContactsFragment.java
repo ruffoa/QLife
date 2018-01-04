@@ -1,6 +1,5 @@
 package engsoc.qlife.ui.fragments;
 
-
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -68,16 +67,26 @@ public class EmergContactsFragment extends ListFragment implements IQLActionbarF
         ArrayList<HashMap<String, String>> emergContactsList = new ArrayList<>();
         ArrayList<DatabaseRow> contacts = (new EmergencyContactsManager(getActivity().getApplicationContext())).getTable();
         for (DatabaseRow row : contacts) {
-            EmergencyContact contact = (EmergencyContact) row;
-            HashMap<String, String> map = new HashMap<>();
-            map.put(EmergencyContact.COLUMN_NAME, contact.getName());
-            map.put(EmergencyContact.COLUMN_PHONE_NUMBER, contact.getPhoneNumber());
-            map.put(EmergencyContact.COLUMN_DESCRIPTION, contact.getDescription());
-            emergContactsList.add(map);
+            emergContactsList.add(packEmergContactsMap(row));
         }
         ListAdapter adapter = new SimpleAdapter(getActivity().getApplicationContext(), emergContactsList,
                 R.layout.emerg_contacts_list_item, new String[]{EmergencyContact.COLUMN_NAME, EmergencyContact.COLUMN_PHONE_NUMBER,
                 EmergencyContact.COLUMN_DESCRIPTION}, new int[]{R.id.name, R.id.number, R.id.description});
         setListAdapter(adapter);
+    }
+
+    /**
+     * Helper method that packs a hash-map containing a key and value for each piece of contact information.
+     *
+     * @param row The contact information to pack for.
+     * @return The packed map.
+     */
+    private static HashMap<String, String> packEmergContactsMap(DatabaseRow row) {
+        EmergencyContact contact = (EmergencyContact) row;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(EmergencyContact.COLUMN_NAME, contact.getName());
+        map.put(EmergencyContact.COLUMN_PHONE_NUMBER, contact.getPhoneNumber());
+        map.put(EmergencyContact.COLUMN_DESCRIPTION, contact.getDescription());
+        return map;
     }
 }
