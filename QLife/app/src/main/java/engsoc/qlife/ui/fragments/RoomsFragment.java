@@ -135,15 +135,15 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
                 @Override
                 public void onTaskCompleted(Object obj) {
                     dialog.dismiss();
-                    if (obj != null && obj.getClass() == SparseArray.class) {
+                    if (obj != null && obj instanceof SparseArray) {
                         SparseArray<String> roomAvailability = (SparseArray<String>) obj;
                         for (DatabaseRow data : rooms) {
                             Room room = (Room) data;
                             if (currentlyAvailable(roomAvailability.get((int) room.getId())))
                                 mAllAvailableRooms.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), true, "", room.getDescription()));
                         }
-                        ArrayList<DataObject> sortedAvailableRooms = sortRooms(mAllAvailableRooms);
-                        setAdapter(sortedAvailableRooms);
+                        mAllAvailableRooms = sortRooms(mAllAvailableRooms);
+                        setAdapter(mAllAvailableRooms);
                     } else {
                         mAllAvailableRooms.add(new DataObject("Data could not be retrieved", null));
                         setAdapter(mAllAvailableRooms);
