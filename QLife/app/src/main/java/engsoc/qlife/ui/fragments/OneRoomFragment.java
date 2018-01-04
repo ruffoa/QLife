@@ -23,7 +23,8 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 import engsoc.qlife.R;
-import engsoc.qlife.database.dibs.GetRoomBookings;
+import engsoc.qlife.database.dibs.GetAllRoomBookings;
+import engsoc.qlife.database.dibs.GetOneRoomBooking;
 import engsoc.qlife.interfaces.AsyncTaskObserver;
 import engsoc.qlife.interfaces.IQLDrawerItem;
 import engsoc.qlife.ui.recyclerview.DataObject;
@@ -52,7 +53,7 @@ public class OneRoomFragment extends Fragment implements IQLDrawerItem {
             mRoomID = bundle.getInt(RoomsFragment.TAG_ROOM_ID);
         }
 
-        GetRoomBookings dibs = new GetRoomBookings(null);
+        GetOneRoomBooking dibs = new GetOneRoomBooking(null);
         try {
             mBookedRooms = dibs.execute(mRoomID, cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
         } catch (InterruptedException | ExecutionException e) {

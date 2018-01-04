@@ -1,5 +1,6 @@
 package engsoc.qlife.ui.fragments;
 
+import android.app.ProgressDialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import engsoc.qlife.R;
-import engsoc.qlife.database.dibs.GetRoomBookings;
+import engsoc.qlife.database.dibs.GetAllRoomBookings;
 import engsoc.qlife.database.dibs.GetRooms;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.rooms.Room;
@@ -44,6 +46,9 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
     public static final String TAG_TITLE = "room_title";
     public static final String TAG_PIC = "pic";
     public static final String TAG_ROOM_ID = "room_id";
+    public static final int DAY_POS = 0;
+    public static final int MONTH_POS = 1;
+    public static final int YEAR_POS = 2;
 
     private boolean mReturning = false;
     private boolean mShowingAll = true;
@@ -92,10 +97,14 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
             else other.add(room);
         }
 
-        small.get(0).setHeader("Small Group Rooms");
-        med.get(0).setHeader("Medium Group Rooms");
-        large.get(0).setHeader("Large Group Rooms");
-        other.get(0).setHeader("Un-categorized Rooms");
+        if (small.size() > 0)
+            small.get(0).setHeader("Small Group Rooms");
+        if (med.size() > 0)
+            med.get(0).setHeader("Medium Group Rooms");
+        if (large.size() > 0)
+            large.get(0).setHeader("Large Group Rooms");
+        if (other.size() > 0)
+            other.get(0).setHeader("Un-categorized Rooms");
 
         res.addAll(small);
         res.addAll(med);
@@ -117,25 +126,43 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
      */
     private void showAvailableRooms() {
         RoomManager roomManager = new RoomManager(this.getContext());
-        ArrayList<DatabaseRow> roomData = roomManager.getTable();
+        final ArrayList<DatabaseRow> rooms = roomManager.getTable();
         Calendar cal = Calendar.getInstance();
 
-        try {
-            if (roomData != null && roomData.size() > 0) {
-                for (DatabaseRow row : roomData) {
-                    GetRoomBookings dibs = new GetRoomBookings(null);
-                    Room room = (Room) row;
-                    String roomAvailability = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
-                    if (currentlyAvailable(roomAvailability)) {
-                        mAllAvailableRooms.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), true, "", room.getDescription()));
+        if (rooms != null && rooms.size() > 0) {
+            final ProgressDialog dialog = new ProgressDialog(getContext());
+            GetAllRoomBookings dibs = new GetAllRoomBookings(rooms, new AsyncTaskObserver() {
+                @Override
+                public void onTaskCompleted(Object obj) {
+                    dialog.dismiss();
+                    if (obj != null && obj.getClass() == SparseArray.class) {
+                        SparseArray<String> roomAvailability = (SparseArray<String>) obj;
+                        for (DatabaseRow data : rooms) {
+                            Room room = (Room) data;
+                            if (currentlyAvailable(roomAvailability.get((int) room.getId())))
+                                mAllAvailableRooms.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), true, "", room.getDescription()));
+                        }
+                        ArrayList<DataObject> sortedAvailableRooms = sortRooms(mAllAvailableRooms);
+                        setAdapter(sortedAvailableRooms);
+                    } else {
+                        mAllAvailableRooms.add(new DataObject("Data could not be retrieved", null));
+                        setAdapter(mAllAvailableRooms);
                     }
                 }
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+
+                @Override
+                public void beforeTaskStarted() {
+                    dialog.setMessage("Please Wait...");
+                    dialog.setCancelable(false);
+                    dialog.show();
+                }
+
+                @Override
+                public void duringTask(Object obj) {
+                }
+            });
+            dibs.execute(cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR));
         }
-        ArrayList<DataObject> sortedAvailableRooms = sortRooms(mAllAvailableRooms);
-        setAdapter(sortedAvailableRooms);
     }
 
     /**

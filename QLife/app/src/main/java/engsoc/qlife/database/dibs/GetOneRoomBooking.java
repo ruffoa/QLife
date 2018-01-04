@@ -8,11 +8,11 @@ import engsoc.qlife.utility.async.DownloadTextTask;
 
 /**
  * Created by Alex on 8/6/2017.
- * Class that gets ILC room availability.
+ * Class that gets one ILC room availability.
  */
-public class GetRoomBookings extends DownloadTextTask<Integer, String> {
+public class GetOneRoomBooking extends DownloadTextTask<Integer, String> {
 
-    public GetRoomBookings(AsyncTaskObserver observer) {
+    public GetOneRoomBooking(AsyncTaskObserver observer) {
         super(observer);
     }
 
@@ -37,5 +37,3 @@ public class GetRoomBookings extends DownloadTextTask<Integer, String> {
         return null;
     }
 }
-
-
