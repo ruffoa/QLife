@@ -1,6 +1,5 @@
 package engsoc.qlife.ui.fragments;
 
-import android.content.Context;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
@@ -55,108 +54,42 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
     private RecyclerView.Adapter mAdapter;
     private View mView;
 
-    private String mRoomAvailability;
-    private ArrayList<DataObject> mRoomData = new ArrayList<>();
+    //need as instance variable so that when coming back, don't have to take
+    //time to re-get availability data. Highly likely data hasn't changed in time not on this fragment.
     private ArrayList<DataObject> mAllAvailableRooms = new ArrayList<>();
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_ilcroom_info, container, false);
-        mRecyclerView = mView.findViewById(R.id.ilcRoomInfoRecyclerView);
-        mRecyclerView.setHasFixedSize(true);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext());
-        mRecyclerView.setLayoutManager(layoutManager);
-        mAdapter = new SectionedRecyclerView(getDayEventData());
-        mRecyclerView.setAdapter(mAdapter);
-
-        setActionbarTitle();
         inflateListView();
-
-        mAvailableButton = mView.findViewById(R.id.available);
-        mAllButton = mView.findViewById(R.id.all);
-        mAvailableButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //toggle selected
-                mShowingAll = false;
-                mAllButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
-                mAvailableButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
-                showAvailableRooms();
-            }
-        });
-        mAllButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //toggle selected
-                mShowingAll = true;
-                mAvailableButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
-                mAllButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
-                showAllRooms();
-            }
-        });
-
-        ((SectionedRecyclerView) mAdapter).setOnItemClickListener(new SectionedRecyclerView
-                .MyClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
-                DataObject data = ((SectionedRecyclerView) mAdapter).getItem(position);
-
-                LinearLayout card = mView.findViewById(R.id.sectioned_card_view);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    card.setTransitionName("transistion_event_info" + position);
-                }
-                RoomManager roomInf = new RoomManager(getContext());
-                ArrayList<DatabaseRow> info = roomInf.getTable();
-
-                String pic = "";
-                if (data != null && info.size() > 0) {
-                    for (DatabaseRow row : info) {
-                        Room room = (Room) row;
-                        if (room.getRoomId() == data.getID()) {
-                            pic = room.getPicUrl();
-                            break;
-                        }
-                    }
-                }
-                Bundle bundle = new Bundle();
-                if (data != null) {
-                    bundle.putString(TAG_TITLE, data.getmText1());
-                    bundle.putInt(TAG_ROOM_ID, data.getID());
-                }
-                bundle.putString(TAG_PIC, pic);
-
-                String cardName = card.getTransitionName();
-                OneRoomFragment nextFrag = new OneRoomFragment();
-                nextFrag.setArguments(bundle);
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().addToBackStack(null)
-                        .replace(R.id.content_frame, nextFrag)
-                        .addSharedElement(card, cardName)
-                        .commit();
-            }
-        });
+        setViews();
+        setActionbarTitle();
+        setOnClicks();
         return mView;
     }
 
     /**
-     * Shows all ILC rooms, sorted by small, medium and large.
+     * Helper method that sorts the supplied list of rooms by small, medium and then large.
+     *
+     * @param rooms The list of rooms to sort.
+     * @return The sorted list of rooms.
      */
-    private void showAllRooms() {
+    private ArrayList<DataObject> sortRooms(ArrayList<DataObject> rooms) {
         ArrayList<DataObject> small = new ArrayList<>();
         ArrayList<DataObject> med = new ArrayList<>();
         ArrayList<DataObject> large = new ArrayList<>();
         ArrayList<DataObject> other = new ArrayList<>();
         ArrayList<DataObject> res = new ArrayList<>();
 
-        for (DataObject obj : mRoomData) {
-            if (Pattern.compile(Pattern.quote("small"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
-                small.add(obj);
-            else if (Pattern.compile(Pattern.quote("medium"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
-                med.add(obj);
-            else if (Pattern.compile(Pattern.quote("large"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
-                large.add(obj);
-            else other.add(obj);
+        for (DataObject room : rooms) {
+            if (Pattern.compile(Pattern.quote("small"), Pattern.CASE_INSENSITIVE).matcher(room.getmText2()).find())
+                small.add(room);
+            else if (Pattern.compile(Pattern.quote("medium"), Pattern.CASE_INSENSITIVE).matcher(room.getmText2()).find())
+                med.add(room);
+            else if (Pattern.compile(Pattern.quote("large"), Pattern.CASE_INSENSITIVE).matcher(room.getmText2()).find())
+                large.add(room);
+            else other.add(room);
         }
 
         small.get(0).setHeader("Small Group Rooms");
@@ -168,23 +101,32 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
         res.addAll(med);
         res.addAll(large);
         res.addAll(other);
-
-        mAdapter = new SectionedRecyclerView(res);
-        mRecyclerView.setAdapter(mAdapter);
+        return res;
     }
 
+    /**
+     * Shows all ILC rooms, sorted by small, medium and large.
+     */
+    private void showAllRooms() {
+        ArrayList<DataObject> sortedAllRooms = sortRooms(getAllRooms());
+        setAdapter(sortedAllRooms);
+    }
+
+    /**
+     * Shows available ILC rooms, sorted by small, medium and large.
+     */
     private void showAvailableRooms() {
-        RoomManager roomInf = new RoomManager(this.getContext());
-        ArrayList<DatabaseRow> data = roomInf.getTable();
+        RoomManager roomManager = new RoomManager(this.getContext());
+        ArrayList<DatabaseRow> roomData = roomManager.getTable();
         Calendar cal = Calendar.getInstance();
 
         try {
-            if (data != null && data.size() > 0) {
-                for (DatabaseRow row : data) {
+            if (roomData != null && roomData.size() > 0) {
+                for (DatabaseRow row : roomData) {
                     GetRoomBookings dibs = new GetRoomBookings(null);
                     Room room = (Room) row;
-                    mRoomAvailability = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
-                    if (currentlyAvailable()) {
+                    String roomAvailability = dibs.execute(room.getRoomId(), cal.get(Calendar.DAY_OF_MONTH), cal.get(Calendar.MONTH), cal.get(Calendar.YEAR)).get();
+                    if (currentlyAvailable(roomAvailability)) {
                         mAllAvailableRooms.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), true, "", room.getDescription()));
                     }
                 }
@@ -192,68 +134,49 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         }
-        ArrayList<DataObject> small = new ArrayList<>();
-        ArrayList<DataObject> med = new ArrayList<>();
-        ArrayList<DataObject> large = new ArrayList<>();
-        ArrayList<DataObject> other = new ArrayList<>();
-
-        for (DataObject obj : mAllAvailableRooms) {
-            if (Pattern.compile(Pattern.quote("small"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
-                small.add(obj);
-            else if (Pattern.compile(Pattern.quote("medium"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
-                med.add(obj);
-            else if (Pattern.compile(Pattern.quote("large"), Pattern.CASE_INSENSITIVE).matcher(obj.getmText2()).find())
-                large.add(obj);
-            else other.add(obj);
-        }
-
-        mAllAvailableRooms.clear(); //remove rooms so they can be re-added in proper order
-        small.get(0).setHeader("Small Group Rooms");
-        med.get(0).setHeader("Medium Group Rooms");
-        large.get(0).setHeader("Large Group Rooms");
-        other.get(0).setHeader("Un-categorized Rooms");
-
-        mAllAvailableRooms.addAll(small);
-        mAllAvailableRooms.addAll(med);
-        mAllAvailableRooms.addAll(large);
-        mAllAvailableRooms.addAll(other);
-        mAdapter = new SectionedRecyclerView(mAllAvailableRooms);
-        mRecyclerView.setAdapter(mAdapter);
+        ArrayList<DataObject> sortedAvailableRooms = sortRooms(mAllAvailableRooms);
+        setAdapter(sortedAvailableRooms);
     }
 
-    private ArrayList<DataObject> getDayEventData() {
-        RoomManager roomInf = new RoomManager(this.getContext());
+    /**
+     * Method that retrieves all rooms from the phone database and packs them into a list.
+     *
+     * @return List of room information packed into DataObjects.
+     */
+    private ArrayList<DataObject> getAllRooms() {
+        RoomManager roomManager = new RoomManager(this.getContext());
         ArrayList<DataObject> result = new ArrayList<>();
-        ArrayList<DatabaseRow> data = roomInf.getTable();
+        ArrayList<DatabaseRow> roomData = roomManager.getTable();
 
-        if (data != null && data.size() > 0) {
-            for (DatabaseRow row : data) {
+        if (roomData != null && roomData.size() > 0) {
+            for (DatabaseRow row : roomData) {
                 Room room = (Room) row;
                 boolean hasTV = room.getDescription().contains(Constants.TV) || room.getDescription().contains(Constants.PROJECTOR);
                 result.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), hasTV, ""));
             }
-            mRoomData = result;
-            return result;
         }
-        return null;
+        return result;
     }
 
-    private boolean currentlyAvailable() {
-        if (mRoomAvailability != null && mRoomAvailability.length() > 0) {
+    /**
+     * Determines if one room is available.
+     *
+     * @param roomAvailability String that holds the availability information for one room.
+     * @return True if the room is currently available, else false.
+     */
+    private boolean currentlyAvailable(String roomAvailability) {
+        if (roomAvailability != null && roomAvailability.length() > 0) {
             try {
-                JSONArray arr = new JSONArray(mRoomAvailability);
+                JSONArray arr = new JSONArray(roomAvailability);
 
                 for (int i = 0; i < arr.length(); i++) {
                     JSONObject roomInfo = arr.getJSONObject(i);
                     String start = roomInfo.getString("StartTime");
                     start = start.substring(start.indexOf("T") + 1);
-
-                    int sHour = Integer.parseInt(start.substring(0, 2));
+                    int startHour = Integer.parseInt(start.substring(0, 2));
                     Calendar cal = Calendar.getInstance();
-                    int now = cal.get(Calendar.HOUR_OF_DAY);
-                    int nowMin = cal.get(Calendar.MINUTE);
-
-                    if (sHour == now || (sHour == now - 1 && nowMin < 30)) {
+                    int curHour = cal.get(Calendar.HOUR_OF_DAY);
+                    if (startHour == curHour || (startHour == curHour - 1 && cal.get(Calendar.MINUTE) < 30)) {
                         return false;
                     }
                 }
@@ -268,23 +191,18 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
     public void onResume() {
         super.onResume();
         selectDrawer();
-        //check if coming back to fragment on a back press
+        //check if coming back to fragment on a back press - if are, restore old state
         if (mReturning) {
-            //check for available/all shown before and restore that state
             if (mShowingAll) {
                 mAllAvailableRooms.clear();
                 mAllButton.performClick();
             } else {
                 mShowingAll = false;
-                mAllButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
-                mAvailableButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
-                mAdapter = new SectionedRecyclerView(mAllAvailableRooms);
-                mRecyclerView.setAdapter(mAdapter);
+                setButtonColours();
+                setAdapter(mAllAvailableRooms);
             }
         } else {
-            //show all rooms
             mAllAvailableRooms.clear();
-            getDayEventData();
             mAllButton.performClick();
         }
     }
@@ -314,10 +232,9 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
 
     @Override
     public void inflateListView() {
-        RoomManager roomInf = new RoomManager(this.getContext());
-        ArrayList<DatabaseRow> data = roomInf.getTable();
-        if (data == null || data.size() == 0) {
-            final Context context = getContext();
+        RoomManager roomManager = new RoomManager(this.getContext());
+        ArrayList<DatabaseRow> roomData = roomManager.getTable();
+        if (roomData == null || roomData.size() == 0) {
             GetRooms dibs = new GetRooms(new AsyncTaskObserver() {
                 @Override
                 public void onTaskCompleted(Object obj) {
@@ -332,7 +249,7 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
                     if (obj.getClass() == JSONArray.class) {
                         JSONArray rooms = (JSONArray) obj;
                         try {
-                            RoomManager tableManager = new RoomManager(context);
+                            RoomManager tableManager = new RoomManager(getContext());
                             for (int i = 0; i < rooms.length(); i++) {
                                 JSONObject roomInfo = rooms.getJSONObject(i);
                                 tableManager.insertRow(new Room(roomInfo.getInt(Room.COLUMN_ROOM_ID), roomInfo.getInt(Room.COLUMN_BUILDING_ID), roomInfo.getString(Room.COLUMN_DESCRIPTION),
@@ -355,5 +272,113 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
     @Override
     public void setActionbarTitle() {
         Util.setActionbarTitle(getString(R.string.fragment_ilc_rooms), (AppCompatActivity) getActivity());
+    }
+
+    /**
+     * Helper method that sets the recycler view adapter to a new view, and then assigns it
+     * to actually be the recycler view adapter.
+     *
+     * @param list List holding the data to be shown in the recycler view.
+     */
+    private void setAdapter(ArrayList<DataObject> list) {
+        mAdapter = new SectionedRecyclerView(list);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    /**
+     * Helper method used to assign views instead of doing so in onCreate.
+     */
+    private void setViews() {
+        mRecyclerView = mView.findViewById(R.id.ilcRoomInfoRecyclerView);
+        mRecyclerView.setHasFixedSize(true);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        mRecyclerView.setLayoutManager(layoutManager);
+        setAdapter(getAllRooms());
+        mAvailableButton = mView.findViewById(R.id.available);
+        mAllButton = mView.findViewById(R.id.all);
+    }
+
+    /**
+     * Helper method that sets the colours of the All/Available buttons to match which is pressed.
+     */
+    private void setButtonColours() {
+        if (mShowingAll) {
+            mAvailableButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
+            mAllButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
+        } else {
+            mAllButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorAccent)));
+            mAvailableButton.setBackground(new ColorDrawable(getResources().getColor(R.color.colorPrimaryDark)));
+        }
+    }
+
+    /**
+     * Helper method that sets the onClick methods for buttons (and recycler view items),
+     * instead of doing so in onCreate.
+     */
+    private void setOnClicks() {
+        //onClick for button that shows available rooms
+        mAvailableButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //toggle selected
+                mShowingAll = false;
+                setButtonColours();
+                showAvailableRooms();
+            }
+        });
+
+        //onClick for button that will show all rooms
+        mAllButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //toggle selected
+                mShowingAll = true;
+                setButtonColours();
+                showAllRooms();
+            }
+        });
+
+        //onClick for item in the recycler view (a room)
+        ((SectionedRecyclerView) mAdapter).setOnItemClickListener(new SectionedRecyclerView
+                .MyClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                DataObject data = ((SectionedRecyclerView) mAdapter).getItem(position);
+
+                LinearLayout card = mView.findViewById(R.id.sectioned_card_view);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    card.setTransitionName("transistion_event_info" + position);
+                }
+                RoomManager roomInf = new RoomManager(getContext());
+                ArrayList<DatabaseRow> info = roomInf.getTable();
+
+                //search for the chosen room in the database, get the picture URL
+                String pic = "";
+                if (data != null && info.size() > 0) {
+                    for (DatabaseRow row : info) {
+                        Room room = (Room) row;
+                        if (room.getRoomId() == data.getID()) {
+                            pic = room.getPicUrl();
+                            break;
+                        }
+                    }
+                }
+                Bundle bundle = new Bundle();
+                if (data != null) {
+                    bundle.putString(TAG_TITLE, data.getmText1());
+                    bundle.putInt(TAG_ROOM_ID, data.getID());
+                }
+                bundle.putString(TAG_PIC, pic);
+
+                String cardName = card.getTransitionName();
+                OneRoomFragment nextFrag = new OneRoomFragment();
+                nextFrag.setArguments(bundle);
+                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                fragmentManager.beginTransaction().addToBackStack(null)
+                        .replace(R.id.content_frame, nextFrag)
+                        .addSharedElement(card, cardName)
+                        .commit();
+            }
+        });
     }
 }
