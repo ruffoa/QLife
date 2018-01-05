@@ -56,17 +56,18 @@ public class StartupActivity extends AppCompatActivity {
 
         // layouts of all welcome sliders, can add more layouts
         mLayouts = new int[]{
-                R.layout.welcome_slide1,
-                R.layout.welcome_slide2,
-                R.layout.welcome_slide3,
-                R.layout.welcome_slide4,
-                R.layout.welcome_slide5
+                R.layout.initial_slide_welcome,
+                R.layout.initial_slide_class,
+                R.layout.initial_slide_campus,
+                R.layout.initial_slide_cloud,
+                R.layout.initial_slide_rooms,
+                R.layout.initial_slide_it_team
         };
 
-        mViewPager = (ViewPager) findViewById(R.id.view_pager);
-        mDotsLayout = (LinearLayout) findViewById(R.id.layoutDots);
-        mButtonSkip = (Button) findViewById(R.id.btn_skip);
-        mButtonNext = (Button) findViewById(R.id.btn_next);
+        mViewPager = findViewById(R.id.view_pager);
+        mDotsLayout = findViewById(R.id.layoutDots);
+        mButtonSkip = findViewById(R.id.btn_skip);
+        mButtonNext = findViewById(R.id.btn_next);
         MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter();
         mViewPager.setAdapter(myViewPagerAdapter);
         mViewPager.addOnPageChangeListener(mViewPagerPageChangeListener);
@@ -136,7 +137,6 @@ public class StartupActivity extends AppCompatActivity {
 
     //defines the on page change listener for the view pager
     ViewPager.OnPageChangeListener mViewPagerPageChangeListener = new ViewPager.OnPageChangeListener() {
-
         @Override
         public void onPageSelected(int position) {
             addBottomDots(position);
@@ -185,9 +185,12 @@ public class StartupActivity extends AppCompatActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View view = mLayoutInflater.inflate(mLayouts[position], container, false);
-            container.addView(view);
-            return view;
+            if (mLayoutInflater != null) {
+                View view = mLayoutInflater.inflate(mLayouts[position], container, false);
+                container.addView(view);
+                return view;
+            }
+            return null;
         }
 
         @Override

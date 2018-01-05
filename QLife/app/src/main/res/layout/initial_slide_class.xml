@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@color/bg_screen4">
+                android:background="@color/bg_screen2">
 
     <LinearLayout
         style="@style/WelcomeSlideLayout">
@@ -10,17 +10,18 @@
         <ImageView
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
-            android:src="@drawable/ic_cloud_outline"
+            android:src="@drawable/ic_calendar"
             android:tint="@android:color/white"/>
 
         <TextView
             style="@style/WelcomeSlideTitleText"
-            android:text="@string/slide_4_title"/>
+            android:text="@string/slide_schedule_title"/>
 
         <TextView
             style="@style/WelcomeSlideText"
-            android:text="@string/slide_4_desc"/>
+            android:text="@string/slide_schedule_text"/>
 
     </LinearLayout>
+
 
 </RelativeLayout>

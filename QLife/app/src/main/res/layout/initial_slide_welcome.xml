@@ -10,19 +10,15 @@
         <ImageView
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
-            android:src="@drawable/ic_it_team_svg"/>
+            android:src="@drawable/ic_qtap_logo_svg"/>
 
         <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="@string/brought_by"
-            android:textColor="@android:color/white"/>
+            style="@style/WelcomeSlideTitleText"
+            android:text="@string/slide_welcome_title"/>
 
         <TextView
             style="@style/WelcomeSlideText"
-            android:text="@string/it_team"/>
+            android:text="@string/slide_welcome_text"/>
 
     </LinearLayout>
-
 </RelativeLayout>

@@ -10,17 +10,17 @@ import android.view.ViewGroup;
 import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import engsoc.qlife.R;
-import engsoc.qlife.utility.Util;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.contacts.engineering.EngineeringContact;
 import engsoc.qlife.database.local.contacts.engineering.EngineeringContactsManager;
 import engsoc.qlife.interfaces.IQLActionbarFragment;
 import engsoc.qlife.interfaces.IQLDrawerItem;
 import engsoc.qlife.interfaces.IQLListFragment;
-
-import java.util.ArrayList;
-import java.util.HashMap;
+import engsoc.qlife.utility.Util;
 
 /**
  * Created by Carson on 12/06/2017.
@@ -68,17 +68,27 @@ public class EngContactsFragment extends ListFragment implements IQLActionbarFra
         ArrayList<HashMap<String, String>> engContactsList = new ArrayList<>();
         ArrayList<DatabaseRow> contacts = (new EngineeringContactsManager(getActivity().getApplicationContext())).getTable();
         for (DatabaseRow row : contacts) {
-            EngineeringContact contact = (EngineeringContact) row;
-            HashMap<String, String> map = new HashMap<>();
-            map.put(EngineeringContact.COLUMN_NAME, contact.getName());
-            map.put(EngineeringContact.COLUMN_EMAIL, contact.getEmail());
-            map.put(EngineeringContact.COLUMN_POSITION, contact.getPosition());
-            map.put(EngineeringContact.COLUMN_DESCRIPTION, contact.getDescription());
-            engContactsList.add(map);
+            engContactsList.add(packEngContactsMap(row));
         }
         ListAdapter adapter = new SimpleAdapter(getActivity().getApplicationContext(), engContactsList,
                 R.layout.eng_contacts_list_item, new String[]{EngineeringContact.COLUMN_NAME, EngineeringContact.COLUMN_EMAIL,
                 EngineeringContact.COLUMN_POSITION, EngineeringContact.COLUMN_DESCRIPTION}, new int[]{R.id.name, R.id.email, R.id.position, R.id.description});
         setListAdapter(adapter);
+    }
+
+    /**
+     * Helper method that packs a hash-map containing a key and value for each piece of contact information.
+     *
+     * @param row The contact information to pack for.
+     * @return The packed map.
+     */
+    private static HashMap<String, String> packEngContactsMap(DatabaseRow row) {
+        EngineeringContact contact = (EngineeringContact) row;
+        HashMap<String, String> map = new HashMap<>();
+        map.put(EngineeringContact.COLUMN_NAME, contact.getName());
+        map.put(EngineeringContact.COLUMN_EMAIL, contact.getEmail());
+        map.put(EngineeringContact.COLUMN_POSITION, contact.getPosition());
+        map.put(EngineeringContact.COLUMN_DESCRIPTION, contact.getDescription());
+        return map;
     }
 }

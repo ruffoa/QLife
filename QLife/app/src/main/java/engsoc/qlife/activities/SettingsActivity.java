@@ -1,6 +1,5 @@
 package engsoc.qlife.activities;
 
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -45,7 +44,7 @@ public class SettingsActivity extends AppCompatActivity implements IQLOptionsMen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        Button logout = (Button) findViewById(R.id.logout);
+        Button logout = findViewById(R.id.logout);
         logout.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 clearData(v);
@@ -57,7 +56,6 @@ public class SettingsActivity extends AppCompatActivity implements IQLOptionsMen
         });
 
         setBackButton();
-
         setTextViews();
     }
 
@@ -74,8 +72,8 @@ public class SettingsActivity extends AppCompatActivity implements IQLOptionsMen
         UserManager mUserManager = new UserManager(this.getApplicationContext());
         ArrayList<DatabaseRow> users = mUserManager.getTable();
         User user = (User) users.get(0); //only ever one user in database
-        TextView netID = (TextView) findViewById(R.id.netID);
-        TextView date = (TextView) findViewById(R.id.login_date);
+        TextView netID = findViewById(R.id.netID);
+        TextView date = findViewById(R.id.login_date);
         date.setText(user.getDateInit());
         netID.setText(user.getNetid());
     }

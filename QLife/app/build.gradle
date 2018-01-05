@@ -23,12 +23,12 @@ repositories {
 
 android {
     compileSdkVersion 26
-    buildToolsVersion "26.0.0"
+    buildToolsVersion '26.0.2'
     defaultConfig {
         applicationId "engsoc.qlife"
         minSdkVersion 21
         targetSdkVersion 26
-        versionCode 4
+        versionCode 5
         versionName "1.2.1"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
@@ -53,9 +53,8 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
     compile('com.crashlytics.sdk.android:crashlytics:2.6.6@aar') {
-        transitive = true;
+        transitive = true
     }
-
     compile 'com.android.support:appcompat-v7:26.0.2'
     compile 'com.android.support:design:26.0.2'
     compile 'com.google.android.gms:play-services-maps:11.0.4+'

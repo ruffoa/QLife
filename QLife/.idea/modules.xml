@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/QLife.iml" filepath="$PROJECT_DIR$/QLife.iml" />
+      <module fileurl="file://H:\Development\EngSoc\Qlife-Ruffoa\QLife\QLife.iml" filepath="H:\Development\EngSoc\Qlife-Ruffoa\QLife\QLife.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://H:\Development\EngSoc\Qlife-Ruffoa\QLife\app\app.iml" filepath="H:\Development\EngSoc\Qlife-Ruffoa\QLife\app\app.iml" />
     </modules>
   </component>
 </project>

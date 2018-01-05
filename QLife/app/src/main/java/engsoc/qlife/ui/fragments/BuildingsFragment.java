@@ -13,6 +13,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import engsoc.qlife.R;
+import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.Util;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.buildings.Building;
@@ -102,11 +103,11 @@ public class BuildingsFragment extends ListFragment implements IQLActionbarFragm
 
         //deal with special case building names - common short forms for long names
         switch (building.getName()) {
-            case "Athletics and Recreation Centre (ARC)":
-                args.putString(Building.COLUMN_NAME, "ARC");
+            case Constants.ARC_FULL:
+                args.putString(Building.COLUMN_NAME, Constants.ARC);
                 break;
-            case "John Deutsch Centre (JDUC)":
-                args.putString(Building.COLUMN_NAME, "JDUC");
+            case Constants.JDUC_FULL:
+                args.putString(Building.COLUMN_NAME, Constants.JDUC);
                 break;
             default:
                 args.putString(Building.COLUMN_NAME, building.getName());

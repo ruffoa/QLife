@@ -19,7 +19,6 @@ import engsoc.qlife.activities.MapsActivity;
  * Class used to handle any permission request.
  * Not confined to Android permissions, for example could handle getting student number permissions.
  */
-
 public class HandlePermissions {
     public static void requestLocationPermissions(Activity activity) {
         int coarsePermission = ContextCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);

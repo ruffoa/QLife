@@ -34,7 +34,7 @@ public class ReviewActivity extends AppCompatActivity implements IQLOptionsMenuA
             @Override
             @SuppressLint("SetJavaScriptEnabled")
             public void onClick(View v) {
-                WebView browser = (WebView) findViewById(R.id.reviewBrowser);
+                WebView browser = findViewById(R.id.reviewBrowser);
                 browser.setWebViewClient(getWebViewClient());
                 browser.getSettings().setSaveFormData(false); //disable autocomplete - more secure, keyboard popup blocks fields
                 browser.getSettings().setJavaScriptEnabled(true); // needed to properly display page / scroll to chosen location
