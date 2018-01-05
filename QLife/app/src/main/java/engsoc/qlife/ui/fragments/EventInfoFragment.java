@@ -136,8 +136,8 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
                     }
                 }
                 catch(StringIndexOutOfBoundsException e){
-                    mGoogleMap.clear();
-                    mMapView.setVisibility(View.GONE);
+                    mGoogleMap.clear(); // clear the generated map, we no longer need it
+                    mMapView.setVisibility(View.GONE);  // hide the map and resize the card to encompass only the class data
                 }
             }
         });

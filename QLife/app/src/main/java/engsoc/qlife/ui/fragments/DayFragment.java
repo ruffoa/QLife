@@ -248,6 +248,7 @@ public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDr
                     amPMTime = (minHour) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
                 else amPMTime = time.get(posSmall) + " AM";
 
+                // This was changed so that the class title shows up within the class view, as that is probably more useful than just the course code for users.  The course code is now held in mText4
                 mResult.add(new DataObject(list.get(posSmall) + " - " + detailsList.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall), detailsList.get(posSmall), list.get(posSmall)));
                 list.remove(posSmall);
                 time.remove(posSmall);
