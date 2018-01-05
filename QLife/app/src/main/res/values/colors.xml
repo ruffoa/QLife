@@ -10,37 +10,42 @@
     <!-- Screens background color-->
     <color name="bg_screen1">#673ab7</color>
     <color name="bg_screen2">#00c853</color>
-    <color name="bg_screen5">#ffcc00</color>
+    <color name="bg_screen6">#ffcc00</color>
     <color name="bg_screen4">#3395ff</color>
     <color name="bg_screen3">#d3b8e1</color>
+    <color name="bg_screen5">#ff9933</color>
 
     <!-- dots inactive colors -->
-    <color name="dot_dark_screen1">#4527a0</color>
-    <color name="dot_dark_screen2">#2e7d32</color>
-    <color name="dot_dark_screen5">#cca300</color>
-    <color name="dot_dark_screen4">#2278d4</color>
-    <color name="dot_dark_screen3">#a11919</color>
+    <color name="dot_dark_screen_team">#4527a0</color>
+    <color name="dot_dark_screen_welcome">#4527a0</color>
+    <color name="dot_dark_screen_class">#2e7d32</color>
+    <color name="dot_dark_screen_cloud">#2278d4</color>
+    <color name="dot_dark_screen_campus">#a11919</color>
+    <color name="dot_dark_screen_rooms">#ff8000</color>
 
     <!-- dots active colors -->
-    <color name="dot_light_screen1">#b39ddb</color>
-    <color name="dot_light_screen2">#a5d6a7</color>
-    <color name="dot_light_screen5">#ffd633</color>
-    <color name="dot_light_screen4">#93c6fd</color>
-    <color name="dot_light_screen3">#f98da5</color>
+    <color name="dot_light_screen_welcome">#b39ddb</color>
+    <color name="dot_light_screen_team">#b39ddb</color>
+    <color name="dot_light_screen_schedule">#a5d6a7</color>
+    <color name="dot_light_screen_cloud">#93c6fd</color>
+    <color name="dot_light_screen_campus">#f98da5</color>
+    <color name="dot_light_screen_rooms">#ffb366</color>
 
     <array name="array_dot_active">
-        <item>@color/dot_light_screen1</item>
-        <item>@color/dot_light_screen2</item>
-        <item>@color/dot_light_screen3</item>
-        <item>@color/dot_light_screen4</item>
-        <item>@color/dot_light_screen1</item>
+        <item>@color/dot_light_screen_welcome</item>
+        <item>@color/dot_light_screen_schedule</item>
+        <item>@color/dot_light_screen_campus</item>
+        <item>@color/dot_light_screen_cloud</item>
+        <item>@color/dot_light_screen_rooms</item>
+        <item>@color/dot_light_screen_team</item>
     </array>
 
     <array name="array_dot_inactive">
-        <item>@color/dot_dark_screen1</item>
-        <item>@color/dot_dark_screen2</item>
-        <item>@color/dot_dark_screen3</item>
-        <item>@color/dot_dark_screen4</item>
-        <item>@color/dot_dark_screen1</item>
+        <item>@color/dot_dark_screen_welcome</item>
+        <item>@color/dot_dark_screen_class</item>
+        <item>@color/dot_dark_screen_campus</item>
+        <item>@color/dot_dark_screen_cloud</item>
+        <item>@color/dot_dark_screen_rooms</item>
+        <item>@color/dot_dark_screen_team</item>
     </array>
 </resources>

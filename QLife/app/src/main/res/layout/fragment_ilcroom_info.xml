@@ -1,9 +1,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="engsoc.qlife.ui.fragments.ILCRoomInfoFragment">
+    tools:context="engsoc.qlife.ui.fragments.RoomsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,59 +11,24 @@
 
         <include
             android:id="@+id/toolbar"
-            layout="@layout/app_bar"/>
-
-        <View android:id="@+id/stripBelowToolbar"
-            android:layout_height="0dp"
-            android:layout_width="fill_parent"/>
-
-        <android.support.design.widget.CoordinatorLayout
-            android:id="@+id/rootLayout"
-            android:layout_height="match_parent"
-            android:layout_width="match_parent"/>
-
-        <ProgressBar
-            android:id="@+id/ilcRoomInf_progress"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:visibility="gone"/>
+            layout="@layout/app_bar" />
 
         <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
             <Button
-                android:id="@+id/prev"
+                android:id="@+id/all"
                 style="@style/MainButton"
-                android:text="@string/prev"
-                android:layout_alignBaseline="@+id/showAvaliable"
-                android:layout_alignBottom="@+id/showAvaliable"
-                android:layout_centerHorizontal="true" />
+                android:layout_alignParentStart="true"
+                android:text="@string/all" />
 
             <Button
-                android:id="@+id/showAvaliable"
-                style="@style/MainButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/prev" />
-
-            <Button
-                android:id="@+id/next"
+                android:id="@+id/available"
                 style="@style/MainButton"
                 android:layout_alignParentEnd="true"
-                android:text="@string/next" />
+                android:text="@string/available" />
         </RelativeLayout>
-
-        <TextView
-            android:id="@+id/date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:textSize="20sp"
-            android:textStyle="bold" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/ilcRoomInfoRecyclerView"
@@ -73,19 +37,4 @@
             android:layout_marginTop="10dp"
             android:scrollbars="vertical" />
     </LinearLayout>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/sortRoomsFab"
-        android:scaleType="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_gravity="end|bottom"
-        android:layout_margin="16dp"
-        android:clickable="true"
-        android:src="@drawable/ic_sort_white_24px" />
-
-
 </FrameLayout>

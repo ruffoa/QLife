@@ -2,17 +2,25 @@ package engsoc.qlife.ui.recyclerview;
 
 /**
  * Created by Alex Ruffo on 3/29/2017.
+ * Object used to send information between RecyclerView classes.
  */
-
 public class DataObject {
     private String mText1;
     private String mText2;
+    private String mText3;
+    private String mText4;
     private String mHeader;
     private int mId;
     private long mClassId;
     private boolean mHasTV;
     private boolean mHasName;
     private String mDescription;
+
+    public DataObject(String text1, String text2, String text3) {
+        mText1 = text1;
+        mText2 = text2;
+        mText3 = text3;
+    }
 
     public DataObject(String text1, String text2) {
         mText1 = text1;
@@ -26,10 +34,39 @@ public class DataObject {
         mHasTV = hasTV;
         mHeader = header;
     }
+
     public DataObject(String text1, String text2, long classId) {
         mText1 = text1;
         mText2 = text2;
         mClassId = classId;
+    }
+
+    public DataObject(String text1, String text2, long classId, boolean hasName, String text3) {
+        mText1 = text1;
+        mText2 = text2;
+        mClassId = classId;
+        mHasName = hasName;
+        mText3 = text3;
+    }
+
+    public DataObject(String text1, String text2, long classId, boolean hasName, String classDescription, String classNum) {
+        mText1 = text1;
+        mText2 = text2;
+        mClassId = classId;
+        mHasName = hasName;
+        mText3 = classDescription;
+        mText4 = classNum;
+    }
+
+
+    public DataObject(String text1, String text2, int id, boolean hasTV, String header, String Description, String text3) {
+        mText1 = text1;
+        mText2 = text2;
+        mId = id;
+        mHasTV = hasTV;
+        mHeader = header;
+        mDescription = Description;
+        mText3 = text3;
     }
 
     public DataObject(String text1, String text2, long classId, boolean hasName) {
@@ -68,18 +105,51 @@ public class DataObject {
         return mText2;
     }
 
+    public String getmText3() {
+        return mText3;
+    }
+
+    public String getmText4() {
+        return mText4;
+    }
+
     public void setmText2(String mText2) {
         this.mText2 = mText2;
     }
+
     public void setmDescription(String description) {
         this.mDescription = description;
     }
-    public String getDescription() {return mDescription; }
-    public long getClassId(){return mClassId; }
-    public boolean getHasTV() {return mHasTV; }
-    public boolean getHasName() {return mHasName; }
-    public String getHeader() {return mHeader; }
-    public void setHeader(String header) {this.mHeader = header; }
-    public void setHasTV(boolean hasTV) {this.mHasTV = hasTV; }
-    public void setHasName(boolean hasName) {this.mHasName = hasName; }
+
+    public String getDescription() {
+        return mDescription;
+    }
+
+    public long getClassId() {
+        return mClassId;
+    }
+
+    public boolean getHasTV() {
+        return mHasTV;
+    }
+
+    public boolean getHasName() {
+        return mHasName;
+    }
+
+    public String getHeader() {
+        return mHeader;
+    }
+
+    public void setHeader(String header) {
+        this.mHeader = header;
+    }
+
+    public void setHasTV(boolean hasTV) {
+        this.mHasTV = hasTV;
+    }
+
+    public void setHasName(boolean hasName) {
+        this.mHasName = hasName;
+    }
 }

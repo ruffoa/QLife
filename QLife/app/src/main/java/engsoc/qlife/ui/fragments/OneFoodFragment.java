@@ -111,7 +111,7 @@ public class OneFoodFragment extends Fragment implements IQLActionbarFragment, I
         ((TextView) mView.findViewById(R.id.takes_card_short)).setText(mArgs.getBoolean(Food.COLUMN_CARD) ? "Yes" : "No");
         ((TextView) mView.findViewById(R.id.takes_meal_short)).setText(mArgs.getBoolean(Food.COLUMN_MEAL_PLAN) ? "Yes" : "No");
 
-        if (mArgs.getString(Food.COLUMN_INFORMATION) != null && !mArgs.getString(Food.COLUMN_INFORMATION).equals("")) {
+        if (mArgs.getString(Food.COLUMN_INFORMATION) != null && !"".equals(mArgs.getString(Food.COLUMN_INFORMATION))) {
             mView.findViewById(R.id.info).setVisibility(View.VISIBLE);
             ((TextView) mView.findViewById(R.id.info)).setText(mArgs.getString(Food.COLUMN_INFORMATION));
         }
@@ -119,7 +119,7 @@ public class OneFoodFragment extends Fragment implements IQLActionbarFragment, I
 
     @Override
     public void setMapView() {
-        MapView mapView = (MapView) mView.findViewById(R.id.map);
+        MapView mapView = mView.findViewById(R.id.map);
         mapView.onCreate(mSavedInstanceState);
         mapView.onResume();
 

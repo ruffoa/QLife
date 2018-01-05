@@ -15,11 +15,11 @@
 
         <TextView
             style="@style/WelcomeSlideTitleText"
-            android:text="@string/slide_3_title"/>
+            android:text="@string/slide_campus_title"/>
 
         <TextView
             style="@style/WelcomeSlideText"
-            android:text="@string/slide_3_desc"/>
+            android:text="@string/slide_campus_text"/>
 
     </LinearLayout>
 

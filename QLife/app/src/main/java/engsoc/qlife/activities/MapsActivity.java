@@ -2,20 +2,15 @@ package engsoc.qlife.activities;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
-import android.os.Bundle;
 
-import engsoc.qlife.utility.HandlePermissions;
-import engsoc.qlife.utility.Util;
-import engsoc.qlife.database.local.DatabaseRow;
-import engsoc.qlife.database.local.buildings.Building;
-import engsoc.qlife.database.local.buildings.BuildingManager;
-import engsoc.qlife.interfaces.IQLMapView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -23,10 +18,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.location.LocationServices;
-import engsoc.qlife.R;
 
 import java.util.ArrayList;
+
+import engsoc.qlife.R;
+import engsoc.qlife.database.local.DatabaseRow;
+import engsoc.qlife.database.local.buildings.Building;
+import engsoc.qlife.database.local.buildings.BuildingManager;
+import engsoc.qlife.interfaces.IQLMapView;
+import engsoc.qlife.utility.HandlePermissions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, IQLMapView {
 

@@ -1,20 +1,11 @@
-package engsoc.qlife.database.dibs;
-
-/**
- * Created by Alex on 8/21/2017.
- */
-
+package engsoc.qlife.database.local.rooms;
 import engsoc.qlife.database.local.DatabaseRow;
 
 /**
  * Created by Alex on 7/28/2017.
+ * Class defines schema for table of ILC rooms in phone database.
  */
-
-public class ILCRoomObj extends DatabaseRow {
-
-    /**
-     * Created by Alex Ruffo on 21/06/2017.
-     */
+public class Room extends DatabaseRow {
     public static final String TABLE_NAME = "ILCRoomInfo";
 
     public static final String COLUMN_NAME = "Name";
@@ -34,7 +25,7 @@ public class ILCRoomObj extends DatabaseRow {
     private String name, mapUrl, description, picUrl;
     private int roomId, buildingId;
 
-    public ILCRoomObj(long id, int buildingId, String description, String mapUrl, String name, String picUrl, int roomId) {
+    public Room(long id, int buildingId, String description, String mapUrl, String name, String picUrl, int roomId) {
         super(id);
         this.name = name;
         this.buildingId = buildingId;

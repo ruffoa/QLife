@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/bg_screen1">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_screen5">
 
     <LinearLayout
         style="@style/WelcomeSlideLayout">
@@ -10,15 +10,15 @@
         <ImageView
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
-            android:src="@drawable/ic_qtap_logo_svg"/>
+            android:src="@mipmap/ic_booking"
+            android:tint="@android:color/white"/>
 
         <TextView
             style="@style/WelcomeSlideTitleText"
-            android:text="@string/slide_1_title"/>
+            android:text="@string/slide_rooms_title"/>
 
         <TextView
             style="@style/WelcomeSlideText"
-            android:text="@string/slide_1_desc"/>
-
+            android:text="@string/slide_rooms_text"/>
     </LinearLayout>
 </RelativeLayout>

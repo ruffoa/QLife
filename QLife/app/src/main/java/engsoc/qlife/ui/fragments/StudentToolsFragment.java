@@ -32,13 +32,13 @@ public class StudentToolsFragment extends Fragment implements IQLActionbarFragme
 
         final FragmentManager fm = getActivity().getSupportFragmentManager();
 
-        CardView emergContactsCard = (CardView) v.findViewById(R.id.emerg_contacts_card);
-        CardView engContactsCard = (CardView) v.findViewById(R.id.eng_contacts_card);
-        CardView counsellingCard = (CardView) v.findViewById(R.id.counselling_card);
-        CardView careerCard = (CardView) v.findViewById(R.id.career_card);
-        CardView solusCard = (CardView) v.findViewById(R.id.solus_card);
-        CardView outlookCard = (CardView) v.findViewById(R.id.outlook_card);
-        CardView onqCard = (CardView) v.findViewById(R.id.onq_card);
+        CardView emergContactsCard = v.findViewById(R.id.emerg_contacts_card);
+        CardView engContactsCard = v.findViewById(R.id.eng_contacts_card);
+        CardView counsellingCard = v.findViewById(R.id.counselling_card);
+        CardView careerCard = v.findViewById(R.id.career_card);
+        CardView solusCard = v.findViewById(R.id.solus_card);
+        CardView outlookCard = v.findViewById(R.id.outlook_card);
+        CardView onqCard = v.findViewById(R.id.onq_card);
 
         emergContactsCard.setOnClickListener(new View.OnClickListener() {
             @Override

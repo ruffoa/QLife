@@ -63,7 +63,7 @@ Information on Queen's cafeterias such as name and hours.
 ### Contacts
 
 This package actually has two sub-packages, one for emergency contacts and one for engineering. Emergency contacts
-have name, telephone and description. Engineering contacts have name, email, position and description.
+have name, telephone and name. Engineering contacts have name, email, position and name.
 
 ## Courses
 
