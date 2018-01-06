@@ -192,20 +192,34 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
      * @return True if the room is currently available, else false.
      */
     private boolean currentlyAvailable(String roomAvailability) {
-        if (roomAvailability != null && roomAvailability.length() > 0) {
+        if (roomAvailability != null && roomAvailability.length() > 0) {  // if the JSON array containing the data is not null (which would be bad)
             try {
-                JSONArray arr = new JSONArray(roomAvailability);
+                JSONArray arr = new JSONArray(roomAvailability); // make a JSON array variable to hold a properly formatted JSON object
 
-                for (int i = 0; i < arr.length(); i++) {
-                    JSONObject roomInfo = arr.getJSONObject(i);
-                    String start = roomInfo.getString("StartTime");
-                    start = start.substring(start.indexOf("T") + 1);
-                    int startHour = Integer.parseInt(start.substring(0, 2));
+                for (int i = 0; i < arr.length(); i++) {    // for all of the data within the array
+                    JSONObject roomInfo = arr.getJSONObject(i); // get the info for the JSON object (each booking is it's own object)
+                    String start = roomInfo.getString("StartTime"); // get the startTime and endTime contained within the object
+                    String end = roomInfo.getString("EndTime");
+
+                    start = start.substring(start.indexOf("T") + 1);    // get the position of the start and end times, and set the string to be the useful part
+                    end = end.substring(end.indexOf("T") + 1);
+
+                    int startHour = Integer.parseInt(start.substring(0, 2));    // cast the starting hour to an int
+                    int endHour = Integer.parseInt(end.substring(0, 2));    // cast the ending hour to an int
+
                     Calendar cal = Calendar.getInstance();
                     int curHour = cal.get(Calendar.HOUR_OF_DAY);
-                    if (startHour == curHour || (startHour == curHour - 1 && cal.get(Calendar.MINUTE) < 30)) {
-                        return false;
-                    }
+                    int curMin = cal.get(Calendar.MINUTE);
+
+                    // Re-added in code to allow for dealing with rooms with bookings longer than 1 hour
+                    // In future versions, the ability to show rooms with bookings that are almost over should probably be re-implemented
+
+                    if (startHour == curHour && curMin > 30 || (startHour <= curHour && curHour <= endHour)) {   // if the current hour is equal to the start hour of a booking, or the current hour is within the time of a booking
+                        return false;       // return 1, the room is currently booked, so we are done, return immediately.
+                    } else if (startHour == curHour - 1 && curMin < 30) // if the room was booked for the current time slot, but the slot is almost over
+                        return false; // state = 2;  // keep state as 2, so that people know that the room is free for the next hour block.  If return 1 is never called, 2 will be returned
+//                    else if (startHour == curHour + 1)                  // if the room is booked for the next time slot
+//                        state = 3;  // let users know that the room will be booked in the next slot, so that they know someone will be after them
                 }
             } catch (JSONException e) {
                 Log.d("HELLOTHERE", e.getMessage());
