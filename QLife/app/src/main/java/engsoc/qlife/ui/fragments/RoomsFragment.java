@@ -136,6 +136,8 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
                 public void onTaskCompleted(Object obj) {
                     dialog.dismiss();
                     if (obj != null && obj instanceof SparseArray) {
+                        //need to check cast - as of now only use SparseArray<String>
+                        //in this context
                         SparseArray<String> roomAvailability = (SparseArray<String>) obj;
                         for (DatabaseRow data : rooms) {
                             Room room = (Room) data;
@@ -197,13 +199,21 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
                 JSONArray arr = new JSONArray(roomAvailability);
 
                 for (int i = 0; i < arr.length(); i++) {
+                    //parse for useful information
                     JSONObject roomInfo = arr.getJSONObject(i);
                     String start = roomInfo.getString("StartTime");
                     start = start.substring(start.indexOf("T") + 1);
+                    String end = roomInfo.getString("EndTime");
+                    end = end.substring(end.indexOf('T') + 1);
+
+                    //get proper types for interesting times
                     int startHour = Integer.parseInt(start.substring(0, 2));
+                    int endHour = Integer.parseInt(end.substring(0, 2));
                     Calendar cal = Calendar.getInstance();
                     int curHour = cal.get(Calendar.HOUR_OF_DAY);
-                    if (startHour == curHour || (startHour == curHour - 1 && cal.get(Calendar.MINUTE) < 30)) {
+
+                    //check available
+                    if (startHour == curHour && cal.get(Calendar.MINUTE) > 30 || (startHour <= curHour && curHour <= endHour)) {
                         return false;
                     }
                 }

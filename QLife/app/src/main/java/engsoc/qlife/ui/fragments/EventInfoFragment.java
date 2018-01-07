@@ -124,14 +124,20 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
                     mGoogleMap.setMyLocationEnabled(true);
                 }
                 String icsBuilding = mEventLoc.substring(mEventLoc.indexOf("at:") + 4, mEventLoc.length());
-                Building building = new BuildingManager(getContext()).getIcsBuilding(icsBuilding.substring(0, 4));
-                if (building != null) {
-                    LatLng pos = new LatLng(building.getLat(), building.getLon());
-                    mGoogleMap.addMarker(new MarkerOptions().position(pos).title(building.getName())).showInfoWindow();
+                try {
+                    Building building = new BuildingManager(getContext()).getIcsBuilding(icsBuilding.substring(0, 4));
+                    if (building != null) {
+                        LatLng pos = new LatLng(building.getLat(), building.getLon());
+                        mGoogleMap.addMarker(new MarkerOptions().position(pos).title(building.getName())).showInfoWindow();
 
-                    //For zooming automatically to the location of the marker
-                    CameraPosition cameraPosition = new CameraPosition.Builder().target(pos).zoom(16).build();
-                    mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                        //For zooming automatically to the location of the marker
+                        CameraPosition cameraPosition = new CameraPosition.Builder().target(pos).zoom(16).build();
+                        mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    }
+                } catch (Exception e) {
+                    //online or TBA class most likely, but for any error with map don't show it
+                    mGoogleMap.clear();
+                    mMapView.setVisibility(View.GONE);
                 }
             }
         });
