@@ -26,7 +26,7 @@
                 style="@style/ListItemH1"/>
 
             <TextView
-                android:id="@+id/name"
+                android:id="@+id/description"
                 style="@style/ListItemH2"
                 android:paddingEnd="7dp"
                 android:paddingStart="7dp"/>

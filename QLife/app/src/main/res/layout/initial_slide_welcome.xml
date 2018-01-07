@@ -14,11 +14,11 @@
 
         <TextView
             style="@style/WelcomeSlideTitleText"
-            android:text="@string/slide_1_title"/>
+            android:text="@string/slide_welcome_title"/>
 
         <TextView
             style="@style/WelcomeSlideText"
-            android:text="@string/slide_1_desc"/>
+            android:text="@string/slide_welcome_text"/>
 
     </LinearLayout>
 </RelativeLayout>

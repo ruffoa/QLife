@@ -18,7 +18,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import engsoc.qlife.R;
-import engsoc.qlife.ui.fragments.ILCRoomInfoFragment;
+import engsoc.qlife.ui.fragments.RoomsFragment;
 import engsoc.qlife.utility.Util;
 import engsoc.qlife.database.local.DatabaseAccessor;
 import engsoc.qlife.database.local.users.User;
@@ -143,7 +143,7 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
                 fragment = new FoodFragment();
                 break;
             case R.id.nav_rooms:
-                fragment = new ILCRoomInfoFragment();
+                fragment = new RoomsFragment();
                 break;
 
         }

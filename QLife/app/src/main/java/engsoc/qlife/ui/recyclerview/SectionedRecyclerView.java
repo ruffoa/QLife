@@ -12,7 +12,7 @@ import engsoc.qlife.R;
 
 /**
  * Created by Alex Ruffo on 8/30/2017.
- *  * Class that defines the adapter for the ILCRoomInfoFragment RecyclerView that allows for sectioned elements.
+ * * Class that defines the adapter for the RoomsFragment RecyclerView that allows for sectioned elements.
  */
 
 public class SectionedRecyclerView extends RecyclerView.Adapter<SectionedRecyclerView.DataObjectHolder> {
@@ -50,7 +50,7 @@ public class SectionedRecyclerView extends RecyclerView.Adapter<SectionedRecycle
 
     @Override
     public SectionedRecyclerView.DataObjectHolder onCreateViewHolder(ViewGroup parent,
-                                                                   int viewType) {
+                                                                     int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.sectioned_recyclerview_card, parent, false);
 
@@ -59,13 +59,21 @@ public class SectionedRecyclerView extends RecyclerView.Adapter<SectionedRecycle
 
     @Override
     public void onBindViewHolder(SectionedRecyclerView.DataObjectHolder holder, int position) {
-        holder.label.setText(mDataset.get(position).getmText1());
-        holder.dateTime.setText(mDataset.get(position).getmText2());
-        if (mDataset.get(position).getHeader() != null && mDataset.get(position).getHeader().length() > 0) {
-            holder.header.setText(mDataset.get(position).getHeader());
-            holder.header.setVisibility(View.VISIBLE);
-        }
+        String text1 = mDataset.get(position).getmText1();
+        String text2 = mDataset.get(position).getmText2();
+        String header = mDataset.get(position).getHeader();
+        if (text1 != null)
+            holder.label.setText(text1);
         else
+            holder.label.setVisibility(View.GONE);
+        if (text2 != null)
+            holder.dateTime.setText(text2);
+        else
+            holder.dateTime.setVisibility(View.GONE);
+        if (header != null && header.length() > 0) {
+            holder.header.setText(header);
+            holder.header.setVisibility(View.VISIBLE);
+        } else
             holder.header.setVisibility(View.GONE);
 
     }
