@@ -66,6 +66,7 @@
     <string name="career_services">Career Services</string>
     <string name="solus">Solus</string>
     <string name="outlook365">Outlook 365</string>
+    <string name="engsoc_apply">Engsoc Apply</string>
     <string name="onq">OnQ</string>
     <string name="logout">Log Out</string>
     <string name="prev">PREV</string>
@@ -85,6 +86,7 @@
     <string name="solus_url">http://www.my.queensu.ca/</string>
     <string name="counselling_url">http://queensu.ca/studentwellness/counselling-services</string>
     <string name="career_url">http://careers.queensu.ca/students</string>
+    <string name="apply_url">https://webapp.queensu.ca/ams/AMSapply/ENGSOC/</string>
     <string name="suggestions_url">http://qtap.engsoc.queensu.ca/improvements_form.html</string>
     <string name="suggestions_accepted_url">http://qtap.engsoc.queensu.ca/submit_improvement.php</string>
 

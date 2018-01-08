@@ -39,6 +39,7 @@ public class StudentToolsFragment extends Fragment implements IQLActionbarFragme
         CardView solusCard = v.findViewById(R.id.solus_card);
         CardView outlookCard = v.findViewById(R.id.outlook_card);
         CardView onqCard = v.findViewById(R.id.onq_card);
+        CardView applyCard = v.findViewById(R.id.engsoc_apply_card);
 
         emergContactsCard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,6 +81,12 @@ public class StudentToolsFragment extends Fragment implements IQLActionbarFragme
                 startBrowser(getString(R.string.queens_url));
             }
         });
+        applyCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startBrowser(getString(R.string.apply_url));
+            }
+        });
         return v;
     }
 
@@ -95,6 +102,11 @@ public class StudentToolsFragment extends Fragment implements IQLActionbarFragme
         deselectDrawer();
     }
 
+    /**
+     * Method that starts the default Internet browser at a given URL.
+     *
+     * @param url The URL to start browsing session.
+     */
     private void startBrowser(String url) {
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
