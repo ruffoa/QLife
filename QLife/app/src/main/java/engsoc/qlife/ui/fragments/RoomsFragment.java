@@ -139,6 +139,7 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
                         //need to check cast - as of now only use SparseArray<String>
                         //in this context
                         SparseArray<String> roomAvailability = (SparseArray<String>) obj;
+                        mAllAvailableRooms.clear();
                         for (DatabaseRow data : rooms) {
                             Room room = (Room) data;
                             if (currentlyAvailable(roomAvailability.get((int) room.getId())))
