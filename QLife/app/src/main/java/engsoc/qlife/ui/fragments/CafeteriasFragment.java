@@ -1,7 +1,6 @@
 package engsoc.qlife.ui.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +9,13 @@ import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
 import engsoc.qlife.R;
+import engsoc.qlife.interfaces.enforcers.ListFragment;
 import engsoc.qlife.utility.Util;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.cafeterias.Cafeteria;
 import engsoc.qlife.database.local.cafeterias.CafeteriaManager;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.interfaces.IQLListFragment;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +24,7 @@ import java.util.HashMap;
  * Created by Carson on 18/07/2017.
  * Fragment that displays the cafeterias in the phone database.
  */
-public class CafeteriasFragment extends ListFragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragment {
+public class CafeteriasFragment extends android.support.v4.app.ListFragment implements ActionbarFragment, DrawerItem, ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

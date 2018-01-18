@@ -14,15 +14,15 @@ import android.view.ViewGroup;
 
 import engsoc.qlife.R;
 import engsoc.qlife.utility.Util;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
 
 
 /**
  * Created by Carson on 02/12/2016.
  * Holds information pertinent to students
  */
-public class StudentToolsFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem {
+public class StudentToolsFragment extends Fragment implements ActionbarFragment, DrawerItem {
 
     @Nullable
     @Override

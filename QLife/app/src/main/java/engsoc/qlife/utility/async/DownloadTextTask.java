@@ -12,7 +12,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.utility.Constants;
 
 /**

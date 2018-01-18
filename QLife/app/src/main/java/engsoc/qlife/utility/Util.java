@@ -18,6 +18,7 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 
 import engsoc.qlife.R;
+import engsoc.qlife.interfaces.observers.CallableObj;
 
 /**
  * Created by Carson on 01/08/2017.

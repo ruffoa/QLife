@@ -23,7 +23,7 @@ import engsoc.qlife.utility.Util;
 import engsoc.qlife.database.local.DatabaseAccessor;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
-import engsoc.qlife.interfaces.IQLActivityHasOptionsMenu;
+import engsoc.qlife.interfaces.enforcers.ActivityHasOptionsMenu;
 import engsoc.qlife.ui.fragments.BuildingsFragment;
 import engsoc.qlife.ui.fragments.CafeteriasFragment;
 import engsoc.qlife.ui.fragments.DayFragment;
@@ -35,7 +35,7 @@ import engsoc.qlife.ui.fragments.StudentToolsFragment;
  * Activity holding most of the app.
  * contains the drawer that navigates user to fragments with map, schedule, info etc.
  */
-public class MainTabActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, IQLActivityHasOptionsMenu {
+public class MainTabActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ActivityHasOptionsMenu {
 
     private boolean mToActivity;
 

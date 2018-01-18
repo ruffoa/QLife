@@ -12,7 +12,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -21,20 +20,20 @@ import engsoc.qlife.R;
 import engsoc.qlife.activities.MapsActivity;
 import engsoc.qlife.database.local.buildings.Building;
 import engsoc.qlife.database.local.buildings.BuildingManager;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.interfaces.IQLListItemDetailsFragment;
-import engsoc.qlife.interfaces.IQLMapView;
-import engsoc.qlife.utility.CallableObj;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
+import engsoc.qlife.interfaces.enforcers.ListItemDetailsFragment;
+import engsoc.qlife.interfaces.enforcers.MapView;
+import engsoc.qlife.interfaces.observers.CallableObj;
 import engsoc.qlife.utility.HandlePermissions;
 import engsoc.qlife.utility.Util;
 
-public class EventInfoFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLMapView, IQLListItemDetailsFragment {
+public class EventInfoFragment extends Fragment implements ActionbarFragment, DrawerItem, MapView, ListItemDetailsFragment {
 
     private String mEventTitle, mEventLoc, mDate, mDetails;
     private Bundle mSavedInstanceState;
     private View myView;
-    private MapView mMapView;
+    private com.google.android.gms.maps.MapView mMapView;
     private GoogleMap mGoogleMap;
 
     @Override

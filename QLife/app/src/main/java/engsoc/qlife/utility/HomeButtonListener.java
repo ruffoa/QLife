@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import engsoc.qlife.interfaces.OnHomePressedListener;
+import engsoc.qlife.interfaces.observers.OnHomePressedListener;
 
 /**
  * Created by Carson on 10/08/2017.

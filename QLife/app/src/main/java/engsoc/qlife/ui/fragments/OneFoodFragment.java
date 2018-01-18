@@ -15,7 +15,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -26,10 +25,10 @@ import engsoc.qlife.R;
 import engsoc.qlife.activities.MapsActivity;
 import engsoc.qlife.database.local.buildings.Building;
 import engsoc.qlife.database.local.food.Food;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.interfaces.IQLListItemDetailsFragment;
-import engsoc.qlife.interfaces.IQLMapView;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
+import engsoc.qlife.interfaces.enforcers.ListItemDetailsFragment;
+import engsoc.qlife.interfaces.enforcers.MapView;
 import engsoc.qlife.utility.HandlePermissions;
 import engsoc.qlife.utility.Util;
 
@@ -37,7 +36,7 @@ import engsoc.qlife.utility.Util;
  * Created by Carson on 23/07/2017.
  * Fragment that holds information for one food establishment.
  */
-public class OneFoodFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListItemDetailsFragment, IQLMapView {
+public class OneFoodFragment extends Fragment implements ActionbarFragment, DrawerItem, ListItemDetailsFragment, MapView {
 
     private Bundle mArgs;
     private View mView;
@@ -119,7 +118,7 @@ public class OneFoodFragment extends Fragment implements IQLActionbarFragment, I
 
     @Override
     public void setMapView() {
-        MapView mapView = mView.findViewById(R.id.map);
+        com.google.android.gms.maps.MapView mapView = mView.findViewById(R.id.map);
         mapView.onCreate(mSavedInstanceState);
         mapView.onResume();
 

@@ -1,11 +1,11 @@
-package engsoc.qlife.interfaces;
+package engsoc.qlife.interfaces.enforcers;
 
 /**
  * Created by Carson on 29/07/2017.
  * Interface for fragment or activity that uses a MapView.
  */
 
-public interface IQLMapView {
+public interface MapView {
 
     /**
      * Method that will initialize and set the MapView/GoogleMap.

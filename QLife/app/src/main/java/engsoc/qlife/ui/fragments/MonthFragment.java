@@ -11,8 +11,8 @@ import android.widget.DatePicker;
 
 import engsoc.qlife.R;
 import engsoc.qlife.utility.Util;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
 
 import java.util.Calendar;
 
@@ -23,7 +23,7 @@ import java.util.Calendar;
  * This is the first screen user sees upon logging in (unless first time login).
  * Attached to MainTabActivity only.
  */
-public class MonthFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem {
+public class MonthFragment extends Fragment implements ActionbarFragment, DrawerItem {
 
     public static final String TAG_DAY = "day";
     public static final String TAG_MONTH = "month";

@@ -27,7 +27,7 @@ import engsoc.qlife.database.local.courses.OneClass.OneClass;
 import engsoc.qlife.database.local.courses.OneClass.OneClassManager;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
-import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.ui.fragments.StudentToolsFragment;
 import engsoc.qlife.utility.Constants;
 

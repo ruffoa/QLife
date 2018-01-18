@@ -2,7 +2,6 @@ package engsoc.qlife.ui.fragments;
 
 
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,16 +16,16 @@ import engsoc.qlife.R;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.contacts.engineering.EngineeringContact;
 import engsoc.qlife.database.local.contacts.engineering.EngineeringContactsManager;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.interfaces.IQLListFragment;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
+import engsoc.qlife.interfaces.enforcers.ListFragment;
 import engsoc.qlife.utility.Util;
 
 /**
  * Created by Carson on 12/06/2017.
  * Activity that displays engineering contact information held in cloud database
  */
-public class EngContactsFragment extends ListFragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragment {
+public class EngContactsFragment extends android.support.v4.app.ListFragment implements ActionbarFragment, DrawerItem, ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

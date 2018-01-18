@@ -2,7 +2,7 @@ package engsoc.qlife.database.dibs;
 
 import android.util.Log;
 
-import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.async.DownloadTextTask;
 

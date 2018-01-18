@@ -1,10 +1,10 @@
-package engsoc.qlife.interfaces;
+package engsoc.qlife.interfaces.enforcers;
 
 /**
  * Created by Carson on 29/07/2017.
  * Interface for fragments that are a part of a drawer layout of an activity.
  */
-public interface IQLDrawerItem {
+public interface DrawerItem {
 
     /**
      * Method that will deselect an item in the drawer layout.

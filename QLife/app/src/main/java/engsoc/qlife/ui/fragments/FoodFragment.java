@@ -19,9 +19,9 @@ import engsoc.qlife.database.local.buildings.Building;
 import engsoc.qlife.database.local.buildings.BuildingManager;
 import engsoc.qlife.database.local.food.Food;
 import engsoc.qlife.database.local.food.FoodManager;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.interfaces.IQLListFragmentWithChild;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
+import engsoc.qlife.interfaces.enforcers.ListFragmentWithChild;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ import java.util.HashMap;
  * Fragment displaying data in phone database regarding food establishments. When a food place is clicked, it starts
  * OneFoodFragment that provides details about the food place.
  */
-public class FoodFragment extends ListFragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragmentWithChild {
+public class FoodFragment extends ListFragment implements ActionbarFragment, DrawerItem, ListFragmentWithChild {
     public static final String TAG_DB_ID = "DB_ID";
     public static final String TAG_BUILDING_NAME = "BUILDING_NAME";
 

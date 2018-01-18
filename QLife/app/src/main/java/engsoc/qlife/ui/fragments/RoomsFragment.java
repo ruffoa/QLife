@@ -33,16 +33,16 @@ import engsoc.qlife.database.dibs.GetRooms;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.rooms.Room;
 import engsoc.qlife.database.local.rooms.RoomManager;
-import engsoc.qlife.interfaces.AsyncTaskObserver;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.interfaces.IQLListFragment;
+import engsoc.qlife.interfaces.enforcers.ListFragment;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
 import engsoc.qlife.ui.recyclerview.DataObject;
 import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.Util;
 
-public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragment {
+public class RoomsFragment extends Fragment implements ActionbarFragment, DrawerItem, ListFragment {
     public static final String TAG_TITLE = "room_title";
     public static final String TAG_PIC = "pic";
     public static final String TAG_ROOM_ID = "room_id";

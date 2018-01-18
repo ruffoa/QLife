@@ -23,10 +23,9 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 import engsoc.qlife.R;
-import engsoc.qlife.database.dibs.GetAllRoomBookings;
 import engsoc.qlife.database.dibs.GetOneRoomBooking;
-import engsoc.qlife.interfaces.AsyncTaskObserver;
-import engsoc.qlife.interfaces.IQLDrawerItem;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
 import engsoc.qlife.ui.recyclerview.DataObject;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.Util;
@@ -36,7 +35,7 @@ import engsoc.qlife.utility.async.DownloadImageTask;
  * Created by Alex on 8/21/2017.
  * Fragment that shows when each room is available.
  */
-public class OneRoomFragment extends Fragment implements IQLDrawerItem {
+public class OneRoomFragment extends Fragment implements DrawerItem {
     private String mRoomName, mRoomPicUrl;
     private int mRoomID;
     private String mBookedRooms;

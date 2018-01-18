@@ -1,10 +1,10 @@
-package engsoc.qlife.interfaces;
+package engsoc.qlife.interfaces.enforcers;
 
 /**
  * Created by Carson on 08/08/2017.
  * Interface that defines an Activity accessed from the options menu.
  */
-public interface IQLOptionsMenuActivity extends IQLActivityHasOptionsMenu{
+public interface OptionsMenuActivity extends ActivityHasOptionsMenu {
     /**
      * Method that sets the back button in the action bar.
      *

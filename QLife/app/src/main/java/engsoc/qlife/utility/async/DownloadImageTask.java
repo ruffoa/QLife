@@ -7,7 +7,7 @@ import android.util.Log;
 
 import java.io.InputStream;
 
-import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 
 /**
  * Created by Carson on 2017-11-28.

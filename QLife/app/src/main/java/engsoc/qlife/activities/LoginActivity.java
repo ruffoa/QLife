@@ -33,7 +33,7 @@ import engsoc.qlife.database.ParseDbJson;
 import engsoc.qlife.database.local.DatabaseAccessor;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
-import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.utility.Constants;
 
 /**

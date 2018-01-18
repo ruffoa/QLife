@@ -16,13 +16,13 @@ import android.webkit.WebViewClient;
 
 import engsoc.qlife.R;
 import engsoc.qlife.utility.Util;
-import engsoc.qlife.interfaces.IQLOptionsMenuActivity;
+import engsoc.qlife.interfaces.enforcers.OptionsMenuActivity;
 
 /**
  * Created by Carson on 06/07/2017.
  * Activity that sends user to review app on Play store and suggest improvements with web form
  */
-public class ReviewActivity extends AppCompatActivity implements IQLOptionsMenuActivity {
+public class ReviewActivity extends AppCompatActivity implements OptionsMenuActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

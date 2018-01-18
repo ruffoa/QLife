@@ -1,7 +1,7 @@
-package engsoc.qlife.utility;
+package engsoc.qlife.interfaces.observers;
 
 /**
- * Created by cookc on 2018-01-18.
+ * Created by Carson on 2018-01-18.
  * Interface that allows a callback with an object parameter in the callback function
  */
 public interface CallableObj<T> {

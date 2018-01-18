@@ -1,4 +1,4 @@
-package engsoc.qlife.interfaces;
+package engsoc.qlife.interfaces.enforcers;
 
 import android.view.Menu;
 
@@ -6,7 +6,7 @@ import android.view.Menu;
  * Created by Carson on 08/08/2017.
  * Interface that defines an Activity that has an options menu.
  */
-public interface IQLActivityHasOptionsMenu {
+public interface ActivityHasOptionsMenu {
 
     /**
      * Method that handles adding items to the options menu.

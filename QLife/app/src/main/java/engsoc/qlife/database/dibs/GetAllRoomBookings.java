@@ -3,14 +3,11 @@ package engsoc.qlife.database.dibs;
 import android.util.Log;
 import android.util.SparseArray;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.rooms.Room;
-import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.ui.fragments.RoomsFragment;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.async.DownloadTextTask;

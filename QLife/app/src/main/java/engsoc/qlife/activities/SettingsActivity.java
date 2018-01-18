@@ -20,13 +20,13 @@ import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.SqlStringStatements;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
-import engsoc.qlife.interfaces.IQLOptionsMenuActivity;
+import engsoc.qlife.interfaces.enforcers.OptionsMenuActivity;
 import engsoc.qlife.utility.Util;
 
 /**
  * Activity for the settings. Can see NetID, time since calendar was last synced and can logout here
  */
-public class SettingsActivity extends AppCompatActivity implements IQLOptionsMenuActivity {
+public class SettingsActivity extends AppCompatActivity implements OptionsMenuActivity {
 
     /**
      * Method that will remove all information from the last session. Deletes the

@@ -28,10 +28,10 @@ import engsoc.qlife.database.local.courses.Course.Course;
 import engsoc.qlife.database.local.courses.Course.CourseManager;
 import engsoc.qlife.database.local.courses.OneClass.OneClass;
 import engsoc.qlife.database.local.courses.OneClass.OneClassManager;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.interfaces.IQLListFragmentWithChild;
-import engsoc.qlife.interfaces.OnHomePressedListener;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
+import engsoc.qlife.interfaces.enforcers.ListFragmentWithChild;
+import engsoc.qlife.interfaces.observers.OnHomePressedListener;
 import engsoc.qlife.ui.recyclerview.DataObject;
 import engsoc.qlife.ui.recyclerview.RecyclerViewAdapter;
 import engsoc.qlife.utility.HomeButtonListener;
@@ -41,7 +41,7 @@ import engsoc.qlife.utility.Util;
  * Fragment that displays the classes for a given day. When a class is clicked, it starts
  * EventInfoFragment that provides details about the class.
  */
-public class DayFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragmentWithChild {
+public class DayFragment extends Fragment implements ActionbarFragment, DrawerItem, ListFragmentWithChild {
 
     public static final String TAG_CODE = "event_code";
     public static final String TAG_NAME = "event_name";

@@ -25,10 +25,10 @@ import engsoc.qlife.R;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.buildings.Building;
 import engsoc.qlife.database.local.buildings.BuildingManager;
-import engsoc.qlife.interfaces.IQLMapView;
+import engsoc.qlife.interfaces.enforcers.MapView;
 import engsoc.qlife.utility.HandlePermissions;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, IQLMapView {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, MapView {
 
     public static final int REQUEST_LOCATION_PERMISSIONS = 1;
     private GoogleMap mGoogleMap;

@@ -1,4 +1,4 @@
-package engsoc.qlife.interfaces;
+package engsoc.qlife.interfaces.observers;
 
 /**
  * Created by Carson on 10/08/2017.

@@ -1,14 +1,14 @@
-package engsoc.qlife.interfaces;
+package engsoc.qlife.interfaces.enforcers;
 
 import android.os.Bundle;
 import android.view.View;
 
 /**
  * Created by Carson on 07/08/2017.
- * Interface that defines an IQLListFragment that shows details when an item is clicked.
+ * Interface that defines an ListFragment that shows details when an item is clicked.
  */
 
-public interface IQLListFragmentWithChild extends IQLListFragment{
+public interface ListFragmentWithChild extends ListFragment {
 
     /**
      * Method that handles logic for when an item within the ListView is clicked.
