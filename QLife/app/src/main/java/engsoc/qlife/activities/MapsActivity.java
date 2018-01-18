@@ -31,7 +31,6 @@ import engsoc.qlife.utility.HandlePermissions;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, IQLMapView {
 
     public static final int REQUEST_LOCATION_PERMISSIONS = 1;
-
     private GoogleMap mMap;
 
     @Override

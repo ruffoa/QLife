@@ -8,8 +8,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import engsoc.qlife.R;
-import engsoc.qlife.utility.Util;
 import engsoc.qlife.interfaces.IQLOptionsMenuActivity;
+import engsoc.qlife.utility.Util;
 
 /**
  * Created by Carson on 06/06/2017.

@@ -125,7 +125,7 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
                 break;
             case R.id.nav_map:
                 mToActivity = true;
-                startActivity(new Intent(MainTabActivity.this, MapsActivity.class));
+                startActivityForResult(new Intent(MainTabActivity.this, MapsActivity.class), 1);
                 break;
             case R.id.nav_day:
                 fragment = new DayFragment();

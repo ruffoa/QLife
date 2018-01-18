@@ -23,6 +23,7 @@ import engsoc.qlife.interfaces.IQLOptionsMenuActivity;
  * Activity that sends user to review app on Play store and suggest improvements with web form
  */
 public class ReviewActivity extends AppCompatActivity implements IQLOptionsMenuActivity {
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,10 +89,10 @@ public class ReviewActivity extends AppCompatActivity implements IQLOptionsMenuA
     public void handleOptionsClick(int itemId) {
         switch (itemId) {
             case R.id.settings:
-                startActivity(new Intent(ReviewActivity.this, SettingsActivity.class));
+                startActivityForResult(new Intent(ReviewActivity.this, SettingsActivity.class), 1);
                 break;
             case R.id.about:
-                startActivity(new Intent(ReviewActivity.this, AboutActivity.class));
+                startActivityForResult(new Intent(ReviewActivity.this, AboutActivity.class), 1);
                 break;
             case android.R.id.home:
                 finish();

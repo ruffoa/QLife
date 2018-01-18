@@ -173,6 +173,12 @@ public class StartupActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        //don't allow back press - after logout, will let user back into app with no database information
+        super.onBackPressed();
+    }
+
     /**
      * Class that makes a custom View Pager adapter.
      * No new methods, however overrides and changes (with no super call) instantiateItem(),

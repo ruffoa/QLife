@@ -28,6 +28,12 @@ import engsoc.qlife.utility.Util;
  */
 public class SettingsActivity extends AppCompatActivity implements IQLOptionsMenuActivity {
 
+    /**
+     * Method that will remove all information from the last session. Deletes the
+     * database, clears Internet information and clears the back button stack.
+     *
+     * @param v The view that holds the app context.
+     */
     private void clearData(View v) {
         CookieManager.getInstance().removeAllCookies(null);
         CookieManager.getInstance().flush();

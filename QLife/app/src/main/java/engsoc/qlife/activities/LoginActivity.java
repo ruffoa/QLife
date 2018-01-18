@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -44,7 +43,6 @@ public class LoginActivity extends AppCompatActivity {
     private View mProgressView;
     private View mLoginFormView;
     private UserManager mUserManager;
-    private ProgressDialog mProgressDialog;
 
     public static String mIcsUrl = "";
     public static String mUserEmail = "";
@@ -126,16 +124,10 @@ public class LoginActivity extends AppCompatActivity {
             GetCloudDb getCloudDb = new GetCloudDb(new AsyncTaskObserver() {
                 @Override
                 public void onTaskCompleted(Object obj) {
-                    mProgressDialog.dismiss();
                 }
 
                 @Override
                 public void beforeTaskStarted() {
-                    mProgressDialog = new ProgressDialog(context);
-                    mProgressDialog.setMessage("Downloading cloud database. Please wait...");
-                    mProgressDialog.setIndeterminate(false);
-                    mProgressDialog.setCancelable(false);
-                    mProgressDialog.show();
                 }
 
                 @Override
