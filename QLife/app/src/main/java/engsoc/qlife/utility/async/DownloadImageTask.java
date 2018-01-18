@@ -21,16 +21,21 @@ public class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
     }
 
     @Override
+    protected void onPreExecute() {
+        mObserver.beforeTaskStarted();
+    }
+
+    @Override
     protected Bitmap doInBackground(String... urls) {
         String urlDisplay = urls[0];
-        Bitmap mIcon11 = null;
+        Bitmap icon = null;
         try {
             InputStream in = new java.net.URL(urlDisplay).openStream();
-            mIcon11 = BitmapFactory.decodeStream(in);
+            icon = BitmapFactory.decodeStream(in);
         } catch (Exception e) {
             Log.d("HELLOTHERE", e.getMessage());
         }
-        return mIcon11;
+        return icon;
     }
 
     @Override

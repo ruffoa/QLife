@@ -92,18 +92,18 @@ public class CafeteriasFragment extends android.support.v4.app.ListFragment impl
         map.put(Cafeteria.COLUMN_NAME, caf.getName());
         //don't put building ID - name makes it obvious
         //use start for key for hours
-        map.put(Cafeteria.COLUMN_WEEK_BREAKFAST_START, Util.getHours(caf.getWeekBreakfastStart(), caf.getWeekBreakfastStop()));
-        map.put(Cafeteria.COLUMN_FRI_BREAKFAST_START, Util.getHours(caf.getFriBreakfastStart(), caf.getFriBreakfastStop()));
-        map.put(Cafeteria.COLUMN_SAT_BREAKFAST_START, Util.getHours(caf.getSatBreakfastStart(), caf.getSatBreakfastStop()));
-        map.put(Cafeteria.COLUMN_SUN_BREAKFAST_START, Util.getHours(caf.getSunBreakfastStart(), caf.getSunBreakfastStop()));
-        map.put(Cafeteria.COLUMN_WEEK_LUNCH_START, Util.getHours(caf.getWeekLunchStart(), caf.getWeekLunchStop()));
-        map.put(Cafeteria.COLUMN_FRI_LUNCH_START, Util.getHours(caf.getFriLunchStart(), caf.getFriLunchStop()));
-        map.put(Cafeteria.COLUMN_SAT_LUNCH_START, Util.getHours(caf.getSatLunchStart(), caf.getSatLunchStop()));
-        map.put(Cafeteria.COLUMN_SUN_LUNCH_START, Util.getHours(caf.getSunLunchStart(), caf.getSunLunchStop()));
-        map.put(Cafeteria.COLUMN_WEEK_DINNER_START, Util.getHours(caf.getWeekDinnerStart(), caf.getWeekDinnerStop()));
-        map.put(Cafeteria.COLUMN_FRI_DINNER_START, Util.getHours(caf.getFriDinnerStart(), caf.getFriDinnerStop()));
-        map.put(Cafeteria.COLUMN_SAT_DINNER_START, Util.getHours(caf.getSatDinnerStart(), caf.getSatDinnerStop()));
-        map.put(Cafeteria.COLUMN_SUN_DINNER_START, Util.getHours(caf.getSunDinnerStart(), caf.getSunDinnerStop()));
+        map.put(Cafeteria.COLUMN_WEEK_BREAKFAST_START, Util.getHoursBetween(caf.getWeekBreakfastStart(), caf.getWeekBreakfastStop()));
+        map.put(Cafeteria.COLUMN_FRI_BREAKFAST_START, Util.getHoursBetween(caf.getFriBreakfastStart(), caf.getFriBreakfastStop()));
+        map.put(Cafeteria.COLUMN_SAT_BREAKFAST_START, Util.getHoursBetween(caf.getSatBreakfastStart(), caf.getSatBreakfastStop()));
+        map.put(Cafeteria.COLUMN_SUN_BREAKFAST_START, Util.getHoursBetween(caf.getSunBreakfastStart(), caf.getSunBreakfastStop()));
+        map.put(Cafeteria.COLUMN_WEEK_LUNCH_START, Util.getHoursBetween(caf.getWeekLunchStart(), caf.getWeekLunchStop()));
+        map.put(Cafeteria.COLUMN_FRI_LUNCH_START, Util.getHoursBetween(caf.getFriLunchStart(), caf.getFriLunchStop()));
+        map.put(Cafeteria.COLUMN_SAT_LUNCH_START, Util.getHoursBetween(caf.getSatLunchStart(), caf.getSatLunchStop()));
+        map.put(Cafeteria.COLUMN_SUN_LUNCH_START, Util.getHoursBetween(caf.getSunLunchStart(), caf.getSunLunchStop()));
+        map.put(Cafeteria.COLUMN_WEEK_DINNER_START, Util.getHoursBetween(caf.getWeekDinnerStart(), caf.getWeekDinnerStop()));
+        map.put(Cafeteria.COLUMN_FRI_DINNER_START, Util.getHoursBetween(caf.getFriDinnerStart(), caf.getFriDinnerStop()));
+        map.put(Cafeteria.COLUMN_SAT_DINNER_START, Util.getHoursBetween(caf.getSatDinnerStart(), caf.getSatDinnerStop()));
+        map.put(Cafeteria.COLUMN_SUN_DINNER_START, Util.getHoursBetween(caf.getSunDinnerStart(), caf.getSunDinnerStop()));
         return map;
     }
 }

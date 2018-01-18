@@ -93,19 +93,19 @@ public class OneFoodFragment extends Fragment implements ActionbarFragment, Draw
     @Override
     public void addDataToViews() {
         ((TextView) mView.findViewById(R.id.mon_hours)).setText(
-                Util.getHours(mArgs.getDouble(Food.COLUMN_MON_START_HOURS), mArgs.getDouble(Food.COLUMN_MON_STOP_HOURS)));
+                Util.getHoursBetween(mArgs.getDouble(Food.COLUMN_MON_START_HOURS), mArgs.getDouble(Food.COLUMN_MON_STOP_HOURS)));
         ((TextView) mView.findViewById(R.id.tue_hours)).setText(
-                Util.getHours(mArgs.getDouble(Food.COLUMN_TUE_START_HOURS), mArgs.getDouble(Food.COLUMN_TUE_STOP_HOURS)));
+                Util.getHoursBetween(mArgs.getDouble(Food.COLUMN_TUE_START_HOURS), mArgs.getDouble(Food.COLUMN_TUE_STOP_HOURS)));
         ((TextView) mView.findViewById(R.id.wed_hours)).setText(
-                Util.getHours(mArgs.getDouble(Food.COLUMN_WED_START_HOURS), mArgs.getDouble(Food.COLUMN_WED_STOP_HOURS)));
+                Util.getHoursBetween(mArgs.getDouble(Food.COLUMN_WED_START_HOURS), mArgs.getDouble(Food.COLUMN_WED_STOP_HOURS)));
         ((TextView) mView.findViewById(R.id.thur_hours)).setText(
-                Util.getHours(mArgs.getDouble(Food.COLUMN_THUR_START_HOURS), mArgs.getDouble(Food.COLUMN_THUR_STOP_HOURS)));
+                Util.getHoursBetween(mArgs.getDouble(Food.COLUMN_THUR_START_HOURS), mArgs.getDouble(Food.COLUMN_THUR_STOP_HOURS)));
         ((TextView) mView.findViewById(R.id.fri_hours)).setText(
-                Util.getHours(mArgs.getDouble(Food.COLUMN_FRI_START_HOURS), mArgs.getDouble(Food.COLUMN_FRI_STOP_HOURS)));
+                Util.getHoursBetween(mArgs.getDouble(Food.COLUMN_FRI_START_HOURS), mArgs.getDouble(Food.COLUMN_FRI_STOP_HOURS)));
         ((TextView) mView.findViewById(R.id.sat_hours)).setText(
-                Util.getHours(mArgs.getDouble(Food.COLUMN_SAT_START_HOURS), mArgs.getDouble(Food.COLUMN_SAT_STOP_HOURS)));
+                Util.getHoursBetween(mArgs.getDouble(Food.COLUMN_SAT_START_HOURS), mArgs.getDouble(Food.COLUMN_SAT_STOP_HOURS)));
         ((TextView) mView.findViewById(R.id.sun_hours)).setText(
-                Util.getHours(mArgs.getDouble(Food.COLUMN_SUN_START_HOURS), mArgs.getDouble(Food.COLUMN_SUN_STOP_HOURS)));
+                Util.getHoursBetween(mArgs.getDouble(Food.COLUMN_SUN_START_HOURS), mArgs.getDouble(Food.COLUMN_SUN_STOP_HOURS)));
 
         ((TextView) mView.findViewById(R.id.takes_card_short)).setText(mArgs.getBoolean(Food.COLUMN_CARD) ? "Yes" : "No");
         ((TextView) mView.findViewById(R.id.takes_meal_short)).setText(mArgs.getBoolean(Food.COLUMN_MEAL_PLAN) ? "Yes" : "No");
