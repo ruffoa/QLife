@@ -76,6 +76,7 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
 
     /**
      * Helper method that sorts the supplied list of rooms by small, medium and then large.
+     * The API call already returns them in order of number.
      *
      * @param rooms The list of rooms to sort.
      * @return The sorted list of rooms.
@@ -97,6 +98,7 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
             else other.add(room);
         }
 
+        //find each type of room
         if (small.size() > 0)
             small.get(0).setHeader("Small Group Rooms");
         if (med.size() > 0)
@@ -106,6 +108,7 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
         if (other.size() > 0)
             other.get(0).setHeader("Un-categorized Rooms");
 
+        //sequentially add each type of room so they show up in order
         res.addAll(small);
         res.addAll(med);
         res.addAll(large);
@@ -140,7 +143,9 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
                         mAllAvailableRooms.clear();
                         for (DatabaseRow data : rooms) {
                             Room room = (Room) data;
+                            //get an object because roomAvailability just holds objects
                             Object objAvail = roomAvailability.get((int) room.getId());
+                            //check retrieved a String - availability should be a String
                             String availability = null;
                             if (objAvail != null && objAvail instanceof String) {
                                 availability = (String) objAvail;

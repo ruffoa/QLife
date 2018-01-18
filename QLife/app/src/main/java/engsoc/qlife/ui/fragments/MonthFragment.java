@@ -64,13 +64,16 @@ public class MonthFragment extends Fragment implements IQLActionbarFragment, IQL
                 new DatePicker.OnDateChangedListener() {
                     @Override
                     public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                        getCalData();
+                        startDayFragment();
                     }
                 }
         );
     }
 
-    public void getCalData() {
+    /**
+     * Helper method that starts DayFragment on the day chosen in the DatePicker.
+     */
+    private void startDayFragment() {
         DayFragment nextFrag = new DayFragment();
         Bundle bundle = new Bundle();
         bundle.putString(TAG_FROM_MONTH, TAG_FROM_MONTH); //tell day fragment bundle is from month fragment

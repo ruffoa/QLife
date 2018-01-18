@@ -1,11 +1,21 @@
 package engsoc.qlife.utility;
 
+import android.Manifest;
 import android.app.Activity;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.View;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
 import engsoc.qlife.R;
 
@@ -14,6 +24,37 @@ import engsoc.qlife.R;
  * Class for common methods. All are short and static.
  */
 public class Util {
+    public static void initMapView(final MapView mapView, Bundle savedInstanceState,
+                                   final Activity activity, final CallableObj<Void> callback) {
+        mapView.onCreate(savedInstanceState);
+        mapView.onResume();
+        try {
+            MapsInitializer.initialize(activity.getApplicationContext());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(GoogleMap googleMap) {
+                if (ActivityCompat.checkSelfPermission(activity.getApplicationContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                        ActivityCompat.checkSelfPermission(activity.getApplicationContext(),
+                                Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    HandlePermissions.requestLocationPermissions(activity);
+                } else {
+                    googleMap.setMyLocationEnabled(true);
+                }
+                try {
+                    callback.call(googleMap);
+                } catch (Exception e) {
+                    googleMap.clear();
+                    mapView.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
     public static void setActionbarTitle(String title, AppCompatActivity activity) {
         ActionBar actionbar = activity.getSupportActionBar();
         if (actionbar != null) {

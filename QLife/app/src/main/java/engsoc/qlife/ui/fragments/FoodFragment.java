@@ -97,6 +97,7 @@ public class FoodFragment extends ListFragment implements IQLActionbarFragment, 
 
     @Override
     public void onListItemChosen(View view) {
+        //go to one FoodFragment
         Bundle args = setDataForOneItem(view);
         OneFoodFragment oneFoodFragment = new OneFoodFragment();
         oneFoodFragment.setArguments(args);

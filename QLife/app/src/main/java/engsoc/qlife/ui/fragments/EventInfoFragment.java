@@ -1,11 +1,8 @@
 package engsoc.qlife.ui.fragments;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -16,22 +13,21 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import engsoc.qlife.R;
+import engsoc.qlife.activities.MapsActivity;
 import engsoc.qlife.database.local.buildings.Building;
 import engsoc.qlife.database.local.buildings.BuildingManager;
-import engsoc.qlife.utility.HandlePermissions;
-import engsoc.qlife.utility.Util;
-import engsoc.qlife.activities.MapsActivity;
 import engsoc.qlife.interfaces.IQLActionbarFragment;
 import engsoc.qlife.interfaces.IQLDrawerItem;
 import engsoc.qlife.interfaces.IQLListItemDetailsFragment;
 import engsoc.qlife.interfaces.IQLMapView;
+import engsoc.qlife.utility.CallableObj;
+import engsoc.qlife.utility.HandlePermissions;
+import engsoc.qlife.utility.Util;
 
 public class EventInfoFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLMapView, IQLListItemDetailsFragment {
 
@@ -104,31 +100,17 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
     @Override
     public void setMapView() {
         mMapView = myView.findViewById(R.id.event_map);
-        mMapView.onCreate(mSavedInstanceState);
-        mMapView.onResume();
-
-        try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        mMapView.getMapAsync(new OnMapReadyCallback() {
+        Util.initMapView(mMapView, mSavedInstanceState, getActivity(), new CallableObj<Void>() {
             @Override
-            public void onMapReady(GoogleMap mMap) {
-                mGoogleMap = mMap;
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    requestLocationPermissions();
-                } else {
-                    mGoogleMap.setMyLocationEnabled(true);
-                }
+            public Void call(Object obj) throws Exception {
+                mGoogleMap = (GoogleMap) obj;
                 String icsBuilding = mEventLoc.substring(mEventLoc.indexOf("at:") + 4, mEventLoc.length());
                 try {
                     Building building = new BuildingManager(getContext()).getIcsBuilding(icsBuilding.substring(0, 4));
                     if (building != null) {
                         LatLng pos = new LatLng(building.getLat(), building.getLon());
-                        mGoogleMap.addMarker(new MarkerOptions().position(pos).title(building.getName())).showInfoWindow();
+                        mGoogleMap.addMarker(new MarkerOptions().position(pos).
+                                title(building.getName())).showInfoWindow();
 
                         //For zooming automatically to the location of the marker
                         CameraPosition cameraPosition = new CameraPosition.Builder().target(pos).zoom(16).build();
@@ -139,6 +121,7 @@ public class EventInfoFragment extends Fragment implements IQLActionbarFragment,
                     mGoogleMap.clear();
                     mMapView.setVisibility(View.GONE);
                 }
+                return null;
             }
         });
     }

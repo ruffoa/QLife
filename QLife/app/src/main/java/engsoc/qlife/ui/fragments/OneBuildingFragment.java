@@ -1,11 +1,8 @@
 package engsoc.qlife.ui.fragments;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -16,8 +13,6 @@ import android.widget.TextView;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -31,6 +26,7 @@ import engsoc.qlife.interfaces.IQLActionbarFragment;
 import engsoc.qlife.interfaces.IQLDrawerItem;
 import engsoc.qlife.interfaces.IQLListItemDetailsFragment;
 import engsoc.qlife.interfaces.IQLMapView;
+import engsoc.qlife.utility.CallableObj;
 import engsoc.qlife.utility.HandlePermissions;
 import engsoc.qlife.utility.Util;
 
@@ -115,31 +111,19 @@ public class OneBuildingFragment extends Fragment implements IQLActionbarFragmen
     @Override
     public void setMapView() {
         MapView mapView = mView.findViewById(R.id.map);
-        mapView.onCreate(mSavedInstanceState);
-        mapView.onResume();
-
-        try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        mapView.getMapAsync(new OnMapReadyCallback() {
+        Util.initMapView(mapView, mSavedInstanceState, getActivity(), new CallableObj<Void>() {
             @Override
-            public void onMapReady(GoogleMap mMap) {
-                mGoogleMap = mMap;
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    requestLocationPermissions();
-                } else {
-                    mGoogleMap.setMyLocationEnabled(true);
-                }
-                LatLng buildingInfo = new LatLng(mArgs.getDouble(Building.COLUMN_LAT), mArgs.getDouble(Building.COLUMN_LON));
-                mGoogleMap.addMarker(new MarkerOptions().position(buildingInfo).title(mArgs.getString(Building.COLUMN_NAME))).showInfoWindow();
+            public Void call(Object obj) {
+                if (obj instanceof GoogleMap) {
+                    mGoogleMap = (GoogleMap) obj;
+                    LatLng buildingInfo = new LatLng(mArgs.getDouble(Building.COLUMN_LAT), mArgs.getDouble(Building.COLUMN_LON));
+                    mGoogleMap.addMarker(new MarkerOptions().position(buildingInfo).title(mArgs.getString(Building.COLUMN_NAME))).showInfoWindow();
 
-                //For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(buildingInfo).zoom(15).build();
-                mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    //For zooming automatically to the location of the marker
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(buildingInfo).zoom(15).build();
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
+                return null;
             }
         });
     }

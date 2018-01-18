@@ -31,7 +31,7 @@ import engsoc.qlife.utility.HandlePermissions;
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, IQLMapView {
 
     public static final int REQUEST_LOCATION_PERMISSIONS = 1;
-    private GoogleMap mMap;
+    private GoogleMap mGoogleMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +59,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onRequestLocationPermissionsResult() {
-        HandlePermissions.onLocationPermissionsGiven(this, mMap);
+        HandlePermissions.onLocationPermissionsGiven(this, mGoogleMap);
     }
 
     @Override
@@ -71,18 +71,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        mGoogleMap = googleMap;
         //need permission to allow user to go to their location - check if already have it
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             requestLocationPermissions();
         } else {
-            mMap.setMyLocationEnabled(true);
+            mGoogleMap.setMyLocationEnabled(true);
         }
         createMarkers();
         //move map to ILC area
         CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(44.228185, -76.492447)).zoom(16).build();
-        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
     }
 
     /**
@@ -94,7 +94,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         for (DatabaseRow row : buildings) {
             Building building = (Building) row;
             MarkerOptions marker = new MarkerOptions().position(new LatLng(building.getLat(), building.getLon())).title(building.getName());
-            mMap.addMarker(marker);
+            mGoogleMap.addMarker(marker);
         }
     }
 

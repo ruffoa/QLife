@@ -114,7 +114,7 @@ public class OneRoomFragment extends Fragment implements IQLDrawerItem {
                 //only one slot, don't try to combine multiple
                 addAvailableTime(firstStart, firstEnd);
             } else {
-                //try to combine overlapping available slots
+                //combine overlapping available slots
                 String start = firstStart;
                 String end = firstEnd;
                 for (int i = 1; i < availableTimes.size(); i++) {
@@ -130,7 +130,7 @@ public class OneRoomFragment extends Fragment implements IQLDrawerItem {
                         end = nextEnd;
                     }
                     if (i == availableTimes.size() - 1) {
-                        //at end of loop, print out current slot (next start/end)
+                        //at end of loop, add current slot (next start/end)
                         addAvailableTime(start, end);
                     }
                 }
