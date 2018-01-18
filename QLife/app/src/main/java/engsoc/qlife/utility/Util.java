@@ -2,6 +2,7 @@ package engsoc.qlife.utility;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -18,6 +19,9 @@ import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 
 import engsoc.qlife.R;
+import engsoc.qlife.activities.AboutActivity;
+import engsoc.qlife.activities.ReviewActivity;
+import engsoc.qlife.activities.SettingsActivity;
 import engsoc.qlife.interfaces.observers.CallableObj;
 
 /**
@@ -54,6 +58,17 @@ public class Util {
                 }
             }
         });
+    }
+
+    public static void handleOptionsClick(Activity current, int clickedId){
+        switch (clickedId) {
+            case R.id.settings:
+                current.startActivity(new Intent(current, SettingsActivity.class));
+                break;
+            case R.id.about:
+                current.startActivity(new Intent(current, AboutActivity.class));
+                break;
+        }
     }
 
     public static void setActionbarTitle(String title, AppCompatActivity activity) {

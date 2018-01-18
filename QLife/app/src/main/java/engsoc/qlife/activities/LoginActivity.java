@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
             //not logged in, show software centre login screen
             final WebView browser = findViewById(R.id.webView);
             browser.getSettings().setSaveFormData(false); //disable autocomplete - more secure, keyboard popup blocks fields
-            browser.getSettings().setJavaScriptEnabled(true); // needed to properly display page / scroll to chosen location
+            browser.getSettings().setJavaScriptEnabled(true); //needed to properly display page/scroll to chosen location
 
             browser.setWebViewClient(new WebViewClient() {
                 @Override

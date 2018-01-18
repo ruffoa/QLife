@@ -28,23 +28,6 @@ import engsoc.qlife.utility.Util;
  */
 public class SettingsActivity extends AppCompatActivity implements OptionsMenuActivity {
 
-    /**
-     * Method that will remove all information from the last session. Deletes the
-     * database, clears Internet information and clears the back button stack.
-     *
-     * @param v The view that holds the app context.
-     */
-    private void clearData(View v) {
-        CookieManager.getInstance().removeAllCookies(null);
-        CookieManager.getInstance().flush();
-        WebView web = new WebView(getApplicationContext());
-        web.clearFormData();
-        web.clearHistory();
-        web.clearCache(true);
-
-        v.getContext().deleteDatabase(SqlStringStatements.PHONE_DATABASE_NAME);
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +46,23 @@ public class SettingsActivity extends AppCompatActivity implements OptionsMenuAc
 
         setBackButton();
         setTextViews();
+    }
+
+    /**
+     * Method that will remove all information from the last session. Deletes the
+     * database, clears Internet information and clears the back button stack.
+     *
+     * @param v The view that holds the app context.
+     */
+    private void clearData(View v) {
+        CookieManager.getInstance().removeAllCookies(null);
+        CookieManager.getInstance().flush();
+        WebView web = new WebView(getApplicationContext());
+        web.clearFormData();
+        web.clearHistory();
+        web.clearCache(true);
+
+        v.getContext().deleteDatabase(SqlStringStatements.PHONE_DATABASE_NAME);
     }
 
     @Override
@@ -104,16 +104,7 @@ public class SettingsActivity extends AppCompatActivity implements OptionsMenuAc
 
     @Override
     public void handleOptionsClick(int itemId) {
-        switch (itemId) {
-            case R.id.about:
-                startActivity(new Intent(SettingsActivity.this, AboutActivity.class));
-                break;
-            case R.id.review:
-                startActivity(new Intent(SettingsActivity.this, ReviewActivity.class));
-                break;
-            case android.R.id.home:
-                finish();
-        }
+        Util.handleOptionsClick(this, itemId);
     }
 
     @Override

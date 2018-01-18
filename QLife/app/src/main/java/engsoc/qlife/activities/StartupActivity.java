@@ -46,12 +46,6 @@ public class StartupActivity extends AppCompatActivity {
             finish();
         }
 
-        // Making notification bar transparent
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        }
-
         setContentView(R.layout.activity_startup);
 
         // layouts of all welcome sliders, can add more layouts
@@ -63,38 +57,9 @@ public class StartupActivity extends AppCompatActivity {
                 R.layout.initial_slide_rooms,
                 R.layout.initial_slide_it_team
         };
-
-        mViewPager = findViewById(R.id.view_pager);
-        mDotsLayout = findViewById(R.id.layoutDots);
-        mButtonSkip = findViewById(R.id.btn_skip);
-        mButtonNext = findViewById(R.id.btn_next);
-        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter();
-        mViewPager.setAdapter(myViewPagerAdapter);
-        mViewPager.addOnPageChangeListener(mViewPagerPageChangeListener);
-
-        addBottomDots(0); // adding bottom dots
-        changeStatusBarColor(); // making notification bar transparent
-
-        mButtonSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchLogin();
-            }
-        });
-
-        mButtonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // checking for last page -> if so, home screen will be launched
-                int current = getItem(+1);
-                if (current < mLayouts.length) {
-                    // move to next screen
-                    mViewPager.setCurrentItem(current);
-                } else {
-                    launchLogin();
-                }
-            }
-        });
+        setViews();
+        addBottomDots(0); //add all bottom dots
+        setStatusBar(); // making notification bar transparent
     }
 
     /**
@@ -163,9 +128,15 @@ public class StartupActivity extends AppCompatActivity {
     };
 
     /**
-     * Method that makes the status bar change colour.
+     * Method that makes the status bar change colour to match the screen.
      */
-    private void changeStatusBarColor() {
+    private void setStatusBar() {
+        // Making notification bar transparent
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+        //make status bar change colour
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -177,6 +148,37 @@ public class StartupActivity extends AppCompatActivity {
     public void onBackPressed() {
         //don't allow back press - after logout, will let user back into app with no database information
         super.onBackPressed();
+    }
+
+    private void setViews(){
+        mViewPager = findViewById(R.id.view_pager);
+        mDotsLayout = findViewById(R.id.layoutDots);
+        mButtonSkip = findViewById(R.id.btn_skip);
+        mButtonNext = findViewById(R.id.btn_next);
+        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter();
+        mViewPager.setAdapter(myViewPagerAdapter);
+        mViewPager.addOnPageChangeListener(mViewPagerPageChangeListener);
+
+        mButtonSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchLogin();
+            }
+        });
+
+        mButtonNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // checking for last page -> if so, home screen will be launched
+                int current = getItem(+1);
+                if (current < mLayouts.length) {
+                    // move to next screen
+                    mViewPager.setCurrentItem(current);
+                } else {
+                    launchLogin();
+                }
+            }
+        });
     }
 
     /**
