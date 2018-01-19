@@ -147,5 +147,5 @@ if (count($response) > 0) {
 }
 
 echo json_encode($response);
-
+mysqli_close($db);
 ?>
