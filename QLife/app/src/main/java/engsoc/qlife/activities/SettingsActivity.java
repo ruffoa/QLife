@@ -40,7 +40,7 @@ public class SettingsActivity extends AppCompatActivity implements OptionsMenuAc
                 Toast.makeText(SettingsActivity.this, getString(R.string.logged_out), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(SettingsActivity.this, StartupActivity.class);
                 startActivity(intent);
-                finish();
+                finishAffinity();
             }
         });
 

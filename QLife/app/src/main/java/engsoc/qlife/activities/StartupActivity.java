@@ -43,7 +43,6 @@ public class StartupActivity extends AppCompatActivity {
         //Check user already logged in, don't need startup screens
         if (!new UserManager(this).getTable().isEmpty()) {
             launchLogin();
-            finish();
         }
 
         setContentView(R.layout.activity_startup);
@@ -142,12 +141,6 @@ public class StartupActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        //don't allow back press - after logout, will let user back into app with no database information
-        super.onBackPressed();
     }
 
     private void setViews(){
