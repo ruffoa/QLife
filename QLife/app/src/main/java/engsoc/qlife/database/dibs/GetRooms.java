@@ -25,7 +25,9 @@ public class GetRooms extends DownloadTextTask<Void, Void> {
             //call php script on server that gets info from cloud database
             String jsonStr = getText(Constants.GET_DIBS_ROOMS);
             mObserver.duringTask(new JSONArray(jsonStr));
-        } catch (JSONException e) {
+        } catch (Exception e) {
+            //must catch JSONException, this will catch exception from
+            //null jsonStr when trying to make a JSONArray
             Log.d("HELLOTHERE", "BAD: " + e);
         }
         return null;
