@@ -206,7 +206,7 @@ public class LoginActivity extends AppCompatActivity {
      * Method that adds the user and their information to the User table in the phone, logging them in.
      */
     private void addUserSession(String netid) {
-        SimpleDateFormat df = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.CANADA);
+        SimpleDateFormat df = new SimpleDateFormat("MMMM d, yyyy, h:mm aa", Locale.CANADA);
         String formattedDate = df.format(Calendar.getInstance().getTime());
         User newUser = new User(1, netid, "", "", formattedDate, mIcsUrl); //ID of 1 as only ever 1 user logged in
         mUserManager = new UserManager(LoginActivity.this);

@@ -188,7 +188,7 @@ public class ParseICS {
                     }
                 }
             }
-            SimpleDateFormat df = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.CANADA);
+            SimpleDateFormat df = new SimpleDateFormat("MMMM d, yyyy, h:mm aa", Locale.CANADA);
             String formattedDate = df.format(Calendar.getInstance().getTime());
 
             User user = (User) userTable.get(0); //only ever 1 user

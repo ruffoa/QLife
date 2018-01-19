@@ -84,7 +84,6 @@ public class SettingsActivity extends AppCompatActivity implements OptionsMenuAc
         netID.setText(user.getNetid());
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         inflateOptionsMenu(menu);
