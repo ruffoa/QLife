@@ -78,7 +78,7 @@ public class StudentToolsFragment extends Fragment implements ActionbarFragment,
         });
         onqCard.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startBrowser(getString(R.string.queens_url));
+                startBrowser(getString(R.string.onq_url));
             }
         });
         applyCard.setOnClickListener(new View.OnClickListener() {

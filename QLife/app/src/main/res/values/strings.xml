@@ -81,7 +81,7 @@
     <string name="information_section">Information</string>
 
     <!--URLs-->
-    <string name="queens_url">http://www.queensu.ca/</string>
+    <string name="onq_url">http://onq.queensu.ca/</string>
     <string name="microsoft_url">https://login.microsoftonline.com/</string>
     <string name="solus_url">http://www.my.queensu.ca/</string>
     <string name="counselling_url">http://queensu.ca/studentwellness/counselling-services</string>
