@@ -1,6 +1,5 @@
 package engsoc.qlife.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -43,17 +42,7 @@ public class AboutActivity extends AppCompatActivity implements OptionsMenuActiv
 
     @Override
     public void handleOptionsClick(int itemId) {
-        switch (itemId) {
-            case R.id.settings:
-                Intent settings = new Intent(AboutActivity.this, SettingsActivity.class);
-                startActivity(settings);
-                break;
-            case R.id.review:
-                startActivity(new Intent(AboutActivity.this, ReviewActivity.class));
-                break;
-            case android.R.id.home:
-                finish();
-        }
+        Util.handleOptionsClick(this, itemId);
     }
 
     @Override

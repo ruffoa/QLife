@@ -60,13 +60,19 @@ public class Util {
         });
     }
 
-    public static void handleOptionsClick(Activity current, int clickedId){
+    public static void handleOptionsClick(Activity current, int clickedId) {
         switch (clickedId) {
             case R.id.settings:
                 current.startActivity(new Intent(current, SettingsActivity.class));
                 break;
             case R.id.about:
                 current.startActivity(new Intent(current, AboutActivity.class));
+                break;
+            case R.id.review:
+                current.startActivity(new Intent(current, ReviewActivity.class));
+                break;
+            case android.R.id.home:
+                current.finish();
                 break;
         }
     }
