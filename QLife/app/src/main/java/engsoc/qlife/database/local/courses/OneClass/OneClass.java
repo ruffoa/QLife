@@ -70,8 +70,6 @@ public class OneClass extends DatabaseRow {
         this.hasName = hasName;
     }
 
-
-    //getters and setters
     public long getCourseID() {
         return courseID;
     }
@@ -84,20 +82,12 @@ public class OneClass extends DatabaseRow {
         this.buildingID = buildingID;
     }
 
-    public void setHasName(String hasName) {
-        this.hasName = hasName;
-    }
-
     public String getHasName() {
         return hasName;
     }
 
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
     }
 
     public long getBuildingID() {

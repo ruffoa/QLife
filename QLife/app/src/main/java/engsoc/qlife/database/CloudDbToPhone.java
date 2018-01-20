@@ -22,7 +22,7 @@ import engsoc.qlife.database.local.food.FoodManager;
  * Created by Carson on 2017-11-29.
  * Static class with methods used to parse out the JSON received from the cloud database.
  */
-public class ParseDbJson {
+public class CloudDbToPhone {
     /**
      * Method that ties together methods that get specific parts of the cloud database JSON.
      * Only public method.

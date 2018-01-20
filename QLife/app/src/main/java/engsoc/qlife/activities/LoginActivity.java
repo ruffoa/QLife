@@ -29,7 +29,7 @@ import engsoc.qlife.ICS.DownloadICSFile;
 import engsoc.qlife.ICS.ParseICS;
 import engsoc.qlife.R;
 import engsoc.qlife.database.GetCloudDb;
-import engsoc.qlife.database.ParseDbJson;
+import engsoc.qlife.database.CloudDbToPhone;
 import engsoc.qlife.database.local.DatabaseAccessor;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
@@ -134,7 +134,7 @@ public class LoginActivity extends AppCompatActivity {
                 public void duringTask(Object obj) {
                     if (obj instanceof JSONObject) {
                         JSONObject json = (JSONObject) obj;
-                        ParseDbJson.cloudToPhoneDB(json, context);
+                        CloudDbToPhone.cloudToPhoneDB(json, context);
                     }
                 }
             });

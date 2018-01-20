@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 import engsoc.qlife.database.local.DatabaseManager;
 import engsoc.qlife.database.local.DatabaseRow;
+import engsoc.qlife.database.local.contacts.engineering.EngineeringContact;
 
 /**
  * Created by Carson on 07/02/2017.
@@ -39,23 +40,7 @@ public class OneClassManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> classes = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        try (Cursor cursor = getDatabase().query(OneClass.TABLE_NAME, null, null, null, null, null, null)) {
-            while (cursor.moveToNext()) {
-                OneClass oneClass = new OneClass(cursor.getInt(OneClass.ID_POS), cursor.getString(OneClass.CLASS_TYPE_POS),
-                        cursor.getString(OneClass.ROOM_NUM_POS), cursor.getString(OneClass.STIME_POS),
-                        cursor.getString(OneClass.ETIME_POS),
-                        cursor.getString(OneClass.DAY_POS), cursor.getString(OneClass.MONTH_POS),
-                        cursor.getString(OneClass.YEAR_POS), cursor.getString(OneClass.COURSE_HAS_NAME_POS));
-
-                oneClass.setBuildingID(cursor.getInt(OneClass.BUILDING_ID_POS));
-                oneClass.setCourseID(cursor.getInt(OneClass.COURSE_ID_POS));
-                classes.add(oneClass);
-            }
-            cursor.close();
-            return classes; //return only when the cursor has been closed
-        }
+        return retrieveTable(OneClass.TABLE_NAME, null);
     }
 
     @Override

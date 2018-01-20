@@ -56,17 +56,7 @@ public class CafeteriaManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> cafs = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        //order table by name, ascending
-        try (Cursor cursor = getDatabase().query(Cafeteria.TABLE_NAME, null, null, null, null, null, Cafeteria.COLUMN_NAME + " ASC")) {
-            while (cursor.moveToNext()) {
-                Cafeteria caf = getRow(cursor.getInt(Cafeteria.ID_POS));
-                cafs.add(caf);
-            }
-            cursor.close();
-            return cafs; //return only when the cursor has been closed
-        }
+        return retrieveTable(Cafeteria.TABLE_NAME, Cafeteria.COLUMN_NAME);
     }
 
     @Override

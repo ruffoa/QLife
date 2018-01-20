@@ -4,10 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.ArrayList;
+
 import engsoc.qlife.database.local.DatabaseManager;
 import engsoc.qlife.database.local.DatabaseRow;
-
-import java.util.ArrayList;
 
 /**
  * Created by Carson on 21/06/2017.
@@ -34,16 +34,7 @@ public class EmergencyContactsManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> contacts = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        try (Cursor cursor = getDatabase().query(EmergencyContact.TABLE_NAME, null, null, null, null, null, null)) {
-            while (cursor.moveToNext()) {
-                EmergencyContact contact = getRow(cursor.getInt(EmergencyContact.ID_POS));
-                contacts.add(contact);
-            }
-            cursor.close();
-            return contacts; //return only when the cursor has been closed
-        }
+        return retrieveTable(EmergencyContact.TABLE_NAME, EmergencyContact.COLUMN_NAME);
     }
 
     @Override

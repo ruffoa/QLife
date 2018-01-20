@@ -10,6 +10,8 @@ import com.crashlytics.android.Crashlytics;
  * Created by Carson on 19/01/2017.
  * Manages creating/upgrading/downgrading the database.
  * Also holds static SQL query strings to create/delete the database.
+ * <p>
+ * Uses the Singleton pattern to avoid multiple database connections.
  */
 public class DbHelper extends SQLiteOpenHelper {
 
@@ -23,8 +25,7 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     /**
-     * Creates an instance of the DBHelper. This method ensures that only one instance
-     * of DBHelper can be created at once.
+     * Creates an instance of the DBHelper. Implements the Singleton pattern.
      *
      * @param context Context to create the DBHelper for.
      * @return returns the instance of DBHelper.

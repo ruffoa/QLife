@@ -4,10 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.ArrayList;
+
 import engsoc.qlife.database.local.DatabaseManager;
 import engsoc.qlife.database.local.DatabaseRow;
-
-import java.util.ArrayList;
 
 /**
  * Created by Carson on 04/07/2017.
@@ -51,17 +51,7 @@ public class FoodManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> food = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        //order table by name, ascending
-        try (Cursor cursor = getDatabase().query(Food.TABLE_NAME, null, null, null, null, null, Food.COLUMN_NAME + " ASC")) {
-            while (cursor.moveToNext()) {
-                Food oneFood = getRow(cursor.getInt(Food.ID_POS));
-                food.add(oneFood);
-            }
-            cursor.close();
-            return food; //return only when the cursor has been closed
-        }
+        return retrieveTable(Food.TABLE_NAME, Food.COLUMN_NAME);
     }
 
     @Override
@@ -95,34 +85,12 @@ public class FoodManager extends DatabaseManager {
      * held in row.
      */
     public ArrayList<Food> getFoodForBuilding(int buildingID) {
-        String[] projection = {
-                Food.ID,
-                Food.COLUMN_NAME,
-                Food.COLUMN_MEAL_PLAN,
-                Food.COLUMN_CARD,
-                Food.COLUMN_INFORMATION,
-                Food.COLUMN_BUILDING_ID,
-                Food.COLUMN_MON_START_HOURS,
-                Food.COLUMN_MON_STOP_HOURS,
-                Food.COLUMN_TUE_START_HOURS,
-                Food.COLUMN_TUE_STOP_HOURS,
-                Food.COLUMN_WED_START_HOURS,
-                Food.COLUMN_WED_STOP_HOURS,
-                Food.COLUMN_THUR_START_HOURS,
-                Food.COLUMN_THUR_STOP_HOURS,
-                Food.COLUMN_FRI_START_HOURS,
-                Food.COLUMN_FRI_STOP_HOURS,
-                Food.COLUMN_SAT_START_HOURS,
-                Food.COLUMN_SAT_STOP_HOURS,
-                Food.COLUMN_SUN_START_HOURS,
-                Food.COLUMN_SUN_STOP_HOURS
-        };
         String selection = Food.COLUMN_BUILDING_ID + " LIKE ?";
         String[] selectionArgs = {String.valueOf(buildingID)};
         ArrayList<Food> food = new ArrayList<>();
         //try with resources - automatically closes cursor whether or not its completed normally
         //order table by name, ascending
-        try (Cursor cursor = getDatabase().query(Food.TABLE_NAME, projection, selection, selectionArgs, null, null, Food.COLUMN_NAME + " ASC")) {
+        try (Cursor cursor = getDatabase().query(Food.TABLE_NAME, null, selection, selectionArgs, null, null, Food.COLUMN_NAME + " ASC")) {
             while (cursor.moveToNext()) {
                 Food oneFood = getRow(cursor.getInt(Food.ID_POS));
                 food.add(oneFood);

@@ -34,16 +34,7 @@ public class CourseManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> courses = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        try (Cursor cursor = getDatabase().query(Course.TABLE_NAME, null, null, null, null, null, null)) {
-            while (cursor.moveToNext()) {
-                Course course = new Course(cursor.getInt(Course.ID_POS), cursor.getString(Course.CODE_POS), cursor.getString(Course.NAME_POS), cursor.getInt(Course.SET_NAME_POS) > 0);
-                courses.add(course);
-            }
-            cursor.close();
-            return courses; //return only when the cursor has been closed
-        }
+        return retrieveTable(Course.TABLE_NAME, Course.COLUMN_NAME);
     }
 
     @Override
@@ -68,7 +59,7 @@ public class CourseManager extends DatabaseManager {
             ContentValues values = new ContentValues();
             values.put(Course.COLUMN_CODE, newCourse.getCode());
             values.put(Course.COLUMN_NAME, newCourse.getName());
-            values.put(Course.COLUMN_SET_NAME,newCourse.isSetName());
+            values.put(Course.COLUMN_SET_NAME, newCourse.isSetName());
             String selection = Course.ID + " LIKE ?";
             String selectionArgs[] = {String.valueOf(oldCourse.getId())};
             getDatabase().update(Course.TABLE_NAME, values, selection, selectionArgs);
