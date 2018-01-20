@@ -24,13 +24,11 @@ public class GetOneRoomBooking extends DownloadTextTask<Integer, String> {
     @Override
     protected String backgroundTaskMultiple(Integer[] values) {
         try {
-            int rMid = values[0];
+            int roomId = values[0];
             int day = values[1];
             int month = values[2];
             int year = values[3];
-
-            //call php script on server that gets info from cloud database
-            return getText(Constants.GET_ROOM_BOOKINGS + year + "-" + (month + 1) + "-" + day + "/" + rMid);
+            return getText(Constants.GET_ROOM_BOOKINGS + year + "-" + (month + 1) + "-" + day + "/" + roomId);
         } catch (Exception e) {
             Log.d("HELLOTHERE", "BAD: " + e);
         }

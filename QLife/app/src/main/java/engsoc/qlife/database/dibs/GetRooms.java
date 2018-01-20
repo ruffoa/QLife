@@ -22,9 +22,9 @@ public class GetRooms extends DownloadTextTask<Void, Void> {
     @Override
     protected Void backgroundTask(Void val) {
         try {
-            //call php script on server that gets info from cloud database
             String jsonStr = getText(Constants.GET_DIBS_ROOMS);
-            mObserver.duringTask(new JSONArray(jsonStr));
+            if (mObserver != null)
+                mObserver.duringTask(new JSONArray(jsonStr));
         } catch (Exception e) {
             //must catch JSONException, this will catch exception from
             //null jsonStr when trying to make a JSONArray

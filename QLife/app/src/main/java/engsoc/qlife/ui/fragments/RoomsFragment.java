@@ -120,8 +120,15 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
      * Shows all ILC rooms, sorted by small, medium and large.
      */
     private void showAllRooms() {
-        ArrayList<DataObject> sortedAllRooms = sortRooms(getAllRooms());
-        setAdapter(sortedAllRooms);
+        ArrayList<DataObject> rooms = getAllRooms();
+        if (rooms.isEmpty()) {
+            //no rooms means no internet
+            mView.findViewById(R.id.NoInternet).setVisibility(View.VISIBLE);
+        } else {
+            mView.findViewById(R.id.NoInternet).setVisibility(View.GONE);
+            rooms = sortRooms(rooms);
+        }
+        setAdapter(rooms);
     }
 
     /**
