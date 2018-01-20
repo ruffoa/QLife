@@ -210,7 +210,12 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
      * @return True if the room is currently available, else false.
      */
     private boolean currentlyAvailable(String roomAvailability) {
-        if (roomAvailability != null && roomAvailability.length() > 0) {
+        if (roomAvailability == null) {
+            //means no internet
+            mView.findViewById(R.id.NoInternet).setVisibility(View.VISIBLE);
+            return false;
+        } else if (roomAvailability.length() > 0) {
+            mView.findViewById(R.id.NoInternet).setVisibility(View.GONE);
             try {
                 JSONArray arr = new JSONArray(roomAvailability);
 
@@ -235,9 +240,11 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
                 }
             } catch (JSONException e) {
                 Log.d("HELLOTHERE", e.getMessage());
+                return false;
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
