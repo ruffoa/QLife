@@ -209,15 +209,20 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
                     String startTime = data.getmText1();
                     String endTime = data.getmText2();
                     int startHour = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
+                    int endHour = Integer.parseInt(endTime.substring(0, endTime.indexOf(":")));
 
                     if (startHour > 12) {
                         data.setmText1((startHour - 12) + endTime.substring(endTime.indexOf(":")) + " PM");
+                    } else if (startHour == 12) {
+                        data.setmText1(startTime + " PM");
                     }
                     if (startHour >= 12) {
-                        int endHour = Integer.parseInt(endTime.substring(0, endTime.indexOf(":")));
                         data.setmText2((endHour - 12) + endTime.substring(endTime.indexOf(":")) + " PM");
                     }
                     if (startHour <= 11) {
+                        if (endHour == 12) {
+                            data.setmText2(endTime + " PM");
+                        }
                         data.setmText1(startTime + " AM");
                     }
                     if (startHour < 11) {
