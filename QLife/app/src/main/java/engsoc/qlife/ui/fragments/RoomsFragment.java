@@ -28,8 +28,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import engsoc.qlife.R;
-import engsoc.qlife.database.dibs.GetAllRoomBookings;
-import engsoc.qlife.database.dibs.GetRooms;
+import engsoc.qlife.utility.async.dibs.GetAllRoomBookings;
+import engsoc.qlife.utility.async.dibs.GetRooms;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.rooms.Room;
 import engsoc.qlife.database.local.rooms.RoomManager;

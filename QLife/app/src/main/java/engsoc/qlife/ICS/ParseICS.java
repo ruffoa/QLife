@@ -28,7 +28,6 @@ import engsoc.qlife.database.local.courses.OneClass.OneClassManager;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
 import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
-import engsoc.qlife.ui.fragments.StudentToolsFragment;
 import engsoc.qlife.utility.Constants;
 
 /**
@@ -36,14 +35,14 @@ import engsoc.qlife.utility.Constants;
  * Class to parse the ICS file.
  */
 public class ParseICS {
-    private final String TAG = StudentToolsFragment.class.getSimpleName();
     private OneClassManager mOneClassManager;
     private CourseManager mCourseManager;
-
     private Context mContext;
 
     public ParseICS(Context context) {
-        this.mContext = context;
+        mContext = context;
+        mOneClassManager = new OneClassManager(context);
+        mCourseManager = new CourseManager(context);
     }
 
     /**
@@ -51,8 +50,8 @@ public class ParseICS {
      *
      * @return List of Strings that contain each line of the ics file.
      */
-    private List<String> readDownloadFile() {
-        List<String> mLines = new ArrayList<>();
+    private ArrayList<String> readDownloadedIcs() {
+        ArrayList<String> mLines = new ArrayList<>();
         try {
             InputStream inputStream = mContext.openFileInput(Constants.CALENDAR_FILE);
 
@@ -68,18 +67,16 @@ public class ParseICS {
                 inputStream.close();
             }
         } catch (FileNotFoundException e) {
-            Log.e(TAG, "File not found: " + e.toString());
+            Log.e("HELLOTHERE", "File not found: " + e.toString());
         } catch (IOException e) {
-            Log.e(TAG, "Can not read file: " + e.toString());
+            Log.e("HELLOTHER", "Can not read file: " + e.toString());
         }
         return mLines;
     }
 
     public void parseICSData() {
-        UserManager userManager = new UserManager(this.mContext);
+        UserManager userManager = new UserManager(mContext);
         ArrayList<DatabaseRow> userTable = userManager.getTable();
-        mOneClassManager = new OneClassManager(mContext);
-        mCourseManager = new CourseManager(mContext);
 
         if (mOneClassManager.getTable().isEmpty()) {
             mOneClassManager.deleteTable(OneClass.TABLE_NAME);
@@ -91,7 +88,7 @@ public class ParseICS {
             boolean repeatWeekly = false;
             String rDayStr = "", rMonStr = "", rYrStr = "";
 
-            List<String> lines = readDownloadFile();
+            List<String> lines = readDownloadedIcs();
             int test = 1;
 
             for (String string : lines) {
@@ -239,36 +236,40 @@ public class ParseICS {
         Pattern pattern = Pattern.compile("[A-Z]+ [0-9]+ "); //matches '<discipline> <course code> '
         Matcher matcher = pattern.matcher(className);
         if (matcher.find()) {
-            className = className.substring(matcher.end(), className.indexOf(" |") - 2); //remove ' F(or W) | <credits>' at end as well
+            //remove ' F(or W) | <credits>' at end
+            className = className.substring(matcher.end(), className.indexOf(" |") - 2);
         } else {
+            //just removes F/W
             className = className.substring(0, className.length() - 2);
         }
         return className;
     }
 
-    public void getClassTypes() {
-        mOneClassManager = new OneClassManager(mContext);
-        mCourseManager = new CourseManager(mContext);
+    /**
+     * Method that retrieves the class disciplines and passes them to another
+     * method to be properly parsed and entered into the phone database.
+     */
+    public void getClassDisciplines() {
         ArrayList<DatabaseRow> courses = mCourseManager.getTable();
-        ArrayList<String> types = new ArrayList<>();
+        ArrayList<String> disciplines = new ArrayList<>();
 
         for (DatabaseRow data : courses) {
-            Course c = (Course) data;
-            String temp = c.getCode().substring(0, c.getCode().indexOf(" "));
-            if (!types.contains(temp) && !c.isSetName())
-                //string builder not used, as string becomes too long for the builder
-                types.add(temp);
+            Course course = (Course) data;
+            String temp = course.getCode().substring(0, course.getCode().indexOf(" "));
+            if (!(disciplines.contains(temp) && course.isSetName())) {
+                disciplines.add(temp);
+            }
         }
 
-        if (!types.isEmpty()) {
-            for (final String str : types) {
-                if (str.length() > 0) {
+        if (!disciplines.isEmpty()) {
+            for (final String discipline : disciplines) {
+                if (discipline.length() > 0) {
                     GetCourseInfo cInfo = new GetCourseInfo(new AsyncTaskObserver() {
                         @Override
                         public void onTaskCompleted(Object obj) {
                             if (obj != null && obj.getClass() == String.class) {
                                 String result = (String) obj;
-                                addClassName(result, str);
+                                addClassName(result, discipline);
                             }
                         }
 
@@ -280,7 +281,7 @@ public class ParseICS {
                         public void duringTask(Object obj) {
                         }
                     });
-                    cInfo.execute(str);
+                    cInfo.execute(discipline);
                 }
             }
         }

@@ -260,7 +260,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         final ParseICS parser = new ParseICS(context);
                         parser.parseICSData();
-                        parser.getClassTypes();
+                        parser.getClassDisciplines();
                     }
                 }
             });

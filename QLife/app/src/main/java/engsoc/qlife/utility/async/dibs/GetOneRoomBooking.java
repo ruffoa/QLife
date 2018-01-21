@@ -1,4 +1,4 @@
-package engsoc.qlife.database.dibs;
+package engsoc.qlife.utility.async.dibs;
 
 import android.util.Log;
 

@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 import engsoc.qlife.R;
-import engsoc.qlife.database.dibs.GetOneRoomBooking;
+import engsoc.qlife.utility.async.dibs.GetOneRoomBooking;
 import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.interfaces.enforcers.DrawerItem;
 import engsoc.qlife.ui.recyclerview.DataObject;
