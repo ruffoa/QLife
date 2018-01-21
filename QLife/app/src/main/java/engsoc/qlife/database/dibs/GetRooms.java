@@ -3,7 +3,6 @@ package engsoc.qlife.database.dibs;
 import android.util.Log;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
 import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.utility.Constants;

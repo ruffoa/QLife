@@ -167,7 +167,11 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
     private ArrayList<DataObject> getDayAvailability() {
         ArrayList<DataObject> availability = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            availability.add(new DataObject((i + 7) + ":" + 30, (i + 8) + ":" + 30));
+            if (Util.isWeekend()) {
+                availability.add(new DataObject((i + 7) + ":00", (i + 8) + ":00"));
+            } else {
+                availability.add(new DataObject((i + 7) + ":" + 30, (i + 8) + ":" + 30));
+            }
         }
 
         if (mBookedRooms != null && mBookedRooms.length() > 0) {
@@ -199,25 +203,25 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
                     }
                 }
 
-                //set AM/PM on start and end times
-                for (int j = 0; j < availability.size(); j++) {
+                //set AM/PM on start and end times - only for weekdays
+                for (DataObject data : availability) {
                     //get hour of start time - use to set AM/PM
-                    String startTime = availability.get(j).getmText1();
-                    int tempTime = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
+                    String startTime = data.getmText1();
+                    String endTime = data.getmText2();
+                    int startHour = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
 
-                    if (tempTime > 12) {
-                        availability.get(j).setmText1((tempTime - 12) + ":30 PM");
+                    if (startHour > 12) {
+                        data.setmText1((startHour - 12) + endTime.substring(endTime.indexOf(":")) + " PM");
                     }
-                    if (tempTime >= 12) {
-                        startTime = availability.get(j).getmText2();
-                        int endTime = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
-                        availability.get(j).setmText2((endTime - 12) + ":30 PM");
+                    if (startHour >= 12) {
+                        int endHour = Integer.parseInt(endTime.substring(0, endTime.indexOf(":")));
+                        data.setmText2((endHour - 12) + endTime.substring(endTime.indexOf(":")) + " PM");
                     }
-                    if (tempTime <= 11) {
-                        availability.get(j).setmText1(startTime + " AM");
+                    if (startHour <= 11) {
+                        data.setmText1(startTime + " AM");
                     }
-                    if (tempTime < 11) {
-                        availability.get(j).setmText2(availability.get(j).getmText2() + " AM");
+                    if (startHour < 11) {
+                        data.setmText2(data.getmText2() + " AM");
                     }
                 }
                 return availability;

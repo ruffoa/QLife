@@ -8,7 +8,6 @@ import java.util.ArrayList;
 
 import engsoc.qlife.database.local.DatabaseManager;
 import engsoc.qlife.database.local.DatabaseRow;
-import engsoc.qlife.database.local.contacts.engineering.EngineeringContact;
 
 /**
  * Created by Carson on 29/01/2017.

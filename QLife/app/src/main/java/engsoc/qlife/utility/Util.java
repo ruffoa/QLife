@@ -18,6 +18,8 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 
+import java.util.Calendar;
+
 import engsoc.qlife.R;
 import engsoc.qlife.activities.AboutActivity;
 import engsoc.qlife.activities.ReviewActivity;
@@ -136,5 +138,10 @@ public class Util {
             sHour += " pm";
         }
         return sHour;
+    }
+
+    public static boolean isWeekend() {
+        Calendar cal = Calendar.getInstance();
+        return cal.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY || cal.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
     }
 }

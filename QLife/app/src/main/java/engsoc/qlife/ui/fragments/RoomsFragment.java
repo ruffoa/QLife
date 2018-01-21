@@ -233,9 +233,15 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
                     Calendar cal = Calendar.getInstance();
                     int curHour = cal.get(Calendar.HOUR_OF_DAY);
 
-                    //check available
-                    if (startHour == curHour && cal.get(Calendar.MINUTE) > 30 || (startHour <= curHour && curHour <= endHour)) {
-                        return false;
+                    //check if available - weekdays are on half hour, weekend on the hour
+                    if (Util.isWeekend()) {
+                        if (startHour <= curHour && curHour < endHour) {
+                            return false;
+                        }
+                    } else {
+                        if ((startHour == curHour && cal.get(Calendar.MINUTE) > 30) || (startHour <= curHour && curHour <= endHour)) {
+                            return false;
+                        }
                     }
                 }
             } catch (JSONException e) {
