@@ -4,9 +4,8 @@ import engsoc.qlife.database.local.DatabaseRow;
 
 /**
  * Created by Carson on 19/01/2017.
- * Defines the schema for the Courses table. Currently holds a field for the class code,
- * room number, class time and ID.
- * **Note** Each lecture/lab/studio needs an entry, so 'Course' is a misnomer.
+ * Defines the schema for the Courses table. Simply holds the course code and name, does not
+ * differentiate between individual classes like lectures and tutorials.
  */
 public class Course extends DatabaseRow {
     //table schema

@@ -30,4 +30,16 @@ public class Constants {
     public static final String GET_DATABASE = "http://qlife.engsoc.queensu.ca/database/get_database.php";
 
     public static final int TIMEOUT = 5000;
+    public static final int ONE_HOUR = 60 * 60 * 1000;
+
+    public static final String REGEX_NON_NUM = "[^0-9]";
+
+    public static final String ICS_START_EVENT = "BEGIN:VEVENT";
+    public static final String ICS_END_EVENT = "END:VEVENT";
+    public static final String ICS_REPEAT = "RRULE:FREQ=WEEKLY;";
+    public static final String ICS_REPEAT_UNTIL = "UNTIL=";
+    public static final String ICS_LOCATION = "LOCATION";
+    public static final String ICS_EVENT_START = "DTSTART";
+    public static final String ICS_EVENT_END = "DTEND";
+    public static final String ICS_SUMMARY = "SUMMARY";
 }
