@@ -10,7 +10,6 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
-import android.util.SparseIntArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,12 +30,11 @@ import engsoc.qlife.database.local.courses.OneClass.OneClassManager;
 import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
 import engsoc.qlife.interfaces.enforcers.DrawerItem;
 import engsoc.qlife.interfaces.enforcers.ListFragmentWithChild;
-import engsoc.qlife.interfaces.observers.OnHomePressedListener;
 import engsoc.qlife.ui.recyclerview.list_objects.DataObject;
-import engsoc.qlife.ui.recyclerview.recyler_adapters.RecyclerViewAdapter;
 import engsoc.qlife.ui.recyclerview.list_objects.DayObject;
 import engsoc.qlife.ui.recyclerview.recyler_adapters.DayAdapter;
-import engsoc.qlife.utility.HomeButtonListener;
+import engsoc.qlife.ui.recyclerview.recyler_adapters.RecyclerViewAdapter;
+import engsoc.qlife.utility.DayFragmentPosition;
 import engsoc.qlife.utility.Util;
 
 /**
@@ -50,10 +48,8 @@ public class DayFragment extends Fragment implements ActionbarFragment, DrawerIt
     public static final String TAG_DATE = "date";
     public static final String TAG_LOC = "event_location";
 
-    private static int mInstances = 0;
-    private static SparseIntArray mArray = new SparseIntArray();
+    private DayFragmentPosition mPosition;
     private int mTotalDaysChange = 0;
-    private HomeButtonListener mHomeListener;
 
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
@@ -73,53 +69,40 @@ public class DayFragment extends Fragment implements ActionbarFragment, DrawerIt
         mCalendar = Calendar.getInstance();
         inflateListView();
         onListItemChosen(null); //this is special case that doesn't need view - RecyclerView not ListView here
-
-        mHomeListener = new HomeButtonListener(getContext());
-        mHomeListener.setOnHomePressedListener(new OnHomePressedListener() {
-            @Override
-            public void onHomePressed() {
-                mArray.put(mInstances, 0);
-            }
-
-            @Override
-            public void onHomeLongPressed() {
-            }
-        });
-        mHomeListener.startListening();
-
         return mView;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mInstances++;
+        mPosition = new DayFragmentPosition(getContext());
+        mPosition.addInstance();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         if (!((MainTabActivity) getActivity()).isToActivity()) {
-            mArray.put(mInstances, mTotalDaysChange); //save number of days to move day view
+            mPosition.changeInstance(mTotalDaysChange);
         } else {
-            mArray.put(mInstances, 0);
+            mPosition.changeInstance(0);
         }
         deselectDrawer();
+        mPosition.homeStopListening();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mArray.delete(mInstances); //instance gone, don't need entry
-        mInstances--;
-        mHomeListener.stopListening();
+        mPosition.removeInstance();
     }
 
     @Override
     public void onResume() {
         super.onResume();
         selectDrawer();
-        changeDate(mArray.get(mInstances, 0)); //account for day changed before moved fragments
+        mPosition.homeStartListening();
+        changeDate(mPosition.getInstanceChange()); //account for day changed before moved fragments
     }
 
     /**
