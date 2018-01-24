@@ -224,11 +224,10 @@ public class ParseICS {
             if (c.getCode().contains(classType) && htmlRes.contains(c.getCode())) {
                 int index = htmlRes.indexOf(c.getCode());
                 String className = parseClassName(htmlRes.substring(index));
-                Course backup = c;
 
                 c.setName(className);
                 c.setSetName(true);
-                mCourseManager.updateRow(backup, c);
+                mCourseManager.updateRow(c.getId(), c);
             }
         }
     }

@@ -86,8 +86,8 @@ public abstract class DatabaseManager extends DatabaseAccessor {
      * Method that changes information in an existing row. Which table is defined by
      * the child manager.
      *
-     * @param oldRow The data of the row to be changed.
+     * @param rowId  The ID of the row to be updated.
      * @param newRow The data to use for the change.
      */
-    public abstract void updateRow(DatabaseRow oldRow, DatabaseRow newRow);
+    public abstract void updateRow(long rowId, DatabaseRow newRow);
 }

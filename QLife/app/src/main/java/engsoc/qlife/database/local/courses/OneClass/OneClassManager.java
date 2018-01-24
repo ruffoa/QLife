@@ -64,9 +64,8 @@ public class OneClassManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof OneClass && newRow instanceof OneClass) {
-            OneClass oldClass = (OneClass) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof OneClass) {
             OneClass newClass = (OneClass) newRow;
             ContentValues values = new ContentValues();
             values.put(OneClass.COLUMN_CLASS_TYPE, newClass.getType());
@@ -79,7 +78,7 @@ public class OneClassManager extends DatabaseManager {
             values.put(OneClass.COLUMN_COURSE_ID, newClass.getCourseID());
             values.put(OneClass.COLUMN_HAS_NAME, newClass.getHasName());
             String selection = OneClass.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldClass.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(OneClass.TABLE_NAME, values, selection, selectionArgs);
         }
     }

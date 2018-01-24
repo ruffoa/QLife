@@ -91,9 +91,8 @@ public class BuildingManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof Building && newRow instanceof Building) {
-            Building oldBuilding = (Building) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof Building) {
             Building newBuilding = (Building) newRow;
 
             ContentValues values = new ContentValues();
@@ -107,7 +106,7 @@ public class BuildingManager extends DatabaseManager {
             values.put(Building.COLUMN_LON, newBuilding.getLon());
 
             String selection = Building.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldBuilding.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(Building.TABLE_NAME, values, selection, selectionArgs);
         }
     }

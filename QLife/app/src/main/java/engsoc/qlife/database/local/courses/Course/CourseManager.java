@@ -52,16 +52,15 @@ public class CourseManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof Course && newRow instanceof Course) {
-            Course oldCourse = (Course) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof Course) {
             Course newCourse = (Course) newRow;
             ContentValues values = new ContentValues();
             values.put(Course.COLUMN_CODE, newCourse.getCode());
             values.put(Course.COLUMN_NAME, newCourse.getName());
             values.put(Course.COLUMN_SET_NAME, newCourse.isSetName());
             String selection = Course.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldCourse.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(Course.TABLE_NAME, values, selection, selectionArgs);
         }
     }

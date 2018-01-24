@@ -60,9 +60,8 @@ public class RoomManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof Room && newRow instanceof Room) {
-            Room oldRoom = (Room) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof Room) {
             Room newRoom = (Room) newRow;
 
             ContentValues values = new ContentValues();
@@ -75,7 +74,7 @@ public class RoomManager extends DatabaseManager {
             values.put(Room.COLUMN_ROOM_ID, newRoom.getRoomId());
 
             String selection = Room.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldRoom.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(Room.TABLE_NAME, values, selection, selectionArgs);
         }
     }

@@ -101,9 +101,8 @@ public class FoodManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof Food && newRow instanceof Food) {
-            Food oldFood = (Food) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof Food) {
             Food newFood = (Food) newRow;
 
             ContentValues values = new ContentValues();
@@ -129,7 +128,7 @@ public class FoodManager extends DatabaseManager {
             values.put(Food.COLUMN_SUN_STOP_HOURS, newFood.getSunStopHours());
 
             String selection = Food.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldFood.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(Food.TABLE_NAME, values, selection, selectionArgs);
         }
     }

@@ -55,9 +55,8 @@ public class EngineeringContactsManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof EngineeringContact && newRow instanceof EngineeringContact) {
-            EngineeringContact oldContact = (EngineeringContact) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof EngineeringContact) {
             EngineeringContact newContact = (EngineeringContact) newRow;
 
             ContentValues values = new ContentValues();
@@ -68,7 +67,7 @@ public class EngineeringContactsManager extends DatabaseManager {
             values.put(EngineeringContact.COLUMN_DESCRIPTION, newContact.getDescription());
 
             String selection = EngineeringContact.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldContact.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(EngineeringContact.TABLE_NAME, values, selection, selectionArgs);
         }
     }

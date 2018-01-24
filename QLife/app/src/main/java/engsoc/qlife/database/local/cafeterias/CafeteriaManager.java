@@ -83,9 +83,8 @@ public class CafeteriaManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof Cafeteria && newRow instanceof Cafeteria) {
-            Cafeteria oldCaf = (Cafeteria) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof Cafeteria) {
             Cafeteria newCaf = (Cafeteria) newRow;
 
             ContentValues values = new ContentValues();
@@ -118,7 +117,7 @@ public class CafeteriaManager extends DatabaseManager {
             values.put(Cafeteria.COLUMN_SUN_DINNER_STOP, newCaf.getSunDinnerStop());
 
             String selection = Cafeteria.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldCaf.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(Cafeteria.TABLE_NAME, values, selection, selectionArgs);
         }
     }

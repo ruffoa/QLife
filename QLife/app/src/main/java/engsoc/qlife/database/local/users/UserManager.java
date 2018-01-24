@@ -75,9 +75,8 @@ public class UserManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof User && newRow instanceof User) {
-            User oldUser = (User) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof User) {
             User newUser = (User) newRow;
             ContentValues values = new ContentValues();
             values.put(User.COLUMN_NETID, newUser.getNetid());
@@ -87,7 +86,7 @@ public class UserManager extends DatabaseManager {
             values.put(User.COLUMN_ICS_URL, newUser.getIcsURL());
 
             String selection = User.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldUser.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(User.TABLE_NAME, values, selection, selectionArgs);
         }
     }
