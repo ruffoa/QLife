@@ -25,7 +25,6 @@ public class OneClassManager extends DatabaseManager {
             OneClass oneClass = (OneClass) row;
             ContentValues values = new ContentValues();
             values.put(OneClass.COLUMN_CLASS_TYPE, oneClass.getType());
-            values.put(OneClass.COLUMN_BUILDING_ID, oneClass.getBuildingID());
             values.put(OneClass.COLUMN_ROOM_NUM, oneClass.getRoomNum());
             values.put(OneClass.COLUMN_START_TIME, oneClass.getStartTime());
             values.put(OneClass.COLUMN_END_TIME, oneClass.getEndTime());
@@ -55,7 +54,6 @@ public class OneClassManager extends DatabaseManager {
                         cursor.getString(OneClass.ETIME_POS),
                         cursor.getString(OneClass.DAY_POS), cursor.getString(OneClass.MONTH_POS),
                         cursor.getString(OneClass.YEAR_POS), cursor.getString(OneClass.COURSE_HAS_NAME_POS));
-                oneClass.setBuildingID(cursor.getInt(OneClass.BUILDING_ID_POS));
                 oneClass.setCourseID(cursor.getInt(OneClass.COURSE_ID_POS));
                 cursor.close();
             }

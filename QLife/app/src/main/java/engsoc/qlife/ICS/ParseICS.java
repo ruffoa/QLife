@@ -194,7 +194,6 @@ public class ParseICS {
         OneClass newClass = new OneClass(mOneClassManager.getTable().size() + 1, name, loc, start,
                 end, Integer.toString(startDay),
                 Integer.toString(startMonth + 1), Integer.toString(startYear));
-        newClass.setBuildingID(15);       //TODO delete later, this is temporary
         newClass.setCourseID(courseId);
         mOneClassManager.insertRow(newClass);
     }

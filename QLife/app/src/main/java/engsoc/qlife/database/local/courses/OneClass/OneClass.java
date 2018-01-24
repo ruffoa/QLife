@@ -37,7 +37,6 @@ public class OneClass extends DatabaseRow {
 
     //fields in database
     private String type;
-    private long buildingID;
     private String roomNum;
     private String startTime;
     private String endTime;
@@ -78,20 +77,12 @@ public class OneClass extends DatabaseRow {
         this.courseID = courseID;
     }
 
-    public void setBuildingID(long buildingID) {
-        this.buildingID = buildingID;
-    }
-
     public String getHasName() {
         return hasName;
     }
 
     public String getType() {
         return type;
-    }
-
-    public long getBuildingID() {
-        return buildingID;
     }
 
     public String getRoomNum() {
