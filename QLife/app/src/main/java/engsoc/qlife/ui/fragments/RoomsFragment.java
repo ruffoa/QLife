@@ -28,19 +28,19 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import engsoc.qlife.R;
-import engsoc.qlife.utility.async.dibs.GetAllRoomBookings;
-import engsoc.qlife.utility.async.dibs.GetRooms;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.rooms.Room;
 import engsoc.qlife.database.local.rooms.RoomManager;
-import engsoc.qlife.interfaces.enforcers.ListFragment;
-import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
 import engsoc.qlife.interfaces.enforcers.DrawerItem;
-import engsoc.qlife.ui.recyclerview.DataObject;
-import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
+import engsoc.qlife.interfaces.enforcers.ListFragment;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
+import engsoc.qlife.ui.recyclerview.list_objects.RoomsObject;
+import engsoc.qlife.ui.recyclerview.recyler_adapters.RoomsAdapter;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.Util;
+import engsoc.qlife.utility.async.dibs.GetAllRoomBookings;
+import engsoc.qlife.utility.async.dibs.GetRooms;
 
 public class RoomsFragment extends Fragment implements ActionbarFragment, DrawerItem, ListFragment {
     public static final String TAG_TITLE = "room_title";
@@ -56,12 +56,12 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
     private Button mAvailableButton;
     private Button mAllButton;
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private RoomsAdapter mAdapter;
     private View mView;
 
     //need as instance variable so that when coming back, don't have to take
     //time to re-get availability data. Highly likely data hasn't changed in time not on this fragment.
-    private ArrayList<DataObject> mAllAvailableRooms = new ArrayList<>();
+    private ArrayList<RoomsObject> mAllAvailableRooms = new ArrayList<>();
 
     @Nullable
     @Override
@@ -81,19 +81,19 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
      * @param rooms The list of rooms to sort.
      * @return The sorted list of rooms.
      */
-    private ArrayList<DataObject> sortRooms(ArrayList<DataObject> rooms) {
-        ArrayList<DataObject> small = new ArrayList<>();
-        ArrayList<DataObject> med = new ArrayList<>();
-        ArrayList<DataObject> large = new ArrayList<>();
-        ArrayList<DataObject> other = new ArrayList<>();
-        ArrayList<DataObject> res = new ArrayList<>();
+    private ArrayList<RoomsObject> sortRooms(ArrayList<RoomsObject> rooms) {
+        ArrayList<RoomsObject> small = new ArrayList<>();
+        ArrayList<RoomsObject> med = new ArrayList<>();
+        ArrayList<RoomsObject> large = new ArrayList<>();
+        ArrayList<RoomsObject> other = new ArrayList<>();
+        ArrayList<RoomsObject> res = new ArrayList<>();
 
-        for (DataObject room : rooms) {
-            if (Pattern.compile(Pattern.quote("small"), Pattern.CASE_INSENSITIVE).matcher(room.getmText2()).find())
+        for (RoomsObject room : rooms) {
+            if (Pattern.compile(Pattern.quote("small"), Pattern.CASE_INSENSITIVE).matcher(room.getDescription()).find())
                 small.add(room);
-            else if (Pattern.compile(Pattern.quote("medium"), Pattern.CASE_INSENSITIVE).matcher(room.getmText2()).find())
+            else if (Pattern.compile(Pattern.quote("medium"), Pattern.CASE_INSENSITIVE).matcher(room.getDescription()).find())
                 med.add(room);
-            else if (Pattern.compile(Pattern.quote("large"), Pattern.CASE_INSENSITIVE).matcher(room.getmText2()).find())
+            else if (Pattern.compile(Pattern.quote("large"), Pattern.CASE_INSENSITIVE).matcher(room.getDescription()).find())
                 large.add(room);
             else other.add(room);
         }
@@ -120,7 +120,7 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
      * Shows all ILC rooms, sorted by small, medium and large.
      */
     private void showAllRooms() {
-        ArrayList<DataObject> rooms = getAllRooms();
+        ArrayList<RoomsObject> rooms = getAllRooms();
         if (rooms.isEmpty()) {
             //no rooms means no internet
             mView.findViewById(R.id.NoInternet).setVisibility(View.VISIBLE);
@@ -158,12 +158,12 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
                                 availability = (String) objAvail;
                             }
                             if (currentlyAvailable(availability))
-                                mAllAvailableRooms.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), true, "", room.getDescription()));
+                                mAllAvailableRooms.add(new RoomsObject(room.getName(), room.getDescription(), room.getRoomId(), true, ""));
                         }
                         mAllAvailableRooms = sortRooms(mAllAvailableRooms);
                         setAdapter(mAllAvailableRooms);
                     } else {
-                        mAllAvailableRooms.add(new DataObject("Data could not be retrieved", null));
+                        mAllAvailableRooms.add(new RoomsObject("Data could not be retrieved", null, -1, false, null));
                         setAdapter(mAllAvailableRooms);
                     }
                 }
@@ -186,18 +186,18 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
     /**
      * Method that retrieves all rooms from the phone database and packs them into a list.
      *
-     * @return List of room information packed into DataObjects.
+     * @return List of room information packed into RoomsObjects.
      */
-    private ArrayList<DataObject> getAllRooms() {
+    private ArrayList<RoomsObject> getAllRooms() {
         RoomManager roomManager = new RoomManager(this.getContext());
-        ArrayList<DataObject> result = new ArrayList<>();
+        ArrayList<RoomsObject> result = new ArrayList<>();
         ArrayList<DatabaseRow> roomData = roomManager.getTable();
 
         if (roomData != null && roomData.size() > 0) {
             for (DatabaseRow row : roomData) {
                 Room room = (Room) row;
                 boolean hasTV = room.getDescription().contains(Constants.TV) || room.getDescription().contains(Constants.PROJECTOR);
-                result.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), hasTV, ""));
+                result.add(new RoomsObject(room.getName(), room.getDescription(), room.getRoomId(), hasTV, ""));
             }
         }
         return result;
@@ -346,8 +346,8 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
      *
      * @param list List holding the data to be shown in the recycler view.
      */
-    private void setAdapter(ArrayList<DataObject> list) {
-        mAdapter = new SectionedRecyclerView(list);
+    private void setAdapter(ArrayList<RoomsObject> list) {
+        mAdapter = new RoomsAdapter(list);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -405,11 +405,11 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
         });
 
         //onClick for item in the recycler view (a room)
-        ((SectionedRecyclerView) mAdapter).setOnItemClickListener(new SectionedRecyclerView
+        mAdapter.setOnItemClickListener(new RoomsAdapter
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                DataObject data = ((SectionedRecyclerView) mAdapter).getItem(position);
+                RoomsObject data = (RoomsObject) mAdapter.getItem(position);
 
                 LinearLayout card = mView.findViewById(R.id.sectioned_card_view);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -423,7 +423,7 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
                 if (data != null && info.size() > 0) {
                     for (DatabaseRow row : info) {
                         Room room = (Room) row;
-                        if (room.getRoomId() == data.getID()) {
+                        if (room.getRoomId() == data.getId()) {
                             pic = room.getPicUrl();
                             break;
                         }
@@ -431,7 +431,7 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
                 }
                 Bundle bundle = new Bundle();
                 if (data != null) {
-                    bundle.putString(TAG_TITLE, data.getmText1());
+                    bundle.putString(TAG_TITLE, data.getName());
                     bundle.putInt(TAG_ROOM_ID, data.getID());
                 }
                 bundle.putString(TAG_PIC, pic);

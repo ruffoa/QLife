@@ -26,7 +26,7 @@ import engsoc.qlife.R;
 import engsoc.qlife.utility.async.dibs.GetOneRoomBooking;
 import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.interfaces.enforcers.DrawerItem;
-import engsoc.qlife.ui.recyclerview.DataObject;
+import engsoc.qlife.ui.recyclerview.list_objects.DataObject;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.Util;
 import engsoc.qlife.utility.async.DownloadImageTask;

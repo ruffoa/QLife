@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 import engsoc.qlife.R;
+import engsoc.qlife.ui.recyclerview.list_objects.DataObject;
 
 /**
  * Created by Alex Ruffo on 8/30/2017.
@@ -19,9 +20,7 @@ public class SectionedRecyclerView extends RecyclerView.Adapter<SectionedRecycle
     private ArrayList<DataObject> mDataset;
     private static MyClickListener myClickListener;
 
-    public static class DataObjectHolder extends RecyclerView.ViewHolder
-            implements View
-            .OnClickListener {
+    public static class DataObjectHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView label;
         TextView dateTime;
         TextView header;
@@ -76,22 +75,6 @@ public class SectionedRecyclerView extends RecyclerView.Adapter<SectionedRecycle
         } else
             holder.header.setVisibility(View.GONE);
 
-    }
-
-    public void addItem(DataObject dataObj, int index) {
-        mDataset.add(index, dataObj);
-        notifyItemInserted(index);
-    }
-
-    public void addItem(DataObject dataObj) {
-        mDataset.add(dataObj);
-        notifyItemInserted(mDataset.indexOf(dataObj));
-    }
-
-
-    public void deleteItem(int index) {
-        mDataset.remove(index);
-        notifyItemRemoved(index);
     }
 
     @Override

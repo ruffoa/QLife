@@ -1,4 +1,4 @@
-package engsoc.qlife.ui.recyclerview;
+package engsoc.qlife.ui.recyclerview.list_objects;
 
 /**
  * Created by Alex Ruffo on 3/29/2017.
@@ -14,6 +14,8 @@ public class DataObject {
     private boolean mHasTV;
     private boolean mHasName;
     private String mDescription;
+
+    protected DataObject(){}
 
     public DataObject(String text1, String text2, String text3) {
         mText1 = text1;
