@@ -23,13 +23,13 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 import engsoc.qlife.R;
-import engsoc.qlife.utility.async.dibs.GetOneRoomBooking;
-import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.interfaces.enforcers.DrawerItem;
-import engsoc.qlife.ui.recyclerview.list_objects.DataObject;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.utility.Constants;
+import engsoc.qlife.utility.TimeSlot;
 import engsoc.qlife.utility.Util;
 import engsoc.qlife.utility.async.DownloadImageTask;
+import engsoc.qlife.utility.async.dibs.GetOneRoomBooking;
 
 /**
  * Created by Alex on 8/21/2017.
@@ -100,7 +100,7 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
      * Adds the available room times to the fragment.
      */
     private void setAvailableTimes() {
-        ArrayList<DataObject> availableTimes = getDayAvailability();
+        ArrayList<TimeSlot> availableTimes = getDayAvailability();
         if (availableTimes == null) {
             //no internet
             mView.findViewById(R.id.NoInternet).setVisibility(View.VISIBLE);
@@ -112,8 +112,8 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
         } else {
             mView.findViewById(R.id.NoAvailability).setVisibility(View.GONE);
             //know at least one available slot, can get it
-            String firstStart = availableTimes.get(0).getmText1();
-            String firstEnd = availableTimes.get(0).getmText2();
+            String firstStart = availableTimes.get(0).getStart();
+            String firstEnd = availableTimes.get(0).getEnd();
 
             if (availableTimes.size() == 1) {
                 //only one slot, don't try to combine multiple
@@ -123,8 +123,8 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
                 String start = firstStart;
                 String end = firstEnd;
                 for (int i = 1; i < availableTimes.size(); i++) {
-                    String nextStart = availableTimes.get(i).getmText1();
-                    String nextEnd = availableTimes.get(i).getmText2();
+                    String nextStart = availableTimes.get(i).getStart();
+                    String nextEnd = availableTimes.get(i).getEnd();
                     if (end.equals(nextStart)) {
                         //overlap, so don't add row and move along
                         end = nextEnd;
@@ -164,13 +164,13 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
      *
      * @return An array of objects that hold the room's available slots.
      */
-    private ArrayList<DataObject> getDayAvailability() {
-        ArrayList<DataObject> availability = new ArrayList<>();
+    private ArrayList<TimeSlot> getDayAvailability() {
+        ArrayList<TimeSlot> availability = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
             if (Util.isWeekend()) {
-                availability.add(new DataObject((i + 7) + ":00", (i + 8) + ":00"));
+                availability.add(new TimeSlot((i + 7) + ":00", (i + 8) + ":00"));
             } else {
-                availability.add(new DataObject((i + 7) + ":" + 30, (i + 8) + ":" + 30));
+                availability.add(new TimeSlot((i + 7) + ":" + 30, (i + 8) + ":" + 30));
             }
         }
 
@@ -188,7 +188,7 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
 
                     //remove booked times from available times
                     for (int j = 0; j < availability.size(); j++) {
-                        String startTime = availability.get(j).getmText1();
+                        String startTime = availability.get(j).getStart();
                         int startHour = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
 
                         if (Integer.parseInt(start.substring(0, 2)) == startHour) {
@@ -204,29 +204,29 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
                 }
 
                 //set AM/PM on start and end times - only for weekdays
-                for (DataObject data : availability) {
+                for (TimeSlot data : availability) {
                     //get hour of start time - use to set AM/PM
-                    String startTime = data.getmText1();
-                    String endTime = data.getmText2();
+                    String startTime = data.getStart();
+                    String endTime = data.getEnd();
                     int startHour = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
                     int endHour = Integer.parseInt(endTime.substring(0, endTime.indexOf(":")));
 
                     if (startHour > 12) {
-                        data.setmText1((startHour - 12) + endTime.substring(endTime.indexOf(":")) + " PM");
+                        data.setStart((startHour - 12) + endTime.substring(endTime.indexOf(":")) + " PM");
                     } else if (startHour == 12) {
-                        data.setmText1(startTime + " PM");
+                        data.setStart(startTime + " PM");
                     }
                     if (startHour >= 12) {
-                        data.setmText2((endHour - 12) + endTime.substring(endTime.indexOf(":")) + " PM");
+                        data.setEnd((endHour - 12) + endTime.substring(endTime.indexOf(":")) + " PM");
                     }
                     if (startHour <= 11) {
                         if (endHour == 12) {
-                            data.setmText2(endTime + " PM");
+                            data.setEnd(endTime + " PM");
                         }
-                        data.setmText1(startTime + " AM");
+                        data.setStart(startTime + " AM");
                     }
                     if (startHour < 11) {
-                        data.setmText2(data.getmText2() + " AM");
+                        data.setEnd(data.getEnd() + " AM");
                     }
                 }
                 return availability;

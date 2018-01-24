@@ -432,7 +432,7 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
                 Bundle bundle = new Bundle();
                 if (data != null) {
                     bundle.putString(TAG_TITLE, data.getName());
-                    bundle.putInt(TAG_ROOM_ID, data.getID());
+                    bundle.putInt(TAG_ROOM_ID, data.getId());
                 }
                 bundle.putString(TAG_PIC, pic);
 
