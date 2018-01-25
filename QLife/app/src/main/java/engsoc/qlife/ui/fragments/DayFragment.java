@@ -88,13 +88,13 @@ public class DayFragment extends Fragment implements ActionbarFragment, DrawerIt
             mPosition.changeInstance(0);
         }
         deselectDrawer();
-        mPosition.homeStopListening();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
         mPosition.removeInstance();
+        mPosition.homeStopListening();
     }
 
     @Override
