@@ -2,7 +2,7 @@
     //connect to DB
     require_once __DIR__ . '/db_connect.php';
     $db = connectDatabase();
-
+    mysqli_query($db,"DELETE FROM Dibs"); //remove all rows so dibs info is updated
     for ($i=0; $i<100; $i++) { //<100 so future room IDs are in loop - need update if more rooms come - break when hit room with API call ID
         date_default_timezone_set("US/Eastern");
         $year=date("Y");
