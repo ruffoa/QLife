@@ -1,10 +1,12 @@
 <?php
-    if (isset($_GET["year"]) && isset($_GET["month"]) && isset($_GET["day"]) && isset($_GET["room"])){
-        $year=$_GET["year"];
-        $month=$_GET["month"];
-        $day=$_GET["day"];
+    //connect to DB
+    require_once __DIR__ . '/database/db_connect.php';
+
+    $db = connectDatabase();
+    if (isset($_GET["room"])){
         $room=$_GET["room"];
-        $bookings=file_get_contents("https://queensu.evanced.info/dibsAPI/reservations/$year-$month-$day/$room");
-        echo $bookings;
+        $bookings=mysqli_query($db,"SELECT * FROM Dibs WHERE roomID=$room");
+        $data = mysqli_fetch_array($bookings);
+        echo $data["jsonData"];
     }
 ?>
