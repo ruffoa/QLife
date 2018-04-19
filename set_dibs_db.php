@@ -4,6 +4,7 @@
     $db = connectDatabase();
 
     for ($i=0; $i<100; $i++) { //<100 so future room IDs are in loop - need update if more rooms come - break when hit room with API call ID
+        date_default_timezone_set("US/Eastern");
         $year=date("Y");
         $month=date("n");
         $day=date("j");

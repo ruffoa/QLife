@@ -40,10 +40,7 @@ public class GetAllRoomBookings extends DownloadTextTask<Integer, SparseArray<St
                 int year = values[RoomsFragment.YEAR_POS];
 
                 //call php script on server that gets info from cloud database - month+1 as Jan is 0
-                //  roomAvailability.put((int) room.getId(), getText(Constants.GET_ROOM_BOOKINGS + year + "-" +
-                //        (month + 1) + "-" + day + "/" + room.getId()));
-                roomAvailability.put((int) room.getId(), getText(Constants.GET_ROOM_BOOKINGS + "year=" + year + "&month=" +
-                         (month + 1) + "&day=" + day + "&room=" + room.getId()));
+                roomAvailability.put((int) room.getId(), getText(Constants.GET_ROOM_BOOKINGS + "room=" + room.getId()));
             } catch (Exception e) {
                 Log.d("HELLOTHERE", "BAD: " + e);
             }

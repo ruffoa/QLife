@@ -28,7 +28,7 @@ public class GetOneRoomBooking extends DownloadTextTask<Integer, String> {
             int day = values[1];
             int month = values[2];
             int year = values[3];
-            return getText(Constants.GET_ROOM_BOOKINGS + "year=" + year + "&month=" + (month + 1) + "&day=" + day + "&room=" + roomId);
+            return getText(Constants.GET_ROOM_BOOKINGS + "room=" + roomId);
         } catch (Exception e) {
             Log.d("HELLOTHERE", "BAD: " + e);
         }
