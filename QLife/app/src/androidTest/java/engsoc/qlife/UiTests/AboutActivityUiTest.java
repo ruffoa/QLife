@@ -1,7 +1,7 @@
-package engsoc.qlife;
+package engsoc.qlife.UiTests;
 
 import android.content.Context;
-import android.support.test.InstrumentationRegistry;
+import android.support.test.espresso.matcher.ViewMatchers;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -10,6 +10,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import engsoc.qlife.R;
 import engsoc.qlife.activities.AboutActivity;
 
 import static android.support.test.InstrumentationRegistry.getInstrumentation;
@@ -20,8 +21,13 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 
+/**
+ * Tests for the AboutActivity UI and UI flow.
+ *
+ * ASSERTION: Assumes the user is logged in.
+ */
 @RunWith(AndroidJUnit4.class)
-public class AboutActivityTest {
+public class AboutActivityUiTest {
 
     private Context mContext;
 
@@ -35,7 +41,7 @@ public class AboutActivityTest {
 
     @Test
     public void infoShown() {
-        onView(withId(R.id.info_text)).check(matches(withText(validInfoString())));
+        onView(ViewMatchers.withId(R.id.info_text)).check(matches(withText(validInfoString())));
     }
 
     @Test
