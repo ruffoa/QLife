@@ -26,7 +26,7 @@ public class InitialSlideCampusTest {
     @Test
     public void viewsTest() {
         onView(withId(R.id.initial_slide_campus));
-        onView(withId(R.id.info_pic)).check(matches(withDrawable(R.drawable.ic_info_black_24dp, null)));
+        onView(withId(R.id.info_pic)).check(matches(withDrawable(R.drawable.ic_info_black_24dp, R.color.white)));
         onView(withId(R.id.campus_title)).check(matches(withText(getString(R.string.slide_campus_title))));
         onView(withId(R.id.campus_text)).check(matches(withText(getString(R.string.slide_campus_text))));
         onView(withId(R.id.btn_next)).check(matches(withText(getString(R.string.next))));
