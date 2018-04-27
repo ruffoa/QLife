@@ -23,9 +23,9 @@ public class InitialSlideClassTest {
     @Test
     public void viewsTest() {
         onView(withId(R.id.initial_slide_class));
-        onView(withId(R.id.calendar)).check(matches(withDrawable(R.drawable.ic_calendar,R.color.white)));
-        onView(withId(R.id.welcome)).check(matches(withText(getString(R.string.slide_schedule_title))));
-        onView(withId(R.id.description)).check(matches(withText(getString(R.string.slide_schedule_text))));
+        onView(withId(R.id.calendar)).check(matches(withDrawable(R.drawable.ic_calendar, R.color.white)));
+        onView(withId(R.id.class_title)).check(matches(withText(getString(R.string.slide_schedule_title))));
+        onView(withId(R.id.class_text)).check(matches(withText(getString(R.string.slide_schedule_text))));
         onView(withId(R.id.btn_next)).check(matches(withText(getString(R.string.next))));
         onView(withId(R.id.btn_skip)).check(matches(withText(getString(R.string.skip))));
         //TODO add checking dots

@@ -15,10 +15,12 @@
             android:tint="@color/white" />
 
         <TextView
+            android:id="@+id/class_title"
             style="@style/WelcomeSlideTitleText"
             android:text="@string/slide_schedule_title" />
 
         <TextView
+            android:id="@+id/class_text"
             style="@style/WelcomeSlideText"
             android:text="@string/slide_schedule_text" />
 
