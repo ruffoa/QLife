@@ -19,16 +19,16 @@ import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static engsoc.qlife.Matchers.TestMatchers.withDrawable;
 
 @RunWith(AndroidJUnit4.class)
-public class InitialSlideWelcomeTest {
+public class InitialSlideRoomsTest {
     @Rule
     public ActivityTestRule<StartupActivity> mStartupActivity = new ActivityTestRule<>(StartupActivity.class);
 
     @Test
     public void viewsTest() {
-        onView(withId(R.id.initial_slide_welcome));
-        onView(withId(R.id.rooms_pic)).check(matches(withDrawable(R.mipmap.ic_booking)));
-        onView(withId(R.id.rooms_title)).check(matches(withText(getString(R.string.slide_rooms_title))));
-        onView(withId(R.id.rooms_text)).check(matches(withText(getString(R.string.slide_rooms_text))));
+        onView(withId(R.id.initial_slide_rooms));
+        onView(withId(R.id.rooms_pic)).check(matches(withDrawable(R.drawable.ic_qtap_logo_svg, R.color.white)));
+        onView(withId(R.id.welcome)).check(matches(withText(getString(R.string.slide_welcome_title))));
+        onView(withId(R.id.description)).check(matches(withText(getString(R.string.slide_welcome_text))));
         onView(withId(R.id.btn_next)).check(matches(withText(getString(R.string.next))));
         onView(withId(R.id.btn_skip)).check(matches(withText(getString(R.string.skip))));
         //TODO add checking dots
@@ -36,16 +36,16 @@ public class InitialSlideWelcomeTest {
 
     @Test
     public void skipTest() {
-        onView(withId(R.id.initial_slide_rooms));
+        onView(withId(R.id.initial_slide_welcome));
         onView(withId(R.id.btn_skip)).perform(click());
         onView(withId(R.id.login_activity));
     }
 
     @Test
     public void nextTest() {
-        onView(withId(R.id.initial_slide_rooms));
+        onView(withId(R.id.initial_slide_welcome));
         onView(withId(R.id.btn_next)).perform(click());
-        onView(withId(R.id.initial_slide_it));
+        onView(withId(R.id.initial_slide_class));
     }
 
     private String getString(int id) {

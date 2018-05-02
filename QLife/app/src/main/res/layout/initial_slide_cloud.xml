@@ -8,16 +8,19 @@
     <LinearLayout style="@style/WelcomeSlideLayout">
 
         <ImageView
+            android:id="@+id/cloud_pic"
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
             android:src="@drawable/ic_cloud_outline"
-            android:tint="@android:color/white" />
+            android:tint="@color/white" />
 
         <TextView
+            android:id="@+id/cloud_title"
             style="@style/WelcomeSlideTitleText"
             android:text="@string/slide_cloud_title" />
 
         <TextView
+            android:id="@+id/cloud_text"
             style="@style/WelcomeSlideText"
             android:text="@string/slide_cloud_text" />
 

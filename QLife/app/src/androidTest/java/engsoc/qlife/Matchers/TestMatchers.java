@@ -8,6 +8,10 @@ import org.hamcrest.Matcher;
  * Class to implement own match assertions for Espresso.
  */
 public class TestMatchers {
+    public static Matcher<View> withDrawable(final int id) {
+        return withDrawable(id, null);
+    }
+
     public static Matcher<View> withDrawable(final int id, final Integer tint) {
         return new DrawableMatcher(id, tint);
     }
