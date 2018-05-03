@@ -2,7 +2,6 @@ package engsoc.qlife.database;
 
 import android.util.Log;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import engsoc.qlife.interfaces.observers.AsyncTaskObserver;

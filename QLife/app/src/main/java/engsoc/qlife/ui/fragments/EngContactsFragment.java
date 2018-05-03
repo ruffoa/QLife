@@ -2,6 +2,7 @@ package engsoc.qlife.ui.fragments;
 
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -64,15 +65,18 @@ public class EngContactsFragment extends android.support.v4.app.ListFragment imp
 
     @Override
     public void inflateListView() {
-        ArrayList<HashMap<String, String>> engContactsList = new ArrayList<>();
-        ArrayList<DatabaseRow> contacts = (new EngineeringContactsManager(getActivity().getApplicationContext())).getTable();
-        for (DatabaseRow row : contacts) {
-            engContactsList.add(packEngContactsMap(row));
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            ArrayList<HashMap<String, String>> engContactsList = new ArrayList<>();
+            ArrayList<DatabaseRow> contacts = (new EngineeringContactsManager(activity.getApplicationContext())).getTable();
+            for (DatabaseRow row : contacts) {
+                engContactsList.add(packEngContactsMap(row));
+            }
+            ListAdapter adapter = new SimpleAdapter(activity.getApplicationContext(), engContactsList,
+                    R.layout.eng_contacts_list_item, new String[]{EngineeringContact.COLUMN_NAME, EngineeringContact.COLUMN_EMAIL,
+                    EngineeringContact.COLUMN_POSITION, EngineeringContact.COLUMN_DESCRIPTION}, new int[]{R.id.name, R.id.email, R.id.position, R.id.description});
+            setListAdapter(adapter);
         }
-        ListAdapter adapter = new SimpleAdapter(getActivity().getApplicationContext(), engContactsList,
-                R.layout.eng_contacts_list_item, new String[]{EngineeringContact.COLUMN_NAME, EngineeringContact.COLUMN_EMAIL,
-                EngineeringContact.COLUMN_POSITION, EngineeringContact.COLUMN_DESCRIPTION}, new int[]{R.id.name, R.id.email, R.id.position, R.id.description});
-        setListAdapter(adapter);
     }
 
     /**

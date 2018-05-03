@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -143,7 +145,7 @@ public class StartupActivity extends AppCompatActivity {
         }
     }
 
-    private void setViews(){
+    private void setViews() {
         mViewPager = findViewById(R.id.view_pager);
         mDotsLayout = findViewById(R.id.layoutDots);
         mButtonSkip = findViewById(R.id.btn_skip);
@@ -184,7 +186,8 @@ public class StartupActivity extends AppCompatActivity {
         private LayoutInflater mLayoutInflater;
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        @Nullable
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
             mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             if (mLayoutInflater != null) {
                 View view = mLayoutInflater.inflate(mLayouts[position], container, false);
@@ -200,14 +203,16 @@ public class StartupActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object obj) {
+        public boolean isViewFromObject(@Nullable View view, @Nullable Object obj) {
             return view == obj;
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = (View) object;
-            container.removeView(view);
+        public void destroyItem(@Nullable ViewGroup container, int position, @Nullable Object object) {
+            if (container != null && object != null) {
+                View view = (View) object;
+                container.removeView(view);
+            }
         }
     }
 }

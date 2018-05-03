@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.rooms.Room;
 import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
-import engsoc.qlife.ui.fragments.RoomsFragment;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.async.DownloadTextTask;
 

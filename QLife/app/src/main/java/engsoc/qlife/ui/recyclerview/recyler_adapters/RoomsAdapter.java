@@ -1,5 +1,6 @@
 package engsoc.qlife.ui.recyclerview.recyler_adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +11,6 @@ import java.util.ArrayList;
 
 import engsoc.qlife.R;
 import engsoc.qlife.ui.recyclerview.list_objects.DataObject;
-import engsoc.qlife.ui.recyclerview.list_objects.DayObject;
 import engsoc.qlife.ui.recyclerview.list_objects.RoomsObject;
 
 /**
@@ -23,7 +23,8 @@ public class RoomsAdapter extends RecyclerViewAdapter<RoomsAdapter.RoomsObjectHo
     }
 
     @Override
-    public RoomsObjectHolder onCreateViewHolder(ViewGroup parent,
+    @NonNull
+    public RoomsObjectHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                                 int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.sectioned_recyclerview_card, parent, false);
@@ -32,7 +33,7 @@ public class RoomsAdapter extends RecyclerViewAdapter<RoomsAdapter.RoomsObjectHo
     }
 
     @Override
-    public void onBindViewHolder(RoomsObjectHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RoomsObjectHolder holder, int position) {
         RoomsObject roomObj = (RoomsObject) mData.get(position);
         String text1 = roomObj.getName();
         String text2 = roomObj.getDescription();

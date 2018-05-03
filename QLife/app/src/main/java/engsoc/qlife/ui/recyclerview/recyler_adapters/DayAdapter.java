@@ -1,5 +1,6 @@
 package engsoc.qlife.ui.recyclerview.recyler_adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,14 +24,15 @@ public class DayAdapter extends RecyclerViewAdapter<DayAdapter.DayObjectHolder> 
     }
 
     @Override
-    public void onBindViewHolder(DayObjectHolder holder, int position) {
+    public void onBindViewHolder(@NonNull DayObjectHolder holder, int position) {
         DayObject data = (DayObject) mData.get(position);
         holder.label.setText(data.getName());
         holder.dateTime.setText(data.getWhere());
     }
 
     @Override
-    public DayObjectHolder onCreateViewHolder(ViewGroup parent,
+    @NonNull
+    public DayObjectHolder onCreateViewHolder(@NonNull ViewGroup parent,
                                               int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.day_events_card, parent, false);

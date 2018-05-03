@@ -4,6 +4,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -61,8 +62,10 @@ public class DayFragment extends Fragment implements ActionbarFragment, DrawerIt
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.fragment_day, container, false);
+    public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        if (inflater != null) {
+            mView = inflater.inflate(R.layout.fragment_day, container, false);
+        }
         setActionbarTitle();
 
         mDateText = mView.findViewById(R.id.date);
@@ -82,7 +85,8 @@ public class DayFragment extends Fragment implements ActionbarFragment, DrawerIt
     @Override
     public void onPause() {
         super.onPause();
-        if (!((MainTabActivity) getActivity()).isToActivity()) {
+        MainTabActivity activity = (MainTabActivity) getActivity();
+        if (activity != null && !activity.isToActivity()) {
             mPosition.changeInstance(mTotalDaysChange);
         } else {
             mPosition.changeInstance(0);
@@ -302,28 +306,31 @@ public class DayFragment extends Fragment implements ActionbarFragment, DrawerIt
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                DataObject dataObj = ((RecyclerViewAdapter) mAdapter).getItem(position);
-                if (dataObj instanceof DayObject) {
-                    DayObject data = (DayObject) dataObj;
-                    CardView card = mView.findViewById(R.id.card_view);
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        card.setTransitionName("transistion_event_info" + position);
+                FragmentActivity activity = getActivity();
+                if (activity != null) {
+                    DataObject dataObj = ((RecyclerViewAdapter) mAdapter).getItem(position);
+                    if (dataObj instanceof DayObject) {
+                        DayObject data = (DayObject) dataObj;
+                        CardView card = mView.findViewById(R.id.card_view);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            card.setTransitionName("transistion_event_info" + position);
+                        }
+
+                        String cardName = card.getTransitionName();
+                        EventInfoFragment nextFrag = new EventInfoFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString(TAG_CODE, data.getClassCode());
+                        bundle.putString(TAG_NAME, data.getName());
+                        bundle.putString(TAG_LOC, data.getWhere());
+                        bundle.putString(TAG_DATE, mDateString);
+                        nextFrag.setArguments(bundle);
+
+                        FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                        fragmentManager.beginTransaction().addToBackStack(null)
+                                .replace(R.id.content_frame, nextFrag)
+                                .addSharedElement(card, cardName)
+                                .commit();
                     }
-
-                    String cardName = card.getTransitionName();
-                    EventInfoFragment nextFrag = new EventInfoFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString(TAG_CODE, data.getClassCode());
-                    bundle.putString(TAG_NAME, data.getName());
-                    bundle.putString(TAG_LOC, data.getWhere());
-                    bundle.putString(TAG_DATE, mDateString);
-                    nextFrag.setArguments(bundle);
-
-                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                    fragmentManager.beginTransaction().addToBackStack(null)
-                            .replace(R.id.content_frame, nextFrag)
-                            .addSharedElement(card, cardName)
-                            .commit();
                 }
             }
         });

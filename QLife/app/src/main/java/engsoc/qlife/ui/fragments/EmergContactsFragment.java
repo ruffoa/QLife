@@ -1,6 +1,7 @@
 package engsoc.qlife.ui.fragments;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,15 +64,18 @@ public class EmergContactsFragment extends android.support.v4.app.ListFragment i
 
     @Override
     public void inflateListView() {
-        ArrayList<HashMap<String, String>> emergContactsList = new ArrayList<>();
-        ArrayList<DatabaseRow> contacts = (new EmergencyContactsManager(getActivity().getApplicationContext())).getTable();
-        for (DatabaseRow row : contacts) {
-            emergContactsList.add(packEmergContactsMap(row));
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            ArrayList<HashMap<String, String>> emergContactsList = new ArrayList<>();
+            ArrayList<DatabaseRow> contacts = (new EmergencyContactsManager(activity.getApplicationContext())).getTable();
+            for (DatabaseRow row : contacts) {
+                emergContactsList.add(packEmergContactsMap(row));
+            }
+            ListAdapter adapter = new SimpleAdapter(activity.getApplicationContext(), emergContactsList,
+                    R.layout.emerg_contacts_list_item, new String[]{EmergencyContact.COLUMN_NAME, EmergencyContact.COLUMN_PHONE_NUMBER,
+                    EmergencyContact.COLUMN_DESCRIPTION}, new int[]{R.id.name, R.id.number, R.id.description});
+            setListAdapter(adapter);
         }
-        ListAdapter adapter = new SimpleAdapter(getActivity().getApplicationContext(), emergContactsList,
-                R.layout.emerg_contacts_list_item, new String[]{EmergencyContact.COLUMN_NAME, EmergencyContact.COLUMN_PHONE_NUMBER,
-                EmergencyContact.COLUMN_DESCRIPTION}, new int[]{R.id.name, R.id.number, R.id.description});
-        setListAdapter(adapter);
     }
 
     /**

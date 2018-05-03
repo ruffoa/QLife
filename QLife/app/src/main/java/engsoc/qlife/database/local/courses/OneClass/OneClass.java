@@ -25,7 +25,6 @@ public class OneClass extends DatabaseRow {
 
     //column number each field ends up in
     public static final int CLASS_TYPE_POS = 1;
-    public static final int BUILDING_ID_POS = 2;
     public static final int ROOM_NUM_POS = 3;
     public static final int STIME_POS = 4;
     public static final int ETIME_POS = 5;

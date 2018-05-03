@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -36,8 +35,6 @@ import engsoc.qlife.utility.Constants;
  * A login screen that offers login to my.queensu.ca via netid/password SSO.
  */
 public class LoginActivity extends AppCompatActivity {
-    private View mProgressView;
-    private View mLoginFormView;
     private UserManager mUserManager;
 
     public static String mIcsUrl = "";
@@ -47,9 +44,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
 
         mUserManager = new UserManager(getBaseContext());
         if (mUserManager.getTable().isEmpty()) {

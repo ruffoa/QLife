@@ -5,8 +5,6 @@ import android.database.Cursor;
 
 import java.util.ArrayList;
 
-import engsoc.qlife.database.local.buildings.Building;
-
 /**
  * Created by Carson on 27/07/2017.
  * Abstract class that defines what methods a phone database manager must have, and provides some method bodies.

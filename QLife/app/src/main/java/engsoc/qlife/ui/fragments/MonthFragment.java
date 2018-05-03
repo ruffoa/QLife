@@ -1,8 +1,10 @@
 package engsoc.qlife.ui.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +36,7 @@ public class MonthFragment extends Fragment implements ActionbarFragment, Drawer
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_month, container, false);
         setActionbarTitle();
 
@@ -55,7 +57,7 @@ public class MonthFragment extends Fragment implements ActionbarFragment, Drawer
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         Calendar calendar = Calendar.getInstance();
@@ -74,16 +76,19 @@ public class MonthFragment extends Fragment implements ActionbarFragment, Drawer
      * Helper method that starts DayFragment on the day chosen in the DatePicker.
      */
     private void startDayFragment() {
-        DayFragment nextFrag = new DayFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(TAG_FROM_MONTH, TAG_FROM_MONTH); //tell day fragment bundle is from month fragment
-        bundle.putInt(TAG_DAY, mDatePicker.getDayOfMonth());
-        bundle.putInt(TAG_MONTH, mDatePicker.getMonth());
-        bundle.putInt(TAG_YEAR, mDatePicker.getYear());
-        nextFrag.setArguments(bundle);
-        this.getFragmentManager().beginTransaction().addToBackStack(null)
-                .replace(R.id.content_frame, nextFrag)
-                .commit();
+        FragmentManager fragMan = this.getFragmentManager();
+        if (fragMan != null) {
+            DayFragment nextFrag = new DayFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(TAG_FROM_MONTH, TAG_FROM_MONTH); //tell day fragment bundle is from month fragment
+            bundle.putInt(TAG_DAY, mDatePicker.getDayOfMonth());
+            bundle.putInt(TAG_MONTH, mDatePicker.getMonth());
+            bundle.putInt(TAG_YEAR, mDatePicker.getYear());
+            nextFrag.setArguments(bundle);
+            fragMan.beginTransaction().addToBackStack(null)
+                    .replace(R.id.content_frame, nextFrag)
+                    .commit();
+        }
     }
 
     @Override

@@ -80,15 +80,19 @@ public class Util {
     }
 
     public static void setActionbarTitle(String title, AppCompatActivity activity) {
-        ActionBar actionbar = activity.getSupportActionBar();
-        if (actionbar != null) {
-            actionbar.setTitle(title);
+        if (activity != null) {
+            ActionBar actionbar = activity.getSupportActionBar();
+            if (actionbar != null) {
+                actionbar.setTitle(title);
+            }
         }
     }
 
     public static void setDrawerItemSelected(Activity activity, int itemId, boolean isChecked) {
-        NavigationView navView = activity.findViewById(R.id.drawer_layout).findViewById(R.id.nav_view);
-        navView.getMenu().findItem(itemId).setChecked(isChecked);
+        if (activity != null) {
+            NavigationView navView = activity.findViewById(R.id.drawer_layout).findViewById(R.id.nav_view);
+            navView.getMenu().findItem(itemId).setChecked(isChecked);
+        }
     }
 
     public static void setBackButton(ActionBar actionBar) {

@@ -1,6 +1,7 @@
 package engsoc.qlife.ui.fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -45,7 +46,7 @@ public class OneFoodFragment extends Fragment implements ActionbarFragment, Draw
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_one_food, container, false);
         mArgs = getArguments();
         setActionbarTitle();
@@ -121,33 +122,35 @@ public class OneFoodFragment extends Fragment implements ActionbarFragment, Draw
         com.google.android.gms.maps.MapView mapView = mView.findViewById(R.id.map);
         mapView.onCreate(mSavedInstanceState);
         mapView.onResume();
-
-        try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        mapView.getMapAsync(new OnMapReadyCallback() {
-            @Override
-            public void onMapReady(GoogleMap mMap) {
-                mGoogleMap = mMap;
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    requestLocationPermissions();
-                } else {
-                    mGoogleMap.setMyLocationEnabled(true);
-                }
-                LatLng buildingInfo = new LatLng(mArgs.getDouble(Building.COLUMN_LAT), mArgs.getDouble(Building.COLUMN_LON));
-                String title = mArgs.getString(Food.COLUMN_NAME);
-                String buildingName = mArgs.getString(FoodFragment.TAG_BUILDING_NAME);
-                mGoogleMap.addMarker(new MarkerOptions().position(buildingInfo).title(title).snippet(buildingName)).showInfoWindow();
-
-                //For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(buildingInfo).zoom(15).build();
-                mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        final Activity activity = getActivity();
+        if (activity != null) {
+            try {
+                MapsInitializer.initialize(activity.getApplicationContext());
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        });
+
+            mapView.getMapAsync(new OnMapReadyCallback() {
+                @Override
+                public void onMapReady(GoogleMap mMap) {
+                    mGoogleMap = mMap;
+                    if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                            ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        requestLocationPermissions();
+                    } else {
+                        mGoogleMap.setMyLocationEnabled(true);
+                    }
+                    LatLng buildingInfo = new LatLng(mArgs.getDouble(Building.COLUMN_LAT), mArgs.getDouble(Building.COLUMN_LON));
+                    String title = mArgs.getString(Food.COLUMN_NAME);
+                    String buildingName = mArgs.getString(FoodFragment.TAG_BUILDING_NAME);
+                    mGoogleMap.addMarker(new MarkerOptions().position(buildingInfo).title(title).snippet(buildingName)).showInfoWindow();
+
+                    //For zooming automatically to the location of the marker
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(buildingInfo).zoom(15).build();
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
+            });
+        }
     }
 
     @Override

@@ -37,7 +37,7 @@ public class EventInfoFragment extends Fragment implements ActionbarFragment, Dr
     private GoogleMap mGoogleMap;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myView = inflater.inflate(R.layout.fragment_event_info, container, false);
         setActionbarTitle();
         addDataToViews();
@@ -101,7 +101,7 @@ public class EventInfoFragment extends Fragment implements ActionbarFragment, Dr
         mMapView = myView.findViewById(R.id.event_map);
         Util.initMapView(mMapView, mSavedInstanceState, getActivity(), new CallableObj<Void>() {
             @Override
-            public Void call(Object obj) throws Exception {
+            public Void call(Object obj) {
                 mGoogleMap = (GoogleMap) obj;
                 String icsBuilding = mEventLoc.substring(mEventLoc.indexOf("at:") + 4, mEventLoc.length());
                 try {

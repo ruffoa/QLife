@@ -17,7 +17,7 @@ public class HomeButtonListener {
     private OnHomePressedListener mListener;
     private InnerReceiver mReceiver;
 
-    public HomeButtonListener(Context context) {
+    HomeButtonListener(Context context) {
         mContext = context;
         mFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
     }

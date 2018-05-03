@@ -42,7 +42,7 @@ public class OneBuildingFragment extends Fragment implements ActionbarFragment, 
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_one_building, container, false);
         mArgs = getArguments();
         setActionbarTitle();

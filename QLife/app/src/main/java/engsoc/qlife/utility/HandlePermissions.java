@@ -22,20 +22,22 @@ import engsoc.qlife.activities.MapsActivity;
 public class HandlePermissions {
 
     public static void requestLocationPermissions(Activity activity) {
-        int coarsePermission = ContextCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
-        int finePermission = ContextCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-        List<String> listPermissionsNeeded = new ArrayList<>();
+        if (activity != null) {
+            int coarsePermission = ContextCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+            int finePermission = ContextCompat.checkSelfPermission(activity.getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+            List<String> listPermissionsNeeded = new ArrayList<>();
 
-        if (finePermission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-        if (coarsePermission != PackageManager.PERMISSION_GRANTED) {
-            listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
-        }
-        if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(activity,
-                    listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
-                    MapsActivity.REQUEST_LOCATION_PERMISSIONS);
+            if (finePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION);
+            }
+            if (coarsePermission != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+            }
+            if (!listPermissionsNeeded.isEmpty()) {
+                ActivityCompat.requestPermissions(activity,
+                        listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
+                        MapsActivity.REQUEST_LOCATION_PERMISSIONS);
+            }
         }
     }
 

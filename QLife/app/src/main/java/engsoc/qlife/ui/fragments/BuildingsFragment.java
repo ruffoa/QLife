@@ -1,6 +1,8 @@
 package engsoc.qlife.ui.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -84,64 +86,74 @@ public class BuildingsFragment extends ListFragment implements ActionbarFragment
 
         OneBuildingFragment oneBuildingFragment = new OneBuildingFragment();
         oneBuildingFragment.setArguments(args);
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().addToBackStack(null).replace(R.id.content_frame, oneBuildingFragment).commit();
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            FragmentManager fm = activity.getSupportFragmentManager();
+            fm.beginTransaction().addToBackStack(null).replace(R.id.content_frame, oneBuildingFragment).commit();
+        }
     }
 
     @Override
     public Bundle setDataForOneItem(View view) {
-        Bundle args = new Bundle();
-        FoodManager foodManager = new FoodManager(getActivity().getApplicationContext());
-        String sId = ((TextView) view.findViewById(R.id.db_id)).getText().toString();
-        Building building = mBuildingManager.getRow(Integer.parseInt(sId));
-        ArrayList<Food> food = foodManager.getFoodForBuilding(Integer.parseInt(sId));
+        Activity activity = getActivity();
+        if (activity != null) {
+            Bundle args = new Bundle();
+            FoodManager foodManager = new FoodManager(getActivity().getApplicationContext());
+            String sId = ((TextView) view.findViewById(R.id.db_id)).getText().toString();
+            Building building = mBuildingManager.getRow(Integer.parseInt(sId));
+            ArrayList<Food> food = foodManager.getFoodForBuilding(Integer.parseInt(sId));
 
-        ArrayList<String> foodNames = new ArrayList<>();
-        for (Food oneFood : food) {
-            foodNames.add(oneFood.getName());
+            ArrayList<String> foodNames = new ArrayList<>();
+            for (Food oneFood : food) {
+                foodNames.add(oneFood.getName());
+            }
+
+            //deal with special case building names - common short forms for long names
+            switch (building.getName()) {
+                case Constants.ARC_FULL:
+                    args.putString(Building.COLUMN_NAME, Constants.ARC);
+                    break;
+                case Constants.JDUC_FULL:
+                    args.putString(Building.COLUMN_NAME, Constants.JDUC);
+                    break;
+                default:
+                    args.putString(Building.COLUMN_NAME, building.getName());
+                    break;
+            }
+
+            args.putString(Building.COLUMN_PURPOSE, building.getPurpose());
+            args.putBoolean(Building.COLUMN_BOOK_ROOMS, building.getBookRooms());
+            args.putBoolean(Building.COLUMN_ATM, building.getAtm());
+            args.putDouble(Building.COLUMN_LAT, building.getLat());
+            args.putDouble(Building.COLUMN_LON, building.getLon());
+            args.putStringArrayList(TAG_FOOD_NAMES, foodNames);
+            return args;
         }
-
-        //deal with special case building names - common short forms for long names
-        switch (building.getName()) {
-            case Constants.ARC_FULL:
-                args.putString(Building.COLUMN_NAME, Constants.ARC);
-                break;
-            case Constants.JDUC_FULL:
-                args.putString(Building.COLUMN_NAME, Constants.JDUC);
-                break;
-            default:
-                args.putString(Building.COLUMN_NAME, building.getName());
-                break;
-        }
-
-        args.putString(Building.COLUMN_PURPOSE, building.getPurpose());
-        args.putBoolean(Building.COLUMN_BOOK_ROOMS, building.getBookRooms());
-        args.putBoolean(Building.COLUMN_ATM, building.getAtm());
-        args.putDouble(Building.COLUMN_LAT, building.getLat());
-        args.putDouble(Building.COLUMN_LON, building.getLon());
-        args.putStringArrayList(TAG_FOOD_NAMES, foodNames);
-        return args;
+        return null;
     }
 
     @Override
     public void inflateListView() {
-        mBuildingManager = new BuildingManager(getActivity().getApplicationContext());
-        ArrayList<HashMap<String, String>> buildingsList = new ArrayList<>();
+        Activity activity = getActivity();
+        if (activity != null) {
+            mBuildingManager = new BuildingManager(activity.getApplicationContext());
+            ArrayList<HashMap<String, String>> buildingsList = new ArrayList<>();
 
-        ArrayList<DatabaseRow> buildings = mBuildingManager.getTable();
-        for (DatabaseRow row : buildings) {
-            Building building = (Building) row;
-            HashMap<String, String> map = new HashMap<>();
-            map.put(Building.COLUMN_NAME, building.getName());
-            map.put(Building.COLUMN_PURPOSE, building.getPurpose());
-            String food = building.getFood() ? "Yes" : "No";
-            map.put(Building.COLUMN_FOOD, food);
-            map.put(FoodFragment.TAG_DB_ID, String.valueOf(building.getId()));
-            buildingsList.add(map);
+            ArrayList<DatabaseRow> buildings = mBuildingManager.getTable();
+            for (DatabaseRow row : buildings) {
+                Building building = (Building) row;
+                HashMap<String, String> map = new HashMap<>();
+                map.put(Building.COLUMN_NAME, building.getName());
+                map.put(Building.COLUMN_PURPOSE, building.getPurpose());
+                String food = building.getFood() ? "Yes" : "No";
+                map.put(Building.COLUMN_FOOD, food);
+                map.put(FoodFragment.TAG_DB_ID, String.valueOf(building.getId()));
+                buildingsList.add(map);
+            }
+            ListAdapter adapter = new SimpleAdapter(activity.getApplicationContext(), buildingsList,
+                    R.layout.buildings_list_item, new String[]{Building.COLUMN_NAME, Building.COLUMN_PURPOSE, Building.COLUMN_FOOD, FoodFragment.TAG_DB_ID},
+                    new int[]{R.id.name, R.id.purpose, R.id.food, R.id.db_id});
+            setListAdapter(adapter);
         }
-        ListAdapter adapter = new SimpleAdapter(getActivity().getApplicationContext(), buildingsList,
-                R.layout.buildings_list_item, new String[]{Building.COLUMN_NAME, Building.COLUMN_PURPOSE, Building.COLUMN_FOOD, FoodFragment.TAG_DB_ID},
-                new int[]{R.id.name, R.id.purpose, R.id.food, R.id.db_id});
-        setListAdapter(adapter);
     }
 }

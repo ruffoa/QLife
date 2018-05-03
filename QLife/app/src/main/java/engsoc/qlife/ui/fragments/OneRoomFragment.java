@@ -2,6 +2,7 @@ package engsoc.qlife.ui.fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
@@ -44,7 +45,7 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
     private ImageView mImageView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             mRoomName = bundle.getString(RoomsFragment.TAG_TITLE);
@@ -65,7 +66,7 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         TextView roomName = view.findViewById(R.id.RoomName);
         roomName.setText(mRoomName);
         TextView dateAvailability = view.findViewById(R.id.RoomAvailabilityDate);

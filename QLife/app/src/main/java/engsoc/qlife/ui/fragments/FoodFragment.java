@@ -1,6 +1,8 @@
 package engsoc.qlife.ui.fragments;
 
+import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.ListFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -43,8 +45,11 @@ public class FoodFragment extends ListFragment implements ActionbarFragment, Dra
         View v = inflater.inflate(R.layout.fragment_list, container, false);
         setActionbarTitle();
 
-        mFoodManager = new FoodManager(getActivity().getApplicationContext());
-        inflateListView();
+        Activity activity = getActivity();
+        if (activity != null) {
+            mFoodManager = new FoodManager(activity.getApplicationContext());
+            inflateListView();
+        }
         return v;
     }
 
@@ -89,10 +94,13 @@ public class FoodFragment extends ListFragment implements ActionbarFragment, Dra
             foodList.add(packFoodMap(row));
         }
 
-        ListAdapter adapter = new SimpleAdapter(getActivity().getApplicationContext(), foodList,
-                R.layout.food_list_item, new String[]{Food.COLUMN_NAME, TAG_BUILDING_NAME, Food.COLUMN_MEAL_PLAN, Food.COLUMN_CARD, TAG_DB_ID, Food.COLUMN_BUILDING_ID},
-                new int[]{R.id.name, R.id.building, R.id.meal_plan, R.id.card, R.id.db_id, R.id.building_db_id});
-        setListAdapter(adapter);
+        Activity activity = getActivity();
+        if (activity != null) {
+            ListAdapter adapter = new SimpleAdapter(activity.getApplicationContext(), foodList,
+                    R.layout.food_list_item, new String[]{Food.COLUMN_NAME, TAG_BUILDING_NAME, Food.COLUMN_MEAL_PLAN, Food.COLUMN_CARD, TAG_DB_ID, Food.COLUMN_BUILDING_ID},
+                    new int[]{R.id.name, R.id.building, R.id.meal_plan, R.id.card, R.id.db_id, R.id.building_db_id});
+            setListAdapter(adapter);
+        }
     }
 
     @Override
@@ -101,8 +109,11 @@ public class FoodFragment extends ListFragment implements ActionbarFragment, Dra
         Bundle args = setDataForOneItem(view);
         OneFoodFragment oneFoodFragment = new OneFoodFragment();
         oneFoodFragment.setArguments(args);
-        FragmentManager fm = getActivity().getSupportFragmentManager();
-        fm.beginTransaction().addToBackStack(null).replace(R.id.content_frame, oneFoodFragment).commit();
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            FragmentManager fm = activity.getSupportFragmentManager();
+            fm.beginTransaction().addToBackStack(null).replace(R.id.content_frame, oneFoodFragment).commit();
+        }
     }
 
     @Override

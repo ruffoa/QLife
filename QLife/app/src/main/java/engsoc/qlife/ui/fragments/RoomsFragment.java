@@ -4,8 +4,10 @@ import android.app.ProgressDialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -46,9 +48,6 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
     public static final String TAG_TITLE = "room_title";
     public static final String TAG_PIC = "pic";
     public static final String TAG_ROOM_ID = "room_id";
-    public static final int DAY_POS = 0;
-    public static final int MONTH_POS = 1;
-    public static final int YEAR_POS = 2;
 
     private boolean mReturning = false;
     private boolean mShowingAll = true;
@@ -65,7 +64,7 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_ilcroom_info, container, false);
         inflateListView();
         setViews();
@@ -409,41 +408,44 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                RoomsObject data = (RoomsObject) mAdapter.getItem(position);
+                FragmentActivity activity = getActivity();
+                if (activity != null) {
+                    RoomsObject data = (RoomsObject) mAdapter.getItem(position);
 
-                LinearLayout card = mView.findViewById(R.id.sectioned_card_view);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    card.setTransitionName("transistion_event_info" + position);
-                }
-                RoomManager roomInf = new RoomManager(getContext());
-                ArrayList<DatabaseRow> info = roomInf.getTable();
+                    LinearLayout card = mView.findViewById(R.id.sectioned_card_view);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        card.setTransitionName("transistion_event_info" + position);
+                    }
+                    RoomManager roomInf = new RoomManager(getContext());
+                    ArrayList<DatabaseRow> info = roomInf.getTable();
 
-                //search for the chosen room in the database, get the picture URL
-                String pic = "";
-                if (data != null && info.size() > 0) {
-                    for (DatabaseRow row : info) {
-                        Room room = (Room) row;
-                        if (room.getRoomId() == data.getId()) {
-                            pic = room.getPicUrl();
-                            break;
+                    //search for the chosen room in the database, get the picture URL
+                    String pic = "";
+                    if (data != null && info.size() > 0) {
+                        for (DatabaseRow row : info) {
+                            Room room = (Room) row;
+                            if (room.getRoomId() == data.getId()) {
+                                pic = room.getPicUrl();
+                                break;
+                            }
                         }
                     }
-                }
-                Bundle bundle = new Bundle();
-                if (data != null) {
-                    bundle.putString(TAG_TITLE, data.getName());
-                    bundle.putInt(TAG_ROOM_ID, data.getId());
-                }
-                bundle.putString(TAG_PIC, pic);
+                    Bundle bundle = new Bundle();
+                    if (data != null) {
+                        bundle.putString(TAG_TITLE, data.getName());
+                        bundle.putInt(TAG_ROOM_ID, data.getId());
+                    }
+                    bundle.putString(TAG_PIC, pic);
 
-                String cardName = card.getTransitionName();
-                OneRoomFragment nextFrag = new OneRoomFragment();
-                nextFrag.setArguments(bundle);
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().addToBackStack(null)
-                        .replace(R.id.content_frame, nextFrag)
-                        .addSharedElement(card, cardName)
-                        .commit();
+                    String cardName = card.getTransitionName();
+                    OneRoomFragment nextFrag = new OneRoomFragment();
+                    nextFrag.setArguments(bundle);
+                    FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                    fragmentManager.beginTransaction().addToBackStack(null)
+                            .replace(R.id.content_frame, nextFrag)
+                            .addSharedElement(card, cardName)
+                            .commit();
+                }
             }
         });
     }
