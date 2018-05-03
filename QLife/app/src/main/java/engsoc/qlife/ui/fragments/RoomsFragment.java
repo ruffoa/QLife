@@ -123,9 +123,9 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
         ArrayList<RoomsObject> rooms = getAllRooms();
         if (rooms.isEmpty()) {
             //no rooms means no internet
-            mView.findViewById(R.id.NoInternet).setVisibility(View.VISIBLE);
+            mView.findViewById(R.id.no_data).setVisibility(View.VISIBLE);
         } else {
-            mView.findViewById(R.id.NoInternet).setVisibility(View.GONE);
+            mView.findViewById(R.id.no_data).setVisibility(View.GONE);
             rooms = sortRooms(rooms);
         }
         setAdapter(rooms);
@@ -212,10 +212,10 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
     private boolean currentlyAvailable(String roomAvailability) {
         if (roomAvailability == null) {
             //means no internet
-            mView.findViewById(R.id.NoInternet).setVisibility(View.VISIBLE);
+            mView.findViewById(R.id.no_data).setVisibility(View.VISIBLE);
             return false;
         } else if (roomAvailability.length() > 0) {
-            mView.findViewById(R.id.NoInternet).setVisibility(View.GONE);
+            mView.findViewById(R.id.no_data).setVisibility(View.GONE);
             try {
                 JSONArray arr = new JSONArray(roomAvailability);
 

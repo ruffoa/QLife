@@ -95,7 +95,7 @@
     <string name="current_availability">Availability for &#160;</string>
     <string name="ilc_room_pic">Room picture</string>
     <string name="no_rooms_available">No rooms are available</string>
-    <string name="no_internet">This information requires an Internet connection</string>
+    <string name="no_data">Sorry! Something went wrong!</string>
 
     <!-- other strings -->
     <string name="ellipses">&#8226;</string>

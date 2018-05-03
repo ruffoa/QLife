@@ -103,12 +103,12 @@ public class OneRoomFragment extends Fragment implements DrawerItem {
         ArrayList<TimeSlot> availableTimes = getDayAvailability();
         if (availableTimes == null) {
             //no internet
-            mView.findViewById(R.id.NoInternet).setVisibility(View.VISIBLE);
+            mView.findViewById(R.id.no_data).setVisibility(View.VISIBLE);
             mView.findViewById(R.id.NoAvailability).setVisibility(View.GONE);
         } else if (availableTimes.isEmpty()) {
             //no rooms available
             mView.findViewById(R.id.NoAvailability).setVisibility(View.VISIBLE);
-            mView.findViewById(R.id.NoInternet).setVisibility(View.GONE);
+            mView.findViewById(R.id.no_data).setVisibility(View.GONE);
         } else {
             mView.findViewById(R.id.NoAvailability).setVisibility(View.GONE);
             //know at least one available slot, can get it

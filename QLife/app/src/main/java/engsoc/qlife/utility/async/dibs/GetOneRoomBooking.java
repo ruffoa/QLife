@@ -25,9 +25,6 @@ public class GetOneRoomBooking extends DownloadTextTask<Integer, String> {
     protected String backgroundTaskMultiple(Integer[] values) {
         try {
             int roomId = values[0];
-            int day = values[1];
-            int month = values[2];
-            int year = values[3];
             return getText(Constants.GET_ROOM_BOOKINGS + "room=" + roomId);
         } catch (Exception e) {
             Log.d("HELLOTHERE", "BAD: " + e);

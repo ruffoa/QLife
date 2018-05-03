@@ -35,11 +35,7 @@ public class GetAllRoomBookings extends DownloadTextTask<Integer, SparseArray<St
         for (DatabaseRow row : mRoomData) {
             Room room = (Room) row;
             try {
-                int day = values[RoomsFragment.DAY_POS];
-                int month = values[RoomsFragment.MONTH_POS];
-                int year = values[RoomsFragment.YEAR_POS];
-
-                //call php script on server that gets info from cloud database - month+1 as Jan is 0
+                //call php script on server that gets info from cloud database
                 roomAvailability.put((int) room.getId(), getText(Constants.GET_ROOM_BOOKINGS + "room=" + room.getId()));
             } catch (Exception e) {
                 Log.d("HELLOTHERE", "BAD: " + e);
