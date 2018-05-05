@@ -20,24 +20,13 @@ import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.SqlStringStatements;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
-import engsoc.qlife.interfaces.IQLOptionsMenuActivity;
+import engsoc.qlife.interfaces.enforcers.OptionsMenuActivity;
 import engsoc.qlife.utility.Util;
 
 /**
  * Activity for the settings. Can see NetID, time since calendar was last synced and can logout here
  */
-public class SettingsActivity extends AppCompatActivity implements IQLOptionsMenuActivity {
-
-    private void clearData(View v) {
-        CookieManager.getInstance().removeAllCookies(null);
-        CookieManager.getInstance().flush();
-        WebView web = new WebView(getApplicationContext());
-        web.clearFormData();
-        web.clearHistory();
-        web.clearCache(true);
-
-        v.getContext().deleteDatabase(SqlStringStatements.PHONE_DATABASE_NAME);
-    }
+public class SettingsActivity extends AppCompatActivity implements OptionsMenuActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +40,29 @@ public class SettingsActivity extends AppCompatActivity implements IQLOptionsMen
                 Toast.makeText(SettingsActivity.this, getString(R.string.logged_out), Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(SettingsActivity.this, StartupActivity.class);
                 startActivity(intent);
-                finish();
+                finishAffinity();
             }
         });
 
         setBackButton();
         setTextViews();
+    }
+
+    /**
+     * Method that will remove all information from the last session. Deletes the
+     * database, clears Internet information and clears the back button stack.
+     *
+     * @param v The view that holds the app context.
+     */
+    private void clearData(View v) {
+        CookieManager.getInstance().removeAllCookies(null);
+        CookieManager.getInstance().flush();
+        WebView web = new WebView(getApplicationContext());
+        web.clearFormData();
+        web.clearHistory();
+        web.clearCache(true);
+
+        v.getContext().deleteDatabase(SqlStringStatements.PHONE_DATABASE_NAME);
     }
 
     @Override
@@ -78,7 +84,6 @@ public class SettingsActivity extends AppCompatActivity implements IQLOptionsMen
         netID.setText(user.getNetid());
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         inflateOptionsMenu(menu);
@@ -98,16 +103,7 @@ public class SettingsActivity extends AppCompatActivity implements IQLOptionsMen
 
     @Override
     public void handleOptionsClick(int itemId) {
-        switch (itemId) {
-            case R.id.about:
-                startActivity(new Intent(SettingsActivity.this, AboutActivity.class));
-                break;
-            case R.id.review:
-                startActivity(new Intent(SettingsActivity.this, ReviewActivity.class));
-                break;
-            case android.R.id.home:
-                finish();
-        }
+        Util.handleOptionsClick(this, itemId);
     }
 
     @Override

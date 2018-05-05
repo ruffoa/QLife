@@ -12,7 +12,7 @@ import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.utility.Constants;
 
 /**
@@ -108,8 +108,8 @@ public abstract class DownloadTextTask<T, S> extends AsyncTask<T, Void, S> {
             con.connect();
             int status = con.getResponseCode();
             switch (status) {
-                case 200:
-                case 201:
+                case HttpURLConnection.HTTP_OK:
+                case HttpURLConnection.HTTP_CREATED:
                     BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
                     StringBuilder sb = new StringBuilder();
                     String line;

@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 
-import engsoc.qlife.interfaces.OnHomePressedListener;
+import engsoc.qlife.interfaces.observers.OnHomePressedListener;
 
 /**
  * Created by Carson on 10/08/2017.
@@ -17,7 +17,7 @@ public class HomeButtonListener {
     private OnHomePressedListener mListener;
     private InnerReceiver mReceiver;
 
-    public HomeButtonListener(Context context) {
+    HomeButtonListener(Context context) {
         mContext = context;
         mFilter = new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
     }

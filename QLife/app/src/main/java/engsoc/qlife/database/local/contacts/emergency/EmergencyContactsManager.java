@@ -4,10 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.ArrayList;
+
 import engsoc.qlife.database.local.DatabaseManager;
 import engsoc.qlife.database.local.DatabaseRow;
-
-import java.util.ArrayList;
 
 /**
  * Created by Carson on 21/06/2017.
@@ -34,16 +34,7 @@ public class EmergencyContactsManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> contacts = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        try (Cursor cursor = getDatabase().query(EmergencyContact.TABLE_NAME, null, null, null, null, null, null)) {
-            while (cursor.moveToNext()) {
-                EmergencyContact contact = getRow(cursor.getInt(EmergencyContact.ID_POS));
-                contacts.add(contact);
-            }
-            cursor.close();
-            return contacts; //return only when the cursor has been closed
-        }
+        return retrieveTable(EmergencyContact.TABLE_NAME, EmergencyContact.COLUMN_NAME);
     }
 
     @Override
@@ -64,9 +55,8 @@ public class EmergencyContactsManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof EmergencyContact && newRow instanceof EmergencyContact) {
-            EmergencyContact oldContact = (EmergencyContact) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof EmergencyContact) {
             EmergencyContact newContact = (EmergencyContact) newRow;
 
             ContentValues values = new ContentValues();
@@ -76,7 +66,7 @@ public class EmergencyContactsManager extends DatabaseManager {
             values.put(EmergencyContact.COLUMN_DESCRIPTION, newContact.getDescription());
 
             String selection = EmergencyContact.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldContact.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(EmergencyContact.TABLE_NAME, values, selection, selectionArgs);
         }
     }

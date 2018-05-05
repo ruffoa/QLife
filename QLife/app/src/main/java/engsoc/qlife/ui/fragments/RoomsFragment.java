@@ -4,8 +4,10 @@ import android.app.ProgressDialog;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,27 +30,24 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import engsoc.qlife.R;
-import engsoc.qlife.database.dibs.GetAllRoomBookings;
-import engsoc.qlife.database.dibs.GetRooms;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.rooms.Room;
 import engsoc.qlife.database.local.rooms.RoomManager;
-import engsoc.qlife.interfaces.AsyncTaskObserver;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.interfaces.IQLListFragment;
-import engsoc.qlife.ui.recyclerview.DataObject;
-import engsoc.qlife.ui.recyclerview.SectionedRecyclerView;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
+import engsoc.qlife.interfaces.enforcers.ListFragment;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
+import engsoc.qlife.ui.recyclerview.list_objects.RoomsObject;
+import engsoc.qlife.ui.recyclerview.recyler_adapters.RoomsAdapter;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.Util;
+import engsoc.qlife.utility.async.dibs.GetAllRoomBookings;
+import engsoc.qlife.utility.async.dibs.GetRooms;
 
-public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragment {
+public class RoomsFragment extends Fragment implements ActionbarFragment, DrawerItem, ListFragment {
     public static final String TAG_TITLE = "room_title";
     public static final String TAG_PIC = "pic";
     public static final String TAG_ROOM_ID = "room_id";
-    public static final int DAY_POS = 0;
-    public static final int MONTH_POS = 1;
-    public static final int YEAR_POS = 2;
 
     private boolean mReturning = false;
     private boolean mShowingAll = true;
@@ -56,16 +55,16 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
     private Button mAvailableButton;
     private Button mAllButton;
     private RecyclerView mRecyclerView;
-    private RecyclerView.Adapter mAdapter;
+    private RoomsAdapter mAdapter;
     private View mView;
 
     //need as instance variable so that when coming back, don't have to take
     //time to re-get availability data. Highly likely data hasn't changed in time not on this fragment.
-    private ArrayList<DataObject> mAllAvailableRooms = new ArrayList<>();
+    private ArrayList<RoomsObject> mAllAvailableRooms = new ArrayList<>();
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_ilcroom_info, container, false);
         inflateListView();
         setViews();
@@ -76,27 +75,29 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
 
     /**
      * Helper method that sorts the supplied list of rooms by small, medium and then large.
+     * The API call already returns them in order of number.
      *
      * @param rooms The list of rooms to sort.
      * @return The sorted list of rooms.
      */
-    private ArrayList<DataObject> sortRooms(ArrayList<DataObject> rooms) {
-        ArrayList<DataObject> small = new ArrayList<>();
-        ArrayList<DataObject> med = new ArrayList<>();
-        ArrayList<DataObject> large = new ArrayList<>();
-        ArrayList<DataObject> other = new ArrayList<>();
-        ArrayList<DataObject> res = new ArrayList<>();
+    private ArrayList<RoomsObject> sortRooms(ArrayList<RoomsObject> rooms) {
+        ArrayList<RoomsObject> small = new ArrayList<>();
+        ArrayList<RoomsObject> med = new ArrayList<>();
+        ArrayList<RoomsObject> large = new ArrayList<>();
+        ArrayList<RoomsObject> other = new ArrayList<>();
+        ArrayList<RoomsObject> res = new ArrayList<>();
 
-        for (DataObject room : rooms) {
-            if (Pattern.compile(Pattern.quote("small"), Pattern.CASE_INSENSITIVE).matcher(room.getmText2()).find())
+        for (RoomsObject room : rooms) {
+            if (Pattern.compile(Pattern.quote("small"), Pattern.CASE_INSENSITIVE).matcher(room.getDescription()).find())
                 small.add(room);
-            else if (Pattern.compile(Pattern.quote("medium"), Pattern.CASE_INSENSITIVE).matcher(room.getmText2()).find())
+            else if (Pattern.compile(Pattern.quote("medium"), Pattern.CASE_INSENSITIVE).matcher(room.getDescription()).find())
                 med.add(room);
-            else if (Pattern.compile(Pattern.quote("large"), Pattern.CASE_INSENSITIVE).matcher(room.getmText2()).find())
+            else if (Pattern.compile(Pattern.quote("large"), Pattern.CASE_INSENSITIVE).matcher(room.getDescription()).find())
                 large.add(room);
             else other.add(room);
         }
 
+        //find each type of room
         if (small.size() > 0)
             small.get(0).setHeader("Small Group Rooms");
         if (med.size() > 0)
@@ -106,6 +107,7 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
         if (other.size() > 0)
             other.get(0).setHeader("Un-categorized Rooms");
 
+        //sequentially add each type of room so they show up in order
         res.addAll(small);
         res.addAll(med);
         res.addAll(large);
@@ -117,8 +119,15 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
      * Shows all ILC rooms, sorted by small, medium and large.
      */
     private void showAllRooms() {
-        ArrayList<DataObject> sortedAllRooms = sortRooms(getAllRooms());
-        setAdapter(sortedAllRooms);
+        ArrayList<RoomsObject> rooms = getAllRooms();
+        if (rooms.isEmpty()) {
+            //no rooms means no internet
+            mView.findViewById(R.id.no_data).setVisibility(View.VISIBLE);
+        } else {
+            mView.findViewById(R.id.no_data).setVisibility(View.GONE);
+            rooms = sortRooms(rooms);
+        }
+        setAdapter(rooms);
     }
 
     /**
@@ -136,16 +145,24 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
                 public void onTaskCompleted(Object obj) {
                     dialog.dismiss();
                     if (obj != null && obj instanceof SparseArray) {
-                        SparseArray<String> roomAvailability = (SparseArray<String>) obj;
+                        SparseArray roomAvailability = (SparseArray) obj;
+                        mAllAvailableRooms.clear();
                         for (DatabaseRow data : rooms) {
                             Room room = (Room) data;
-                            if (currentlyAvailable(roomAvailability.get((int) room.getId())))
-                                mAllAvailableRooms.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), true, "", room.getDescription()));
+                            //get an object because roomAvailability just holds objects
+                            Object objAvail = roomAvailability.get((int) room.getId());
+                            //check retrieved a String - availability should be a String
+                            String availability = null;
+                            if (objAvail != null && objAvail instanceof String) {
+                                availability = (String) objAvail;
+                            }
+                            if (currentlyAvailable(availability))
+                                mAllAvailableRooms.add(new RoomsObject(room.getName(), room.getDescription(), room.getRoomId(), true, ""));
                         }
                         mAllAvailableRooms = sortRooms(mAllAvailableRooms);
                         setAdapter(mAllAvailableRooms);
                     } else {
-                        mAllAvailableRooms.add(new DataObject("Data could not be retrieved", null));
+                        mAllAvailableRooms.add(new RoomsObject("Data could not be retrieved", null, -1, false, null));
                         setAdapter(mAllAvailableRooms);
                     }
                 }
@@ -168,18 +185,18 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
     /**
      * Method that retrieves all rooms from the phone database and packs them into a list.
      *
-     * @return List of room information packed into DataObjects.
+     * @return List of room information packed into RoomsObjects.
      */
-    private ArrayList<DataObject> getAllRooms() {
+    private ArrayList<RoomsObject> getAllRooms() {
         RoomManager roomManager = new RoomManager(this.getContext());
-        ArrayList<DataObject> result = new ArrayList<>();
+        ArrayList<RoomsObject> result = new ArrayList<>();
         ArrayList<DatabaseRow> roomData = roomManager.getTable();
 
         if (roomData != null && roomData.size() > 0) {
             for (DatabaseRow row : roomData) {
                 Room room = (Room) row;
                 boolean hasTV = room.getDescription().contains(Constants.TV) || room.getDescription().contains(Constants.PROJECTOR);
-                result.add(new DataObject(room.getName(), room.getDescription(), room.getRoomId(), hasTV, ""));
+                result.add(new RoomsObject(room.getName(), room.getDescription(), room.getRoomId(), hasTV, ""));
             }
         }
         return result;
@@ -192,7 +209,12 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
      * @return True if the room is currently available, else false.
      */
     private boolean currentlyAvailable(String roomAvailability) {
-        if (roomAvailability != null && roomAvailability.length() > 0) {  // if the JSON array containing the data is not null (which would be bad)
+        if (roomAvailability == null) {
+            //means no internet
+            mView.findViewById(R.id.no_data).setVisibility(View.VISIBLE);
+            return false;
+        } else if (roomAvailability.length() > 0) {
+            mView.findViewById(R.id.no_data).setVisibility(View.GONE);
             try {
                 JSONArray arr = new JSONArray(roomAvailability); // make a JSON array variable to hold a properly formatted JSON object
 
@@ -207,25 +229,38 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
                     int startHour = Integer.parseInt(start.substring(0, 2));    // cast the starting hour to an int
                     int endHour = Integer.parseInt(end.substring(0, 2));    // cast the ending hour to an int
 
+                for (int i = 0; i < arr.length(); i++) {
+                    //parse for useful information
+                    JSONObject roomInfo = arr.getJSONObject(i);
+                    String start = roomInfo.getString("StartTime");
+                    start = start.substring(start.indexOf("T") + 1);
+                    String end = roomInfo.getString("EndTime");
+                    end = end.substring(end.indexOf('T') + 1);
+
+                    //get proper types for interesting times
+                    int startHour = Integer.parseInt(start.substring(0, 2));
+                    int endHour = Integer.parseInt(end.substring(0, 2));
                     Calendar cal = Calendar.getInstance();
                     int curHour = cal.get(Calendar.HOUR_OF_DAY);
-                    int curMin = cal.get(Calendar.MINUTE);
 
-                    // Re-added in code to allow for dealing with rooms with bookings longer than 1 hour
-                    // In future versions, the ability to show rooms with bookings that are almost over should probably be re-implemented
-
-                    if (startHour == curHour && curMin > 30 || (startHour <= curHour && curHour <= endHour)) {   // if the current hour is equal to the start hour of a booking, or the current hour is within the time of a booking
-                        return false;       // return 1, the room is currently booked, so we are done, return immediately.
-                    } else if (startHour == curHour - 1 && curMin < 30) // if the room was booked for the current time slot, but the slot is almost over
-                        return false; // state = 2;  // keep state as 2, so that people know that the room is free for the next hour block.  If return 1 is never called, 2 will be returned
-//                    else if (startHour == curHour + 1)                  // if the room is booked for the next time slot
-//                        state = 3;  // let users know that the room will be booked in the next slot, so that they know someone will be after them
+                    //check if available - weekdays are on half hour, weekend on the hour
+                    if (Util.isWeekend()) {
+                        if (startHour <= curHour && curHour < endHour) {
+                            return false;
+                        }
+                    } else {
+                        if ((startHour == curHour && cal.get(Calendar.MINUTE) > 30) || (startHour <= curHour && curHour <= endHour)) {
+                            return false;
+                        }
+                    }
                 }
             } catch (JSONException e) {
                 Log.d("HELLOTHERE", e.getMessage());
+                return false;
             }
+            return true;
         }
-        return true;
+        return false;
     }
 
     @Override
@@ -321,8 +356,8 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
      *
      * @param list List holding the data to be shown in the recycler view.
      */
-    private void setAdapter(ArrayList<DataObject> list) {
-        mAdapter = new SectionedRecyclerView(list);
+    private void setAdapter(ArrayList<RoomsObject> list) {
+        mAdapter = new RoomsAdapter(list);
         mRecyclerView.setAdapter(mAdapter);
     }
 
@@ -380,45 +415,48 @@ public class RoomsFragment extends Fragment implements IQLActionbarFragment, IQL
         });
 
         //onClick for item in the recycler view (a room)
-        ((SectionedRecyclerView) mAdapter).setOnItemClickListener(new SectionedRecyclerView
+        mAdapter.setOnItemClickListener(new RoomsAdapter
                 .MyClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                DataObject data = ((SectionedRecyclerView) mAdapter).getItem(position);
+                FragmentActivity activity = getActivity();
+                if (activity != null) {
+                    RoomsObject data = (RoomsObject) mAdapter.getItem(position);
 
-                LinearLayout card = mView.findViewById(R.id.sectioned_card_view);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    card.setTransitionName("transistion_event_info" + position);
-                }
-                RoomManager roomInf = new RoomManager(getContext());
-                ArrayList<DatabaseRow> info = roomInf.getTable();
+                    LinearLayout card = mView.findViewById(R.id.sectioned_card_view);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                        card.setTransitionName("transistion_event_info" + position);
+                    }
+                    RoomManager roomInf = new RoomManager(getContext());
+                    ArrayList<DatabaseRow> info = roomInf.getTable();
 
-                //search for the chosen room in the database, get the picture URL
-                String pic = "";
-                if (data != null && info.size() > 0) {
-                    for (DatabaseRow row : info) {
-                        Room room = (Room) row;
-                        if (room.getRoomId() == data.getID()) {
-                            pic = room.getPicUrl();
-                            break;
+                    //search for the chosen room in the database, get the picture URL
+                    String pic = "";
+                    if (data != null && info.size() > 0) {
+                        for (DatabaseRow row : info) {
+                            Room room = (Room) row;
+                            if (room.getRoomId() == data.getId()) {
+                                pic = room.getPicUrl();
+                                break;
+                            }
                         }
                     }
-                }
-                Bundle bundle = new Bundle();
-                if (data != null) {
-                    bundle.putString(TAG_TITLE, data.getmText1());
-                    bundle.putInt(TAG_ROOM_ID, data.getID());
-                }
-                bundle.putString(TAG_PIC, pic);
+                    Bundle bundle = new Bundle();
+                    if (data != null) {
+                        bundle.putString(TAG_TITLE, data.getName());
+                        bundle.putInt(TAG_ROOM_ID, data.getId());
+                    }
+                    bundle.putString(TAG_PIC, pic);
 
-                String cardName = card.getTransitionName();
-                OneRoomFragment nextFrag = new OneRoomFragment();
-                nextFrag.setArguments(bundle);
-                FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
-                fragmentManager.beginTransaction().addToBackStack(null)
-                        .replace(R.id.content_frame, nextFrag)
-                        .addSharedElement(card, cardName)
-                        .commit();
+                    String cardName = card.getTransitionName();
+                    OneRoomFragment nextFrag = new OneRoomFragment();
+                    nextFrag.setArguments(bundle);
+                    FragmentManager fragmentManager = activity.getSupportFragmentManager();
+                    fragmentManager.beginTransaction().addToBackStack(null)
+                            .replace(R.id.content_frame, nextFrag)
+                            .addSharedElement(card, cardName)
+                            .commit();
+                }
             }
         });
     }

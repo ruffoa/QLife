@@ -1,7 +1,7 @@
 package engsoc.qlife.ui.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.ListFragment;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,13 +10,13 @@ import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
 import engsoc.qlife.R;
+import engsoc.qlife.interfaces.enforcers.ListFragment;
 import engsoc.qlife.utility.Util;
 import engsoc.qlife.database.local.DatabaseRow;
 import engsoc.qlife.database.local.contacts.emergency.EmergencyContact;
 import engsoc.qlife.database.local.contacts.emergency.EmergencyContactsManager;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.interfaces.IQLListFragment;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +25,7 @@ import java.util.HashMap;
  * Created by Carson on 12/06/2017.
  * Fragment that displays emergency contact information held in cloud database
  */
-public class EmergContactsFragment extends ListFragment implements IQLActionbarFragment, IQLDrawerItem, IQLListFragment {
+public class EmergContactsFragment extends android.support.v4.app.ListFragment implements ActionbarFragment, DrawerItem, ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,15 +64,18 @@ public class EmergContactsFragment extends ListFragment implements IQLActionbarF
 
     @Override
     public void inflateListView() {
-        ArrayList<HashMap<String, String>> emergContactsList = new ArrayList<>();
-        ArrayList<DatabaseRow> contacts = (new EmergencyContactsManager(getActivity().getApplicationContext())).getTable();
-        for (DatabaseRow row : contacts) {
-            emergContactsList.add(packEmergContactsMap(row));
+        FragmentActivity activity = getActivity();
+        if (activity != null) {
+            ArrayList<HashMap<String, String>> emergContactsList = new ArrayList<>();
+            ArrayList<DatabaseRow> contacts = (new EmergencyContactsManager(activity.getApplicationContext())).getTable();
+            for (DatabaseRow row : contacts) {
+                emergContactsList.add(packEmergContactsMap(row));
+            }
+            ListAdapter adapter = new SimpleAdapter(activity.getApplicationContext(), emergContactsList,
+                    R.layout.emerg_contacts_list_item, new String[]{EmergencyContact.COLUMN_NAME, EmergencyContact.COLUMN_PHONE_NUMBER,
+                    EmergencyContact.COLUMN_DESCRIPTION}, new int[]{R.id.name, R.id.number, R.id.description});
+            setListAdapter(adapter);
         }
-        ListAdapter adapter = new SimpleAdapter(getActivity().getApplicationContext(), emergContactsList,
-                R.layout.emerg_contacts_list_item, new String[]{EmergencyContact.COLUMN_NAME, EmergencyContact.COLUMN_PHONE_NUMBER,
-                EmergencyContact.COLUMN_DESCRIPTION}, new int[]{R.id.name, R.id.number, R.id.description});
-        setListAdapter(adapter);
     }
 
     /**

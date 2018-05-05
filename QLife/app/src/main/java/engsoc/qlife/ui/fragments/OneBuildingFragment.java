@@ -1,11 +1,8 @@
 package engsoc.qlife.ui.fragments;
 
-import android.Manifest;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -15,9 +12,6 @@ import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -27,10 +21,11 @@ import java.util.ArrayList;
 import engsoc.qlife.R;
 import engsoc.qlife.activities.MapsActivity;
 import engsoc.qlife.database.local.buildings.Building;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.interfaces.IQLListItemDetailsFragment;
-import engsoc.qlife.interfaces.IQLMapView;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
+import engsoc.qlife.interfaces.enforcers.ListItemDetailsFragment;
+import engsoc.qlife.interfaces.enforcers.MapView;
+import engsoc.qlife.interfaces.observers.CallableObj;
 import engsoc.qlife.utility.HandlePermissions;
 import engsoc.qlife.utility.Util;
 
@@ -38,7 +33,7 @@ import engsoc.qlife.utility.Util;
  * Created by Carson on 25/07/2017.
  * Fragment that shows details of one building from the list view
  */
-public class OneBuildingFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem, IQLListItemDetailsFragment, IQLMapView {
+public class OneBuildingFragment extends Fragment implements ActionbarFragment, DrawerItem, ListItemDetailsFragment, MapView {
 
     private Bundle mArgs;
     private View mView;
@@ -47,7 +42,7 @@ public class OneBuildingFragment extends Fragment implements IQLActionbarFragmen
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_one_building, container, false);
         mArgs = getArguments();
         setActionbarTitle();
@@ -114,32 +109,20 @@ public class OneBuildingFragment extends Fragment implements IQLActionbarFragmen
 
     @Override
     public void setMapView() {
-        MapView mapView = mView.findViewById(R.id.map);
-        mapView.onCreate(mSavedInstanceState);
-        mapView.onResume();
-
-        try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        mapView.getMapAsync(new OnMapReadyCallback() {
+        com.google.android.gms.maps.MapView mapView = mView.findViewById(R.id.map);
+        Util.initMapView(mapView, mSavedInstanceState, getActivity(), new CallableObj<Void>() {
             @Override
-            public void onMapReady(GoogleMap mMap) {
-                mGoogleMap = mMap;
-                if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                        ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    requestLocationPermissions();
-                } else {
-                    mGoogleMap.setMyLocationEnabled(true);
-                }
-                LatLng buildingInfo = new LatLng(mArgs.getDouble(Building.COLUMN_LAT), mArgs.getDouble(Building.COLUMN_LON));
-                mGoogleMap.addMarker(new MarkerOptions().position(buildingInfo).title(mArgs.getString(Building.COLUMN_NAME))).showInfoWindow();
+            public Void call(Object obj) {
+                if (obj instanceof GoogleMap) {
+                    mGoogleMap = (GoogleMap) obj;
+                    LatLng buildingInfo = new LatLng(mArgs.getDouble(Building.COLUMN_LAT), mArgs.getDouble(Building.COLUMN_LON));
+                    mGoogleMap.addMarker(new MarkerOptions().position(buildingInfo).title(mArgs.getString(Building.COLUMN_NAME))).showInfoWindow();
 
-                //For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(buildingInfo).zoom(15).build();
-                mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    //For zooming automatically to the location of the marker
+                    CameraPosition cameraPosition = new CameraPosition.Builder().target(buildingInfo).zoom(15).build();
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }
+                return null;
             }
         });
     }

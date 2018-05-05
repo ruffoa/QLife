@@ -2,6 +2,7 @@ package engsoc.qlife.ui.fragments;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.format.DateFormat;
@@ -23,20 +24,19 @@ import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 import engsoc.qlife.R;
-import engsoc.qlife.database.dibs.GetAllRoomBookings;
-import engsoc.qlife.database.dibs.GetOneRoomBooking;
-import engsoc.qlife.interfaces.AsyncTaskObserver;
-import engsoc.qlife.interfaces.IQLDrawerItem;
-import engsoc.qlife.ui.recyclerview.DataObject;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.utility.Constants;
+import engsoc.qlife.utility.TimeSlot;
 import engsoc.qlife.utility.Util;
 import engsoc.qlife.utility.async.DownloadImageTask;
+import engsoc.qlife.utility.async.dibs.GetOneRoomBooking;
 
 /**
  * Created by Alex on 8/21/2017.
  * Fragment that shows when each room is available.
  */
-public class OneRoomFragment extends Fragment implements IQLDrawerItem {
+public class OneRoomFragment extends Fragment implements DrawerItem {
     private String mRoomName, mRoomPicUrl;
     private int mRoomID;
     private String mBookedRooms;
@@ -45,7 +45,7 @@ public class OneRoomFragment extends Fragment implements IQLDrawerItem {
     private ImageView mImageView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Bundle bundle = this.getArguments();
         if (bundle != null) {
             mRoomName = bundle.getString(RoomsFragment.TAG_TITLE);
@@ -66,7 +66,7 @@ public class OneRoomFragment extends Fragment implements IQLDrawerItem {
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         TextView roomName = view.findViewById(R.id.RoomName);
         roomName.setText(mRoomName);
         TextView dateAvailability = view.findViewById(R.id.RoomAvailabilityDate);
@@ -101,25 +101,31 @@ public class OneRoomFragment extends Fragment implements IQLDrawerItem {
      * Adds the available room times to the fragment.
      */
     private void setAvailableTimes() {
-        ArrayList<DataObject> availableTimes = getDayAvailability();
-        if (availableTimes == null || availableTimes.isEmpty()) {
+        ArrayList<TimeSlot> availableTimes = getDayAvailability();
+        if (availableTimes == null) {
+            //no internet
+            mView.findViewById(R.id.no_data).setVisibility(View.VISIBLE);
+            mView.findViewById(R.id.NoAvailability).setVisibility(View.GONE);
+        } else if (availableTimes.isEmpty()) {
+            //no rooms available
             mView.findViewById(R.id.NoAvailability).setVisibility(View.VISIBLE);
+            mView.findViewById(R.id.no_data).setVisibility(View.GONE);
         } else {
             mView.findViewById(R.id.NoAvailability).setVisibility(View.GONE);
             //know at least one available slot, can get it
-            String firstStart = availableTimes.get(0).getmText1();
-            String firstEnd = availableTimes.get(0).getmText2();
+            String firstStart = availableTimes.get(0).getStart();
+            String firstEnd = availableTimes.get(0).getEnd();
 
             if (availableTimes.size() == 1) {
                 //only one slot, don't try to combine multiple
                 addAvailableTime(firstStart, firstEnd);
             } else {
-                //try to combine overlapping available slots
+                //combine overlapping available slots
                 String start = firstStart;
                 String end = firstEnd;
                 for (int i = 1; i < availableTimes.size(); i++) {
-                    String nextStart = availableTimes.get(i).getmText1();
-                    String nextEnd = availableTimes.get(i).getmText2();
+                    String nextStart = availableTimes.get(i).getStart();
+                    String nextEnd = availableTimes.get(i).getEnd();
                     if (end.equals(nextStart)) {
                         //overlap, so don't add row and move along
                         end = nextEnd;
@@ -130,7 +136,7 @@ public class OneRoomFragment extends Fragment implements IQLDrawerItem {
                         end = nextEnd;
                     }
                     if (i == availableTimes.size() - 1) {
-                        //at end of loop, print out current slot (next start/end)
+                        //at end of loop, add current slot (next start/end)
                         addAvailableTime(start, end);
                     }
                 }
@@ -159,10 +165,14 @@ public class OneRoomFragment extends Fragment implements IQLDrawerItem {
      *
      * @return An array of objects that hold the room's available slots.
      */
-    private ArrayList<DataObject> getDayAvailability() {
-        ArrayList<DataObject> availability = new ArrayList<>();
+    private ArrayList<TimeSlot> getDayAvailability() {
+        ArrayList<TimeSlot> availability = new ArrayList<>();
         for (int i = 0; i < 16; i++) {
-            availability.add(new DataObject((i + 7) + ":" + 30, (i + 8) + ":" + 30));
+            if (Util.isWeekend()) {
+                availability.add(new TimeSlot((i + 7) + ":00", (i + 8) + ":00"));
+            } else {
+                availability.add(new TimeSlot((i + 7) + ":" + 30, (i + 8) + ":" + 30));
+            }
         }
 
         if (mBookedRooms != null && mBookedRooms.length() > 0) {
@@ -179,7 +189,7 @@ public class OneRoomFragment extends Fragment implements IQLDrawerItem {
 
                     //remove booked times from available times
                     for (int j = 0; j < availability.size(); j++) {
-                        String startTime = availability.get(j).getmText1();
+                        String startTime = availability.get(j).getStart();
                         int startHour = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
 
                         if (Integer.parseInt(start.substring(0, 2)) == startHour) {
@@ -194,25 +204,30 @@ public class OneRoomFragment extends Fragment implements IQLDrawerItem {
                     }
                 }
 
-                //set AM/PM on start and end times
-                for (int j = 0; j < availability.size(); j++) {
+                //set AM/PM on start and end times - only for weekdays
+                for (TimeSlot data : availability) {
                     //get hour of start time - use to set AM/PM
-                    String startTime = availability.get(j).getmText1();
-                    int tempTime = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
+                    String startTime = data.getStart();
+                    String endTime = data.getEnd();
+                    int startHour = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
+                    int endHour = Integer.parseInt(endTime.substring(0, endTime.indexOf(":")));
 
-                    if (tempTime > 12) {
-                        availability.get(j).setmText1((tempTime - 12) + ":30 PM");
+                    if (startHour > 12) {
+                        data.setStart((startHour - 12) + endTime.substring(endTime.indexOf(":")) + " PM");
+                    } else if (startHour == 12) {
+                        data.setStart(startTime + " PM");
                     }
-                    if (tempTime >= 12) {
-                        startTime = availability.get(j).getmText2();
-                        int endTime = Integer.parseInt(startTime.substring(0, startTime.indexOf(":")));
-                        availability.get(j).setmText2((endTime - 12) + ":30 PM");
+                    if (startHour >= 12) {
+                        data.setEnd((endHour - 12) + endTime.substring(endTime.indexOf(":")) + " PM");
                     }
-                    if (tempTime <= 11) {
-                        availability.get(j).setmText1(startTime + " AM");
+                    if (startHour <= 11) {
+                        if (endHour == 12) {
+                            data.setEnd(endTime + " PM");
+                        }
+                        data.setStart(startTime + " AM");
                     }
-                    if (tempTime < 11) {
-                        availability.get(j).setmText2(availability.get(j).getmText2() + " AM");
+                    if (startHour < 11) {
+                        data.setEnd(data.getEnd() + " AM");
                     }
                 }
                 return availability;

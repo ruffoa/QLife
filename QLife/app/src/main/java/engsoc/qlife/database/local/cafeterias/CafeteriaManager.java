@@ -56,17 +56,7 @@ public class CafeteriaManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> cafs = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        //order table by name, ascending
-        try (Cursor cursor = getDatabase().query(Cafeteria.TABLE_NAME, null, null, null, null, null, Cafeteria.COLUMN_NAME + " ASC")) {
-            while (cursor.moveToNext()) {
-                Cafeteria caf = getRow(cursor.getInt(Cafeteria.ID_POS));
-                cafs.add(caf);
-            }
-            cursor.close();
-            return cafs; //return only when the cursor has been closed
-        }
+        return retrieveTable(Cafeteria.TABLE_NAME, Cafeteria.COLUMN_NAME);
     }
 
     @Override
@@ -93,9 +83,8 @@ public class CafeteriaManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof Cafeteria && newRow instanceof Cafeteria) {
-            Cafeteria oldCaf = (Cafeteria) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof Cafeteria) {
             Cafeteria newCaf = (Cafeteria) newRow;
 
             ContentValues values = new ContentValues();
@@ -128,7 +117,7 @@ public class CafeteriaManager extends DatabaseManager {
             values.put(Cafeteria.COLUMN_SUN_DINNER_STOP, newCaf.getSunDinnerStop());
 
             String selection = Cafeteria.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldCaf.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(Cafeteria.TABLE_NAME, values, selection, selectionArgs);
         }
     }

@@ -23,7 +23,7 @@ import engsoc.qlife.utility.Util;
 import engsoc.qlife.database.local.DatabaseAccessor;
 import engsoc.qlife.database.local.users.User;
 import engsoc.qlife.database.local.users.UserManager;
-import engsoc.qlife.interfaces.IQLActivityHasOptionsMenu;
+import engsoc.qlife.interfaces.enforcers.ActivityHasOptionsMenu;
 import engsoc.qlife.ui.fragments.BuildingsFragment;
 import engsoc.qlife.ui.fragments.CafeteriasFragment;
 import engsoc.qlife.ui.fragments.DayFragment;
@@ -35,7 +35,7 @@ import engsoc.qlife.ui.fragments.StudentToolsFragment;
  * Activity holding most of the app.
  * contains the drawer that navigates user to fragments with map, schedule, info etc.
  */
-public class MainTabActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, IQLActivityHasOptionsMenu {
+public class MainTabActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, ActivityHasOptionsMenu {
 
     private boolean mToActivity;
 
@@ -50,7 +50,8 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
         mDrawer = findViewById(R.id.drawer_layout);
 
         setSupportActionBar(toolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer,
+                toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
         mFragManager = getSupportFragmentManager();
@@ -58,7 +59,7 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
         navigationView.setNavigationItemSelectedListener(this);
         displayView(R.id.nav_day); //start at calendar view
 
-        User u = (new UserManager(this)).getRow(1); //only ever one person in database
+        User u = (new UserManager(this)).getRow(1); //only ever one person in database, so ID always 1
         View header = navigationView.getHeaderView(0);// get the existing headerView
         TextView name = header.findViewById(R.id.navHeaderAccountName);
         name.setText(u.getNetid());
@@ -68,7 +69,8 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
     public void onBackPressed() {
         mToActivity = false;
         mDrawer.closeDrawer(GravityCompat.START);
-        if (mFragManager.getBackStackEntryCount() <= 1) { //last item in back stack, so close app
+        if (mFragManager.getBackStackEntryCount() <= 1) {
+            //last item in back stack, so close app
             mToActivity = true;
             moveTaskToBack(true);
         } else {
@@ -125,7 +127,7 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
                 break;
             case R.id.nav_map:
                 mToActivity = true;
-                startActivity(new Intent(MainTabActivity.this, MapsActivity.class));
+                startActivityForResult(new Intent(MainTabActivity.this, MapsActivity.class), 1);
                 break;
             case R.id.nav_day:
                 fragment = new DayFragment();

@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@color/bg_screen2">
+    android:id="@+id/initial_slide_class"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_screen2">
 
-    <LinearLayout
-        style="@style/WelcomeSlideLayout">
+    <LinearLayout style="@style/WelcomeSlideLayout">
 
         <ImageView
+            android:id="@+id/calendar"
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
             android:src="@drawable/ic_calendar"
-            android:tint="@android:color/white"/>
+            android:tint="@color/white" />
 
         <TextView
+            android:id="@+id/class_title"
             style="@style/WelcomeSlideTitleText"
-            android:text="@string/slide_schedule_title"/>
+            android:text="@string/slide_schedule_title" />
 
         <TextView
+            android:id="@+id/class_text"
             style="@style/WelcomeSlideText"
-            android:text="@string/slide_schedule_text"/>
+            android:text="@string/slide_schedule_text" />
 
     </LinearLayout>
 

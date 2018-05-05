@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -43,13 +45,6 @@ public class StartupActivity extends AppCompatActivity {
         //Check user already logged in, don't need startup screens
         if (!new UserManager(this).getTable().isEmpty()) {
             launchLogin();
-            finish();
-        }
-
-        // Making notification bar transparent
-        if (Build.VERSION.SDK_INT >= 21) {
-            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
-                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
 
         setContentView(R.layout.activity_startup);
@@ -63,38 +58,9 @@ public class StartupActivity extends AppCompatActivity {
                 R.layout.initial_slide_rooms,
                 R.layout.initial_slide_it_team
         };
-
-        mViewPager = findViewById(R.id.view_pager);
-        mDotsLayout = findViewById(R.id.layoutDots);
-        mButtonSkip = findViewById(R.id.btn_skip);
-        mButtonNext = findViewById(R.id.btn_next);
-        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter();
-        mViewPager.setAdapter(myViewPagerAdapter);
-        mViewPager.addOnPageChangeListener(mViewPagerPageChangeListener);
-
-        addBottomDots(0); // adding bottom dots
-        changeStatusBarColor(); // making notification bar transparent
-
-        mButtonSkip.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                launchLogin();
-            }
-        });
-
-        mButtonNext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // checking for last page -> if so, home screen will be launched
-                int current = getItem(+1);
-                if (current < mLayouts.length) {
-                    // move to next screen
-                    mViewPager.setCurrentItem(current);
-                } else {
-                    launchLogin();
-                }
-            }
-        });
+        setViews();
+        addBottomDots(0); //add all bottom dots
+        setStatusBar(); // making notification bar transparent
     }
 
     /**
@@ -163,14 +129,51 @@ public class StartupActivity extends AppCompatActivity {
     };
 
     /**
-     * Method that makes the status bar change colour.
+     * Method that makes the status bar change colour to match the screen.
      */
-    private void changeStatusBarColor() {
+    private void setStatusBar() {
+        // Making notification bar transparent
+        if (Build.VERSION.SDK_INT >= 21) {
+            getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE |
+                    View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        }
+        //make status bar change colour
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(Color.TRANSPARENT);
         }
+    }
+
+    private void setViews() {
+        mViewPager = findViewById(R.id.view_pager);
+        mDotsLayout = findViewById(R.id.layoutDots);
+        mButtonSkip = findViewById(R.id.btn_skip);
+        mButtonNext = findViewById(R.id.btn_next);
+        MyViewPagerAdapter myViewPagerAdapter = new MyViewPagerAdapter();
+        mViewPager.setAdapter(myViewPagerAdapter);
+        mViewPager.addOnPageChangeListener(mViewPagerPageChangeListener);
+
+        mButtonSkip.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launchLogin();
+            }
+        });
+
+        mButtonNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // checking for last page -> if so, home screen will be launched
+                int current = getItem(+1);
+                if (current < mLayouts.length) {
+                    // move to next screen
+                    mViewPager.setCurrentItem(current);
+                } else {
+                    launchLogin();
+                }
+            }
+        });
     }
 
     /**
@@ -183,7 +186,8 @@ public class StartupActivity extends AppCompatActivity {
         private LayoutInflater mLayoutInflater;
 
         @Override
-        public Object instantiateItem(ViewGroup container, int position) {
+        @Nullable
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
             mLayoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             if (mLayoutInflater != null) {
                 View view = mLayoutInflater.inflate(mLayouts[position], container, false);
@@ -199,14 +203,16 @@ public class StartupActivity extends AppCompatActivity {
         }
 
         @Override
-        public boolean isViewFromObject(View view, Object obj) {
+        public boolean isViewFromObject(@Nullable View view, @Nullable Object obj) {
             return view == obj;
         }
 
         @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            View view = (View) object;
-            container.removeView(view);
+        public void destroyItem(@Nullable ViewGroup container, int position, @Nullable Object object) {
+            if (container != null && object != null) {
+                View view = (View) object;
+                container.removeView(view);
+            }
         }
     }
 }

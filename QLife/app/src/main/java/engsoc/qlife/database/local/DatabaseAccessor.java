@@ -16,7 +16,6 @@ public class DatabaseAccessor {
 
     public DatabaseAccessor(Context context) {
         this.mContext = context;
-        mDBHelper = DbHelper.getInstance(mContext);
         open();
     }
 

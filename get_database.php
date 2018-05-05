@@ -1,15 +1,18 @@
 <?php
 //connect to DB
 require_once __DIR__ . '/db_connect.php';
-$db = new DB_CONNECT();
+$db = connectDatabase();
 $response = array();
 
 //eng contacts
-$result = mysql_query("SELECT * FROM EngineeringContacts") or die(mysql_error());
+$result = mysqli_query($db, "SELECT * FROM EngineeringContacts");
+if (!$result){
+    die("NO ENG");
+}
 // check for empty result
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
     $response["EngineeringContacts"] = array();
-    while ($row = mysql_fetch_array($result)) {
+    while ($row = mysqli_fetch_array($result)) {
         // temp user array
         $product = array();
         $product["ID"] = $row["ID"];
@@ -22,11 +25,14 @@ if (mysql_num_rows($result) > 0) {
 }
 
 //emerg contacts
-$result = mysql_query("SELECT * FROM EmergencyContacts") or die(mysql_error());
+$result = mysqli_query($db, "SELECT * FROM EmergencyContacts");
+if (!$result){
+    die("NO EMERG");
+}
 // check for empty result
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
     $response["EmergencyContacts"] = array();
-    while ($row = mysql_fetch_array($result)) {
+    while ($row = mysqli_fetch_array($result)) {
         // temp user array
         $product = array();
         $product["ID"] = $row["ID"];
@@ -38,11 +44,14 @@ if (mysql_num_rows($result) > 0) {
 }
 
 //buildings
-$result = mysql_query("SELECT * FROM Buildings") or die(mysql_error());
+$result = mysqli_query($db, "SELECT * FROM Buildings");
+if (!$result){
+    die("NO BUILDINGS");
+}
 // check for empty result
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
     $response["Buildings"] = array();
-    while ($row = mysql_fetch_array($result)) {
+    while ($row = mysqli_fetch_array($result)) {
         // temp user array
         $product = array();
         $product["ID"] = $row["ID"];
@@ -58,11 +67,14 @@ if (mysql_num_rows($result) > 0) {
 }
 
 //food
-$result = mysql_query("SELECT * FROM Food") or die(mysql_error());
+$result = mysqli_query($db, "SELECT * FROM Food");
+if (!$result){
+    die("NO FOOD");
+}
 // check for empty result
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
     $response["Food"] = array();
-    while ($row = mysql_fetch_array($result)) {
+    while ($row = mysqli_fetch_array($result)) {
         // temp user array
         $product = array();
         $product["ID"] = $row["ID"];
@@ -90,11 +102,11 @@ if (mysql_num_rows($result) > 0) {
 }
 
 //cafs
-$result = mysql_query("SELECT * FROM Cafeterias") or die(mysql_error());
+$result = mysqli_query($db, "SELECT * FROM Cafeterias") or die(mysqli_error());
 // check for empty result
-if (mysql_num_rows($result) > 0) {
+if (mysqli_num_rows($result) > 0) {
     $response["Cafeterias"] = array();
-    while ($row = mysql_fetch_array($result)) {
+    while ($row = mysqli_fetch_array($result)) {
         // temp user array
         $product = array();
         $product["ID"] = $row["ID"];
@@ -135,5 +147,5 @@ if (count($response) > 0) {
 }
 
 echo json_encode($response);
-
+mysqli_close($db);
 ?>

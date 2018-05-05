@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:card_view="http://schemas.android.com/apk/res-auto"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white"
-            android:fillViewport="true">
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:fillViewport="true">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:layout_width="match_parent"
-                  android:layout_height="wrap_content"
-                  android:orientation="vertical"
-                  android:paddingTop="@dimen/button_space">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/button_space">
 
         <TextView
             android:id="@+id/resources"
@@ -19,7 +19,7 @@
             android:gravity="center"
             android:text="@string/resources"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
 
         <android.support.v7.widget.CardView
             android:id="@+id/emerg_contacts_card"
@@ -39,7 +39,7 @@
                 android:layout_gravity="center"
                 android:background="@android:color/background_light"
                 android:text="@string/fragment_emerg_contacts"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black" />
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -62,7 +62,7 @@
                 android:background="@android:color/background_light"
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/fragment_eng_contacts"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black" />
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -85,7 +85,7 @@
                 android:background="@android:color/background_light"
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/counselling_services"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black" />
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -108,7 +108,7 @@
                 android:background="@android:color/background_light"
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/career_services"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black" />
         </android.support.v7.widget.CardView>
 
         <TextView
@@ -119,7 +119,30 @@
             android:gravity="center"
             android:text="@string/links"
             android:textColor="@color/colorPrimaryDark"
-            android:textSize="18sp"/>
+            android:textSize="18sp" />
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/engsoc_apply_card"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:elevation="10dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            card_view:cardCornerRadius="2dp"
+            card_view:contentPadding="10dp">
+
+            <TextView
+                android:id="@+id/apply_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:color/background_light"
+                android:shadowColor="@android:color/background_light"
+                android:text="@string/engsoc_apply"
+                android:textColor="@android:color/black" />
+        </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
             android:id="@+id/solus_card"
@@ -141,30 +164,7 @@
                 android:background="@android:color/background_light"
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/solus"
-                android:textColor="@android:color/black"/>
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:id="@+id/outlook_card"
-            android:layout_width="fill_parent"
-            android:layout_height="50dp"
-            android:layout_gravity="center"
-            android:layout_margin="5dp"
-            android:clickable="true"
-            android:elevation="10dp"
-            android:foreground="?android:attr/selectableItemBackground"
-            card_view:cardCornerRadius="2dp"
-            card_view:contentPadding="10dp">
-
-            <TextView
-                android:id="@+id/outlook_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@android:color/background_light"
-                android:shadowColor="@android:color/background_light"
-                android:text="@string/outlook365"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black" />
         </android.support.v7.widget.CardView>
 
         <android.support.v7.widget.CardView
@@ -187,7 +187,30 @@
                 android:background="@android:color/background_light"
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/onq"
-                android:textColor="@android:color/black"/>
+                android:textColor="@android:color/black" />
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/outlook_card"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:clickable="true"
+            android:elevation="10dp"
+            android:foreground="?android:attr/selectableItemBackground"
+            card_view:cardCornerRadius="2dp"
+            card_view:contentPadding="10dp">
+
+            <TextView
+                android:id="@+id/outlook_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@android:color/background_light"
+                android:shadowColor="@android:color/background_light"
+                android:text="@string/outlook365"
+                android:textColor="@android:color/black" />
         </android.support.v7.widget.CardView>
     </LinearLayout>
 </ScrollView>

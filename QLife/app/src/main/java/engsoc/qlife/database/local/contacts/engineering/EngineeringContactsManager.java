@@ -4,10 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.ArrayList;
+
 import engsoc.qlife.database.local.DatabaseManager;
 import engsoc.qlife.database.local.DatabaseRow;
-
-import java.util.ArrayList;
 
 /**
  * Created by Carson on 21/06/2017.
@@ -34,16 +34,7 @@ public class EngineeringContactsManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> contacts = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        try (Cursor cursor = getDatabase().query(EngineeringContact.TABLE_NAME, null, null, null, null, null, null)) {
-            while (cursor.moveToNext()) {
-                EngineeringContact contact = getRow(cursor.getInt(EngineeringContact.ID_POS));
-                contacts.add(contact);
-            }
-            cursor.close();
-            return contacts; //return only when the cursor has been closed
-        }
+        return retrieveTable(EngineeringContact.TABLE_NAME, EngineeringContact.COLUMN_NAME);
     }
 
     @Override
@@ -64,9 +55,8 @@ public class EngineeringContactsManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof EngineeringContact && newRow instanceof EngineeringContact) {
-            EngineeringContact oldContact = (EngineeringContact) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof EngineeringContact) {
             EngineeringContact newContact = (EngineeringContact) newRow;
 
             ContentValues values = new ContentValues();
@@ -77,7 +67,7 @@ public class EngineeringContactsManager extends DatabaseManager {
             values.put(EngineeringContact.COLUMN_DESCRIPTION, newContact.getDescription());
 
             String selection = EngineeringContact.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldContact.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(EngineeringContact.TABLE_NAME, values, selection, selectionArgs);
         }
     }

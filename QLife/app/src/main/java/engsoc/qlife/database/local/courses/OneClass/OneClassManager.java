@@ -24,7 +24,6 @@ public class OneClassManager extends DatabaseManager {
             OneClass oneClass = (OneClass) row;
             ContentValues values = new ContentValues();
             values.put(OneClass.COLUMN_CLASS_TYPE, oneClass.getType());
-            values.put(OneClass.COLUMN_BUILDING_ID, oneClass.getBuildingID());
             values.put(OneClass.COLUMN_ROOM_NUM, oneClass.getRoomNum());
             values.put(OneClass.COLUMN_START_TIME, oneClass.getStartTime());
             values.put(OneClass.COLUMN_END_TIME, oneClass.getEndTime());
@@ -39,23 +38,7 @@ public class OneClassManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> classes = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        try (Cursor cursor = getDatabase().query(OneClass.TABLE_NAME, null, null, null, null, null, null)) {
-            while (cursor.moveToNext()) {
-                OneClass oneClass = new OneClass(cursor.getInt(OneClass.ID_POS), cursor.getString(OneClass.CLASS_TYPE_POS),
-                        cursor.getString(OneClass.ROOM_NUM_POS), cursor.getString(OneClass.STIME_POS),
-                        cursor.getString(OneClass.ETIME_POS),
-                        cursor.getString(OneClass.DAY_POS), cursor.getString(OneClass.MONTH_POS),
-                        cursor.getString(OneClass.YEAR_POS), cursor.getString(OneClass.COURSE_HAS_NAME_POS));
-
-                oneClass.setBuildingID(cursor.getInt(OneClass.BUILDING_ID_POS));
-                oneClass.setCourseID(cursor.getInt(OneClass.COURSE_ID_POS));
-                classes.add(oneClass);
-            }
-            cursor.close();
-            return classes; //return only when the cursor has been closed
-        }
+        return retrieveTable(OneClass.TABLE_NAME, null);
     }
 
     @Override
@@ -70,7 +53,6 @@ public class OneClassManager extends DatabaseManager {
                         cursor.getString(OneClass.ETIME_POS),
                         cursor.getString(OneClass.DAY_POS), cursor.getString(OneClass.MONTH_POS),
                         cursor.getString(OneClass.YEAR_POS), cursor.getString(OneClass.COURSE_HAS_NAME_POS));
-                oneClass.setBuildingID(cursor.getInt(OneClass.BUILDING_ID_POS));
                 oneClass.setCourseID(cursor.getInt(OneClass.COURSE_ID_POS));
                 cursor.close();
             }
@@ -79,9 +61,8 @@ public class OneClassManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof OneClass && newRow instanceof OneClass) {
-            OneClass oldClass = (OneClass) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof OneClass) {
             OneClass newClass = (OneClass) newRow;
             ContentValues values = new ContentValues();
             values.put(OneClass.COLUMN_CLASS_TYPE, newClass.getType());
@@ -94,7 +75,7 @@ public class OneClassManager extends DatabaseManager {
             values.put(OneClass.COLUMN_COURSE_ID, newClass.getCourseID());
             values.put(OneClass.COLUMN_HAS_NAME, newClass.getHasName());
             String selection = OneClass.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldClass.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(OneClass.TABLE_NAME, values, selection, selectionArgs);
         }
     }

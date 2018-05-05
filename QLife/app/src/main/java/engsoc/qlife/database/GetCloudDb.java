@@ -2,10 +2,9 @@ package engsoc.qlife.database;
 
 import android.util.Log;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import engsoc.qlife.interfaces.AsyncTaskObserver;
+import engsoc.qlife.interfaces.observers.AsyncTaskObserver;
 import engsoc.qlife.utility.Constants;
 import engsoc.qlife.utility.async.DownloadTextTask;
 
@@ -29,7 +28,10 @@ public class GetCloudDb extends DownloadTextTask<Void, Void> {
             if (success == 1) {
                 mObserver.duringTask(json);
             }
-        } catch (JSONException e) {
+        } catch (Exception e) {
+            //catch JSONException as required
+            //catch exception when getText() result is null - no data for whatever getText()
+            //request failed
             Log.d("HELLOTHERE", "BAD: " + e);
         }
         return null;

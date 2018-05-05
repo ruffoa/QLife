@@ -35,16 +35,7 @@ public class UserManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> users = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        try (Cursor cursor = getDatabase().query(User.TABLE_NAME, null, null, null, null, null, null)) {
-            while (cursor.moveToNext()) {
-                User user = getRow(cursor.getInt(User.ID_POS));
-                users.add(user);
-            }
-            cursor.close();
-            return users; //return only when the cursor has been closed
-        }
+        return retrieveTable(User.TABLE_NAME, null);
     }
 
     /**
@@ -70,20 +61,11 @@ public class UserManager extends DatabaseManager {
 
     @Override
     public User getRow(long id) {
-        String[] projection = {
-                User.ID,
-                User.COLUMN_NETID,
-                User.COLUMN_FIRST_NAME,
-                User.COLUMN_LAST_NAME,
-                User.COLUMN_DATE_INIT,
-                User.COLUMN_ICS_URL
-        };
-        User user;
         String selection = User.ID + " LIKE ?";
         String[] selectionArgs = {String.valueOf(id)};
-        try (Cursor cursor = getDatabase().query(User.TABLE_NAME, projection, selection, selectionArgs, null, null, null)) {
+        try (Cursor cursor = getDatabase().query(User.TABLE_NAME, null, selection, selectionArgs, null, null, null)) {
             cursor.moveToNext();
-            user = new User(cursor.getInt(User.ID_POS), cursor.getString(User.NETID_POS), cursor.getString(User.FIRST_NAME_POS),
+            User user = new User(cursor.getInt(User.ID_POS), cursor.getString(User.NETID_POS), cursor.getString(User.FIRST_NAME_POS),
                     cursor.getString(User.LAST_NAME_POS), cursor.getString(User.DATE_INIT_POS), cursor.getString(User.ICS_URL_POS));
             cursor.close();
             return user; //return only when the cursor has been closed.
@@ -93,9 +75,8 @@ public class UserManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof User && newRow instanceof User) {
-            User oldUser = (User) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof User) {
             User newUser = (User) newRow;
             ContentValues values = new ContentValues();
             values.put(User.COLUMN_NETID, newUser.getNetid());
@@ -105,7 +86,7 @@ public class UserManager extends DatabaseManager {
             values.put(User.COLUMN_ICS_URL, newUser.getIcsURL());
 
             String selection = User.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldUser.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(User.TABLE_NAME, values, selection, selectionArgs);
         }
     }

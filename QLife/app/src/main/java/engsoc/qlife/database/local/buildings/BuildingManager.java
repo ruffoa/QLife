@@ -4,10 +4,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+import java.util.ArrayList;
+
 import engsoc.qlife.database.local.DatabaseManager;
 import engsoc.qlife.database.local.DatabaseRow;
-
-import java.util.ArrayList;
 
 /**
  * Created by Carson on 26/06/2017.
@@ -37,17 +37,7 @@ public class BuildingManager extends DatabaseManager {
 
     @Override
     public ArrayList<DatabaseRow> getTable() {
-        ArrayList<DatabaseRow> buildings = new ArrayList<>();
-        //try with resources - automatically closes cursor whether or not its completed normally
-        //order by building name
-        try (Cursor cursor = getDatabase().query(Building.TABLE_NAME, null, null, null, null, null, Building.COLUMN_NAME + " ASC")) {
-            while (cursor.moveToNext()) {
-                Building building = getRow(cursor.getInt(Building.ID_POS));
-                buildings.add(building);
-            }
-            cursor.close();
-            return buildings; //return only when the cursor has been closed
-        }
+        return retrieveTable(Building.TABLE_NAME, Building.COLUMN_NAME);
     }
 
     @Override
@@ -86,7 +76,7 @@ public class BuildingManager extends DatabaseManager {
         try (Cursor cursor = getDatabase().rawQuery("SELECT * FROM Buildings GROUP BY Name HAVING Name LIKE '%" + icsName + "%'", null)) {
             Building building = null;
             if (cursor.moveToNext()) {
-                if (cursor.getString(Building.NAME_POS).contains("Art Centre")){
+                if (cursor.getString(Building.NAME_POS).contains("Art Centre")) {
                     cursor.moveToNext();
                 }
                 //getInt()>0 because SQLite doesn't have boolean types - 1 is true, 0 is false
@@ -101,9 +91,8 @@ public class BuildingManager extends DatabaseManager {
     }
 
     @Override
-    public void updateRow(DatabaseRow oldRow, DatabaseRow newRow) {
-        if (oldRow instanceof Building && newRow instanceof Building) {
-            Building oldBuilding = (Building) oldRow;
+    public void updateRow(long rowId, DatabaseRow newRow) {
+        if (newRow instanceof Building) {
             Building newBuilding = (Building) newRow;
 
             ContentValues values = new ContentValues();
@@ -117,7 +106,7 @@ public class BuildingManager extends DatabaseManager {
             values.put(Building.COLUMN_LON, newBuilding.getLon());
 
             String selection = Building.ID + " LIKE ?";
-            String selectionArgs[] = {String.valueOf(oldBuilding.getId())};
+            String selectionArgs[] = {String.valueOf(rowId)};
             getDatabase().update(Building.TABLE_NAME, values, selection, selectionArgs);
         }
     }

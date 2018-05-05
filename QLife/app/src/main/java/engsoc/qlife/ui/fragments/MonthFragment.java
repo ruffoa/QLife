@@ -1,8 +1,10 @@
 package engsoc.qlife.ui.fragments;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +13,8 @@ import android.widget.DatePicker;
 
 import engsoc.qlife.R;
 import engsoc.qlife.utility.Util;
-import engsoc.qlife.interfaces.IQLActionbarFragment;
-import engsoc.qlife.interfaces.IQLDrawerItem;
+import engsoc.qlife.interfaces.enforcers.ActionbarFragment;
+import engsoc.qlife.interfaces.enforcers.DrawerItem;
 
 import java.util.Calendar;
 
@@ -23,7 +25,7 @@ import java.util.Calendar;
  * This is the first screen user sees upon logging in (unless first time login).
  * Attached to MainTabActivity only.
  */
-public class MonthFragment extends Fragment implements IQLActionbarFragment, IQLDrawerItem {
+public class MonthFragment extends Fragment implements ActionbarFragment, DrawerItem {
 
     public static final String TAG_DAY = "day";
     public static final String TAG_MONTH = "month";
@@ -34,7 +36,7 @@ public class MonthFragment extends Fragment implements IQLActionbarFragment, IQL
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_month, container, false);
         setActionbarTitle();
 
@@ -55,7 +57,7 @@ public class MonthFragment extends Fragment implements IQLActionbarFragment, IQL
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         Calendar calendar = Calendar.getInstance();
@@ -64,23 +66,29 @@ public class MonthFragment extends Fragment implements IQLActionbarFragment, IQL
                 new DatePicker.OnDateChangedListener() {
                     @Override
                     public void onDateChanged(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                        getCalData();
+                        startDayFragment();
                     }
                 }
         );
     }
 
-    public void getCalData() {
-        DayFragment nextFrag = new DayFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString(TAG_FROM_MONTH, TAG_FROM_MONTH); //tell day fragment bundle is from month fragment
-        bundle.putInt(TAG_DAY, mDatePicker.getDayOfMonth());
-        bundle.putInt(TAG_MONTH, mDatePicker.getMonth());
-        bundle.putInt(TAG_YEAR, mDatePicker.getYear());
-        nextFrag.setArguments(bundle);
-        this.getFragmentManager().beginTransaction().addToBackStack(null)
-                .replace(R.id.content_frame, nextFrag)
-                .commit();
+    /**
+     * Helper method that starts DayFragment on the day chosen in the DatePicker.
+     */
+    private void startDayFragment() {
+        FragmentManager fragMan = this.getFragmentManager();
+        if (fragMan != null) {
+            DayFragment nextFrag = new DayFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(TAG_FROM_MONTH, TAG_FROM_MONTH); //tell day fragment bundle is from month fragment
+            bundle.putInt(TAG_DAY, mDatePicker.getDayOfMonth());
+            bundle.putInt(TAG_MONTH, mDatePicker.getMonth());
+            bundle.putInt(TAG_YEAR, mDatePicker.getYear());
+            nextFrag.setArguments(bundle);
+            fragMan.beginTransaction().addToBackStack(null)
+                    .replace(R.id.content_frame, nextFrag)
+                    .commit();
+        }
     }
 
     @Override

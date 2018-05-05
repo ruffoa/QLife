@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/initial_slide_rooms"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_screen5">
 
-    <LinearLayout
-        style="@style/WelcomeSlideLayout">
+    <LinearLayout style="@style/WelcomeSlideLayout">
 
         <ImageView
+            android:id="@+id/rooms_pic"
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
             android:src="@mipmap/ic_booking"
-            android:tint="@android:color/white"/>
+            android:tint="@color/white" />
 
         <TextView
+            android:id="@+id/rooms_title"
             style="@style/WelcomeSlideTitleText"
-            android:text="@string/slide_rooms_title"/>
+            android:text="@string/slide_rooms_title" />
 
         <TextView
+            android:id="@+id/rooms_text"
             style="@style/WelcomeSlideText"
-            android:text="@string/slide_rooms_text"/>
+            android:text="@string/slide_rooms_text" />
     </LinearLayout>
 </RelativeLayout>

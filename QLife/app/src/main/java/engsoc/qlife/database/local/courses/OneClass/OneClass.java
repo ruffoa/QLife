@@ -25,7 +25,6 @@ public class OneClass extends DatabaseRow {
 
     //column number each field ends up in
     public static final int CLASS_TYPE_POS = 1;
-    public static final int BUILDING_ID_POS = 2;
     public static final int ROOM_NUM_POS = 3;
     public static final int STIME_POS = 4;
     public static final int ETIME_POS = 5;
@@ -37,7 +36,6 @@ public class OneClass extends DatabaseRow {
 
     //fields in database
     private String type;
-    private long buildingID;
     private String roomNum;
     private String startTime;
     private String endTime;
@@ -70,8 +68,6 @@ public class OneClass extends DatabaseRow {
         this.hasName = hasName;
     }
 
-
-    //getters and setters
     public long getCourseID() {
         return courseID;
     }
@@ -80,28 +76,12 @@ public class OneClass extends DatabaseRow {
         this.courseID = courseID;
     }
 
-    public void setBuildingID(long buildingID) {
-        this.buildingID = buildingID;
-    }
-
-    public void setHasName(String hasName) {
-        this.hasName = hasName;
-    }
-
     public String getHasName() {
         return hasName;
     }
 
     public String getType() {
         return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public long getBuildingID() {
-        return buildingID;
     }
 
     public String getRoomNum() {

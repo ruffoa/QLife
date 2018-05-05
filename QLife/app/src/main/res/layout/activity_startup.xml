@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <!--Dots are added programmatically so it does not end up empty-->
     <LinearLayout
         android:id="@+id/layoutDots"
         android:layout_width="match_parent"
