@@ -140,6 +140,8 @@ public class LoginActivity extends AppCompatActivity {
         } else {        // if the user has logged in before, see if the schedule is up to date
             User userData = (User) mUserManager.getTable().get(0);
             String date = userData.getDateInit();
+            if (mIcsUrl == "")
+                mIcsUrl = userData.getIcsURL(); // get the URL from the DB so that we can re-download the schedule and info if we need to
 
             if (!date.isEmpty()) {
                 //if downloaded calendar, but older than a week, re-download
@@ -150,7 +152,11 @@ public class LoginActivity extends AppCompatActivity {
                 try {
                     Calendar lastDownloaded = Calendar.getInstance();
                     lastDownloaded.setTime(sdf.parse(date));
-                    if (lastDownloaded.after(lastWeek)) {
+                    if (lastDownloaded.before(lastWeek)) {
+                        getIcsFile();
+                    }
+                    else    // ToDo: DELETE ME!! THIS IS JUST FOR DEBUGGING PURPOSES!!!
+                    {
                         getIcsFile();
                     }
                 } catch (Exception e) {

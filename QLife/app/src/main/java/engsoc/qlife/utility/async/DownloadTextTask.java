@@ -4,8 +4,10 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -135,4 +137,54 @@ public abstract class DownloadTextTask<T, S> extends AsyncTask<T, Void, S> {
         }
         return null;
     }
+
+    protected String postText(String url, String... params) {
+        HttpURLConnection con = null;
+        try {
+            URL u = new URL(url);
+            con = (HttpURLConnection) u.openConnection();
+            con.setRequestMethod("POST");
+            con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            con.setRequestProperty("Accept", "*/*");
+            con.setDoOutput(true);
+            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(con.getOutputStream()));
+
+            for (String parameter : params) {
+                writer.write(parameter);
+            }
+            writer.flush();
+
+            writer.close();
+
+            con.connect();
+            int status = con.getResponseCode();
+            switch (status) {
+                case HttpURLConnection.HTTP_OK:
+                case HttpURLConnection.HTTP_CREATED:
+                    BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream()));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = br.readLine()) != null) {
+                        sb.append(line).append("\n");
+                    }
+                    br.close();
+                    return sb.toString();
+            }
+
+        } catch (MalformedURLException ex) {
+            Log.d("HELLOTHERE", ex.getMessage());
+        } catch (IOException e) {
+            Log.d("HELLOTHERE", "bad io " + e);
+        } finally {
+            if (con != null) {
+                try {
+                    con.disconnect();
+                } catch (Exception ex) {
+                    Logger.getLogger(getClass().getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
+        return null;
+    }
+
 }

@@ -3,6 +3,10 @@ package engsoc.qlife.ICS;
 import android.content.Context;
 import android.util.Log;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -215,18 +219,54 @@ public class ParseICS {
         if (htmlRes == null || htmlRes.length() == 0)
             return;
 
+        JSONArray jsonArray = null;
+        JSONObject classObj = null;
+
+        if (classType.indexOf("COMM") >= 0){
+            try {
+                jsonArray = new JSONArray(htmlRes);
+                classObj = new JSONObject();
+                for(int i = 0; i < jsonArray.length(); i++){
+                    String a = jsonArray.getString(i);
+                    classObj.put(a, a);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
         CourseManager mCourseManager = new CourseManager(mContext);
         ArrayList<DatabaseRow> courses = mCourseManager.getTable();
 
         for (DatabaseRow course : courses) {
             Course c = (Course) course;
-            if (c.getCode().contains(classType) && htmlRes.contains(c.getCode())) {
-                int index = htmlRes.indexOf(c.getCode());
-                String className = parseClassName(htmlRes.substring(index));
+            if (classType.indexOf("COMM") >= 0) {
+                if (jsonArray.length() > 0){
+                    for(int i = 0; i < jsonArray.length(); i++){
+                        try {
+                            JSONObject obj = jsonArray.getJSONObject(i);
+                            if (obj.getString("code").contains(c.getCode()) && c.getCode().contains(classType))
+                            {
+                                String className = obj.getString("title");
+                                c.setName(className);
+                                c.setSetName(true);
+                                mCourseManager.updateRow(c.getId(), c);
+                            }
+                        }catch (JSONException e){
 
-                c.setName(className);
-                c.setSetName(true);
-                mCourseManager.updateRow(c.getId(), c);
+                        }
+                    }
+                }
+            }
+            else {
+                if (c.getCode().contains(classType) && htmlRes.contains(c.getCode())) {
+                    int index = htmlRes.indexOf(c.getCode());
+                    String className = parseClassName(htmlRes.substring(index), classType);
+
+                    c.setName(className);
+                    c.setSetName(true);
+                    mCourseManager.updateRow(c.getId(), c);
+                }
             }
         }
     }
@@ -237,7 +277,7 @@ public class ParseICS {
      * @param className The full class name to be stripped down.
      * @return The stripped version of the class name.
      */
-    private String parseClassName(String className) {
+    private String parseClassName(String className, String classType) {
         Pattern pattern = Pattern.compile("[A-Z]+ [0-9]+ "); //matches '<discipline> <course code> '
         Matcher matcher = pattern.matcher(className);
         if (matcher.find()) {

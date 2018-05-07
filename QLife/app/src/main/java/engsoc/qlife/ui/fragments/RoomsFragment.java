@@ -216,18 +216,7 @@ public class RoomsFragment extends Fragment implements ActionbarFragment, Drawer
         } else if (roomAvailability.length() > 0) {
             mView.findViewById(R.id.no_data).setVisibility(View.GONE);
             try {
-                JSONArray arr = new JSONArray(roomAvailability); // make a JSON array variable to hold a properly formatted JSON object
-
-                for (int i = 0; i < arr.length(); i++) {    // for all of the data within the array
-                    JSONObject roomInfo = arr.getJSONObject(i); // get the info for the JSON object (each booking is it's own object)
-                    String start = roomInfo.getString("StartTime"); // get the startTime and endTime contained within the object
-                    String end = roomInfo.getString("EndTime");
-
-                    start = start.substring(start.indexOf("T") + 1);    // get the position of the start and end times, and set the string to be the useful part
-                    end = end.substring(end.indexOf("T") + 1);
-
-                    int startHour = Integer.parseInt(start.substring(0, 2));    // cast the starting hour to an int
-                    int endHour = Integer.parseInt(end.substring(0, 2));    // cast the ending hour to an int
+                JSONArray arr = new JSONArray(roomAvailability);
 
                 for (int i = 0; i < arr.length(); i++) {
                     //parse for useful information
