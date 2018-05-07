@@ -219,18 +219,11 @@ public class ParseICS {
         if (htmlRes == null || htmlRes.length() == 0)
             return;
 
-        JSONArray jsonArray = null;
-        JSONObject classObj = null;
+        JSONArray commArray = null; // stores the JSON array for the COMM courses (if required)
 
         if (classType.indexOf("COMM") >= 0){
             try {
-                jsonArray = new JSONArray(htmlRes);
-                classObj = new JSONObject();
-                for(int i = 0; i < jsonArray.length(); i++){
-                    String a = jsonArray.getString(i);
-                    classObj.put(a, a);
-                }
-
+                commArray = new JSONArray(htmlRes);
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -240,11 +233,11 @@ public class ParseICS {
 
         for (DatabaseRow course : courses) {
             Course c = (Course) course;
-            if (classType.indexOf("COMM") >= 0) {
-                if (jsonArray.length() > 0){
-                    for(int i = 0; i < jsonArray.length(); i++){
+            if (classType.indexOf("COMM") >= 0 && c.getCode().contains("COMM")) {   // if the current course is a COMM course, then parse the JSON Array to find out what the name of the course is
+                if (commArray.length() > 0){
+                    for(int i = 0; i < commArray.length(); i++){
                         try {
-                            JSONObject obj = jsonArray.getJSONObject(i);
+                            JSONObject obj = commArray.getJSONObject(i);
                             if (obj.getString("code").contains(c.getCode()) && c.getCode().contains(classType))
                             {
                                 String className = obj.getString("title");
