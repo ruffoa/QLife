@@ -147,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
             if (!date.isEmpty()) {
                 //if downloaded calendar, but older than a week, re-download
                 Calendar lastWeek = Calendar.getInstance();
-                lastWeek.add(Calendar.DAY_OF_YEAR, -7); // initialize a calendar variable to one week ago
+                lastWeek.add(Calendar.DAY_OF_YEAR, -21); // initialize a calendar variable to 3 weeks ago
                 SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.ENGLISH);
 
                 try {
