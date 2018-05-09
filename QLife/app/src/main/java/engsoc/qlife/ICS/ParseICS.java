@@ -79,77 +79,81 @@ public class ParseICS {
      * the phone database.
      */
     public void parseICSData() {
-        if (!mOneClassManager.getTable().isEmpty()) {   // if we already have data, delete what we had and re-parse the ics file
+        if (mOneClassManager.getTable().isEmpty()) {   // if we already have data, delete what we had and re-parse the ics file
             mOneClassManager.deleteTable(OneClass.TABLE_NAME);
-        }
-        boolean isEvent = false;
-        String loc = "", name = "";
-        int hour = 0, minute = 0, year = 0;
-        int startHour = 0, startMinute = 0, startDay = 0, startMonth = 0;
-        boolean repeatWeekly = false;
-        String rDayStr = "", rMonStr = "", rYrStr = "";
-        int courseId = 1;
 
-        List<String> lines = readDownloadedIcs();
-        SimpleTimeZone pdt = createTimezone();
+            boolean isEvent = false;
+            String loc = "", name = "";
+            int hour = 0, minute = 0, year = 0;
+            int startHour = 0, startMinute = 0, startDay = 0, startMonth = 0;
+            boolean repeatWeekly = false;
+            String rDayStr = "", rMonStr = "", rYrStr = "";
+            int courseId = 1;
 
-        for (String line : lines) {
-            if (line.contains(Constants.ICS_START_EVENT)) {
-                isEvent = true;
-            } else if (line.contains(Constants.ICS_END_EVENT)) {
-                //end of event information, so parse and put into database
-                isEvent = false;
-                String eventStartTime = Integer.toString(startHour) + ":" + Integer.toString(startMinute);
-                String eventEndTime = Integer.toString(hour) + ":" + Integer.toString(minute);
+            List<String> lines = readDownloadedIcs();
+            SimpleTimeZone pdt = createTimezone();
 
-                Course course = new Course(mCourseManager.getTable().size() + 1, name);
-                mCourseManager.insertRow(course);
+            for (String line : lines) {
+                if (line.contains(Constants.ICS_START_EVENT)) {
+                    isEvent = true;
+                } else if (line.contains(Constants.ICS_END_EVENT)) {
+                    //end of event information, so parse and put into database
+                    isEvent = false;
+                    String eventStartTime = Integer.toString(startHour) + ":" + Integer.toString(startMinute);
+                    String eventEndTime = Integer.toString(hour) + ":" + Integer.toString(minute);
 
-                Calendar day = new GregorianCalendar(pdt);
-                day.set(year, startMonth, startDay);
-                addOneClass(day, courseId, name, loc, eventStartTime, eventEndTime);
+                    Course course = new Course(mCourseManager.getTable().size() + 1, name);
+                    mCourseManager.insertRow(course);
 
-                if (repeatWeekly) {
-                    Calendar startCal = new GregorianCalendar(pdt);
-                    Calendar endCal = new GregorianCalendar(pdt);
-                    startCal.set(year, startMonth - 1, startDay);
-                    endCal.set(Integer.parseInt(rYrStr), Integer.parseInt(rMonStr) - 1, Integer.parseInt(rDayStr) + 1);
-                    addAllClasses(startCal, endCal, courseId, name, loc, eventStartTime, eventEndTime);
-                }
-                repeatWeekly = false;
-                courseId++;
-            } else if (line.contains((Constants.ICS_REPEAT))) {
-                repeatWeekly = true;
-                if (line.contains(Constants.ICS_REPEAT_UNTIL)) {
-                    //time event stops repeating
-                    String rTime = line.replaceAll(Constants.REGEX_NON_NUM, "");
-                    rDayStr = rTime.substring(6, 8);
-                    rMonStr = rTime.substring(4, 6);
-                    rYrStr = rTime.substring(0, 4);
-                }
-            } else if (isEvent) {
-                if (line.contains(Constants.ICS_LOCATION))
-                    loc = line.substring(9);
-                else if (line.contains(Constants.ICS_EVENT_START)) {
-                    //start time of event information
-                    String sTime = line.replaceAll(Constants.REGEX_NON_NUM, "");
-                    startHour = Integer.parseInt(sTime.substring(8, 10));
-                    startMinute = Integer.parseInt(sTime.substring(10, 12));
-                    startDay = Integer.parseInt(sTime.substring(6, 8));
-                    startMonth = Integer.parseInt(sTime.substring(4, 6));
-                    year = Integer.parseInt(sTime.substring(0, 4));
-                } else if (line.contains(Constants.ICS_EVENT_END)) {
-                    //end of event information
-                    String eventTime = line.replaceAll(Constants.REGEX_NON_NUM, "");
-                    hour = Integer.parseInt(eventTime.substring(8, 10));
-                    minute = Integer.parseInt(eventTime.substring(10, 12));
-                } else if (line.contains(Constants.ICS_SUMMARY)) {
-                    //take part of string that is the course code
-                    name = (line.substring(line.lastIndexOf(":") + 1, line.indexOf(" ", line.indexOf(" ") + 1)));
+                    Calendar day = new GregorianCalendar(pdt);
+                    day.set(year, startMonth, startDay);
+                    addOneClass(day, courseId, name, loc, eventStartTime, eventEndTime);
+
+                    if (repeatWeekly) {
+                        Calendar startCal = new GregorianCalendar(pdt);
+                        Calendar endCal = new GregorianCalendar(pdt);
+                        startCal.set(year, startMonth - 1, startDay);
+                        endCal.set(Integer.parseInt(rYrStr), Integer.parseInt(rMonStr) - 1, Integer.parseInt(rDayStr) + 1);
+                        addAllClasses(startCal, endCal, courseId, name, loc, eventStartTime, eventEndTime);
+                    }
+                    repeatWeekly = false;
+                    courseId++;
+                } else if (line.contains((Constants.ICS_REPEAT))) {
+                    repeatWeekly = true;
+                    if (line.contains(Constants.ICS_REPEAT_UNTIL)) {
+                        //time event stops repeating
+                        String rTime = line.replaceAll(Constants.REGEX_NON_NUM, "");
+                        rDayStr = rTime.substring(6, 8);
+                        rMonStr = rTime.substring(4, 6);
+                        rYrStr = rTime.substring(0, 4);
+                    }
+                } else if (isEvent) {
+                    if (line.contains(Constants.ICS_LOCATION))
+                        loc = line.substring(9);
+                    else if (line.contains(Constants.ICS_EVENT_START)) {
+                        //start time of event information
+                        String sTime = line.replaceAll(Constants.REGEX_NON_NUM, "");
+                        startHour = Integer.parseInt(sTime.substring(8, 10));
+                        startMinute = Integer.parseInt(sTime.substring(10, 12));
+                        startDay = Integer.parseInt(sTime.substring(6, 8));
+                        startMonth = Integer.parseInt(sTime.substring(4, 6));
+                        year = Integer.parseInt(sTime.substring(0, 4));
+                    } else if (line.contains(Constants.ICS_EVENT_END)) {
+                        //end of event information
+                        String eventTime = line.replaceAll(Constants.REGEX_NON_NUM, "");
+                        hour = Integer.parseInt(eventTime.substring(8, 10));
+                        minute = Integer.parseInt(eventTime.substring(10, 12));
+                    } else if (line.contains(Constants.ICS_SUMMARY)) {
+                        //take part of string that is the course code
+                        try {
+                            name = (line.substring(line.lastIndexOf(":") + 1, line.indexOf(" ", line.indexOf(" ") + 1)));
+                        } catch (Exception e) {    // if the course code does not contain a section number or an "mtg", then simply add the name as it appears
+                            name = line.substring(line.lastIndexOf(":") + 1);
+                        }
+                    }
                 }
             }
         }
-        //}
     }
 
     /**

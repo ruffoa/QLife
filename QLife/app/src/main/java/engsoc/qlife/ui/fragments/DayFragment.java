@@ -230,7 +230,11 @@ public class DayFragment extends Fragment implements ActionbarFragment, DrawerIt
                 amPMTime = (minHour) + ":" + minMinStr + "-" + (endHour - 12) + ":" + endMinStr + " PM";
             else amPMTime = time.get(posSmall) + " AM";
 
-            mResult.add(new DayObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall), detailsList.get(posSmall)));
+            if (hasName.get(posSmall))
+                mResult.add(new DayObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall), detailsList.get(posSmall)));
+            else
+                mResult.add(new DayObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall), list.get(posSmall)));
+
             list.remove(posSmall);
             time.remove(posSmall);
             loc.remove(posSmall);
