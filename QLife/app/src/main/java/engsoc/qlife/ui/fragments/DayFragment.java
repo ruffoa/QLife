@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -214,15 +215,19 @@ public class DayFragment extends Fragment implements ActionbarFragment, DrawerIt
                 }
             }
             String amPMTime;
+            DecimalFormat formatter = new DecimalFormat("00");
+            String minMinStr = formatter.format(minMin);    // formatted Start minute with two digits for the minutes
+            String endMinStr = formatter.format(endMin);    // formatted end minute with two digits for the minutes
+
             if (minHour > 12)
-                amPMTime = (minHour - 12) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
+                amPMTime = (minHour - 12) + ":" + minMinStr + "-" + (endHour - 12) + ":" + endMinStr + " PM";
             else if (minHour < 12 && endHour >= 12)
                 if (endHour == 12)
-                    amPMTime = (minHour) + ":" + minMin + " AM-" + (endHour) + ":" + endMin + " PM";
+                    amPMTime = (minHour) + ":" + minMinStr + " AM-" + (endHour) + ":" + endMinStr + " PM";
                 else
-                    amPMTime = (minHour) + ":" + minMin + " AM-" + (endHour - 12) + ":" + endMin + " PM";
+                    amPMTime = (minHour) + ":" + minMinStr + " AM-" + (endHour - 12) + ":" + endMinStr + " PM";
             else if (endHour > 12)
-                amPMTime = (minHour) + ":" + minMin + "-" + (endHour - 12) + ":" + endMin + " PM";
+                amPMTime = (minHour) + ":" + minMinStr + "-" + (endHour - 12) + ":" + endMinStr + " PM";
             else amPMTime = time.get(posSmall) + " AM";
 
             mResult.add(new DayObject(list.get(posSmall), amPMTime + " at: " + loc.get(posSmall), classID.get(posSmall), hasName.get(posSmall), detailsList.get(posSmall)));
