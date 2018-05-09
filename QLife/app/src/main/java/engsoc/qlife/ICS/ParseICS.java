@@ -79,9 +79,9 @@ public class ParseICS {
      * the phone database.
      */
     public void parseICSData() {
-        if (mOneClassManager.getTable().isEmpty()) {
+        if (!mOneClassManager.getTable().isEmpty()) {   // if we already have data, delete what we had and re-parse the ics file
             mOneClassManager.deleteTable(OneClass.TABLE_NAME);
-
+        }
             boolean isEvent = false;
             String loc = "", name = "";
             int hour = 0, minute = 0, year = 0;
@@ -149,7 +149,7 @@ public class ParseICS {
                     }
                 }
             }
-        }
+        //}
     }
 
     /**
