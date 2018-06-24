@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:id="@+id/room_info"
     android:layout_height="match_parent"
-    tools:context="engsoc.qlife.ui.fragments.RoomsFragment">
+    tools:context="beta.qlife.ui.fragments.RoomsFragment">
 
     <LinearLayout
         android:layout_width="match_parent"

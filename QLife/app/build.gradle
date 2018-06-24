@@ -25,7 +25,7 @@ android {
     compileSdkVersion 27
     buildToolsVersion '27.0.3'
     defaultConfig {
-        applicationId "engsoc.qlife"
+        applicationId "engsoc.beta.qlife"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 5
