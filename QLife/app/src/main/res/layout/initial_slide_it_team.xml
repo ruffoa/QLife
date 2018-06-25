@@ -11,6 +11,8 @@
             android:id="@+id/it_pic"
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
+            android:background="@android:color/white"
+            android:alpha="1"
             android:src="@drawable/ic_it_team_svg" />
 
         <TextView
