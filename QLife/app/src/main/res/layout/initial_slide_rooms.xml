@@ -11,7 +11,8 @@
             android:id="@+id/rooms_pic"
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
-            android:src="@mipmap/ic_booking"
+            android:scaleType="fitXY"
+            android:src="@drawable/ic_baseline_meeting_room_24px"
             android:tint="@color/white" />
 
         <TextView
