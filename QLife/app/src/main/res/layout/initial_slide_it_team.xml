@@ -11,9 +11,11 @@
             android:id="@+id/it_pic"
             android:layout_width="@dimen/img_width_height"
             android:layout_height="@dimen/img_width_height"
-            android:background="@android:color/white"
+            android:scaleType="fitXY"
+            android:background="#f2FFFFFF"
             android:alpha="1"
             android:src="@drawable/ic_it_team_svg" />
+        <!--https://stackoverflow.com/questions/11285961/how-to-make-a-background-20-transparent-on-android-->
 
         <TextView
             android:id="@+id/it_title"
