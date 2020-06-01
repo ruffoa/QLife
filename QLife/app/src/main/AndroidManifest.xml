@@ -16,7 +16,7 @@
         android:name="permission.MAPS_RECEIVE"
         android:protectionLevel="signature"/>
     <uses-permission android:name="com.example.alex.qtapandroid.permission.MAPS_RECEIVE"/>
-    <!--android:allowBackup="false"-->  // to turn off auto connect on install
+    <!--android:allowBackup="false"-->  <!-- to turn off auto connect on install -->
     <!--android:fullBackupContent="false"-->
 
     <application

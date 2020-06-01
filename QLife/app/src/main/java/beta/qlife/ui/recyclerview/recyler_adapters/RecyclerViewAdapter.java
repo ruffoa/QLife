@@ -1,6 +1,6 @@
 package beta.qlife.ui.recyclerview.recyler_adapters;
 
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView;
 import android.view.View;
 
 import beta.qlife.ui.recyclerview.list_objects.DataObject;

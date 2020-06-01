@@ -21,7 +21,7 @@
             android:textColor="@color/colorPrimaryDark"
             android:textSize="18sp" />
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/emerg_contacts_card"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
@@ -40,9 +40,9 @@
                 android:background="@android:color/background_light"
                 android:text="@string/fragment_emerg_contacts"
                 android:textColor="@android:color/black" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/eng_contacts_card"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
@@ -63,9 +63,9 @@
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/fragment_eng_contacts"
                 android:textColor="@android:color/black" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/counselling_card"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
@@ -86,9 +86,9 @@
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/counselling_services"
                 android:textColor="@android:color/black" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/career_card"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
@@ -109,7 +109,7 @@
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/career_services"
                 android:textColor="@android:color/black" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
         <TextView
             android:id="@+id/links"
@@ -121,7 +121,7 @@
             android:textColor="@color/colorPrimaryDark"
             android:textSize="18sp" />
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/engsoc_apply_card"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
@@ -142,9 +142,9 @@
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/engsoc_apply"
                 android:textColor="@android:color/black" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/solus_card"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
@@ -165,9 +165,9 @@
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/solus"
                 android:textColor="@android:color/black" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/onq_card"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
@@ -188,9 +188,9 @@
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/onq"
                 android:textColor="@android:color/black" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
 
-        <android.support.v7.widget.CardView
+        <androidx.cardview.widget.CardView
             android:id="@+id/outlook_card"
             android:layout_width="fill_parent"
             android:layout_height="50dp"
@@ -211,6 +211,6 @@
                 android:shadowColor="@android:color/background_light"
                 android:text="@string/outlook365"
                 android:textColor="@android:color/black" />
-        </android.support.v7.widget.CardView>
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 </ScrollView>

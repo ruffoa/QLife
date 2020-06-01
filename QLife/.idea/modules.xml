@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/QLife.iml" filepath="$PROJECT_DIR$/QLife.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/QLife-QLife.iml" filepath="$PROJECT_DIR$/.idea/modules/QLife-QLife.iml" group="QLife" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/QLife-app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/QLife-app.iml" group="QLife/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
