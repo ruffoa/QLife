@@ -5,9 +5,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,6 +38,7 @@ public class EventInfoFragment extends Fragment implements ActionbarFragment, Dr
     private View myView;
     private com.google.android.gms.maps.MapView mMapView;
     private GoogleMap mGoogleMap;
+    private ImageView mEventBuildingImg;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -114,11 +118,15 @@ public class EventInfoFragment extends Fragment implements ActionbarFragment, Dr
                         //For zooming automatically to the location of the marker
                         CameraPosition cameraPosition = new CameraPosition.Builder().target(pos).zoom(16).build();
                         mGoogleMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    } else {
+                        // we don't know where the building is (it *should* be in the DB, but let's handle it gracefully(ish) anyways by hiding the map
+                        // this will also happen if the DB connection times out or cannot be downloaded for whatever reason :(
+
+                        hideMapAndShowFallbackBuilding();
                     }
                 } catch (Exception e) {
                     //online or TBA class most likely, but for any error with map don't show it
-                    mGoogleMap.clear();
-                    mMapView.setVisibility(View.GONE);
+                    hideMapAndShowFallbackBuilding();
                 }
                 return null;
             }
@@ -157,5 +165,21 @@ public class EventInfoFragment extends Fragment implements ActionbarFragment, Dr
         } else {
             eventDetails.setVisibility(View.GONE);
         }
+    }
+
+    void hideMapAndShowFallbackBuilding() {
+        mGoogleMap.clear();
+        mMapView.setVisibility(View.GONE);
+
+        mEventBuildingImg = myView.findViewById(R.id.event_building_Image);
+
+        if (mEventTitle.contains("COMM")) {
+            Log.d("EventView", "Showing fallback image for " + mEventTitle);
+            mEventBuildingImg.setImageDrawable(getResources().getDrawable(R.drawable.goodes));
+        } else {
+            mEventBuildingImg.setImageDrawable(getResources().getDrawable(R.drawable.ilc));
+        }
+
+        mEventBuildingImg.setVisibility(View.VISIBLE);
     }
 }

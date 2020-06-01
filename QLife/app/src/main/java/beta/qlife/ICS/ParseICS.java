@@ -238,7 +238,7 @@ public class ParseICS {
         for (DatabaseRow course : courses) {
             Course c = (Course) course;
             if (classType.indexOf("COMM") >= 0 && c.getCode().contains("COMM")) {   // if the current course is a COMM course, then parse the JSON Array to find out what the name of the course is
-                if (commArray.length() > 0){
+                if (commArray != null && commArray.length() > 0){
                     for(int i = 0; i < commArray.length(); i++){
                         try {
                             JSONObject obj = commArray.getJSONObject(i);
