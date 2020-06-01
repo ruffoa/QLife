@@ -30,6 +30,7 @@ import beta.qlife.database.local.users.User;
 import beta.qlife.database.local.users.UserManager;
 import beta.qlife.interfaces.observers.AsyncTaskObserver;
 import beta.qlife.utility.Constants;
+import beta.qlife.utility.DateChecks;
 
 /**
  * A login screen that offers login to my.queensu.ca via netid/password SSO.
@@ -146,16 +147,14 @@ public class LoginActivity extends AppCompatActivity {
                 mIcsUrl = userData.getIcsURL(); // get the URL from the DB so that we can re-download the schedule and info if we need to
 
             mIcsUrl = "https://raw.githubusercontent.com/ruffoa/QLife/master/testCal.ics"; // ToDo: Remove this temporary link
+
             if (!date.isEmpty()) {
-                //if downloaded calendar, but older than a week, re-download
-                Calendar lastWeek = Calendar.getInstance();
-                lastWeek.add(Calendar.DAY_OF_YEAR, -21); // initialize a calendar variable to 3 weeks ago
-                SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.ENGLISH);
+                //if downloaded calendar, but we are close to a term rollover, re-download it (class are probably added by now)
+//                SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.ENGLISH);
+                DateChecks dateChecks = new DateChecks();
 
                 try {
-                    Calendar lastDownloaded = Calendar.getInstance();
-                    lastDownloaded.setTime(sdf.parse(date));
-                    if (lastDownloaded.before(lastWeek)) {
+                    if (dateChecks.dateIsCloseToNewTerm()) {
                         getIcsFile();
                     }
 //                    else    // ToDo: DELETE ME!! THIS IS JUST FOR DEBUGGING PURPOSES!!!
@@ -163,14 +162,14 @@ public class LoginActivity extends AppCompatActivity {
 //                        getIcsFile();
 //                    }
                 } catch (Exception e) {
-                    Log.d("HELLOTHERE", e.getMessage());
+                    Log.d(TAG, e.getMessage());
 
                 }
             } else    // the user never downloaded a schedule successfully, thus we should download
                 try {
                     getIcsFile();  // download the new schedule data right now on the main thread
                 } catch (Exception e) {
-                    Log.d("HELLOTHERE", e.getMessage());
+                    Log.d(TAG, e.getMessage());
                 }
         }
         startActivity(new Intent(LoginActivity.this, MainTabActivity.class));

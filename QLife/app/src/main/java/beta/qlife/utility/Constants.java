@@ -1,5 +1,8 @@
 package beta.qlife.utility;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by Carson on 2017-11-26.
  * Static class for constants.
@@ -45,6 +48,11 @@ public class Constants {
     public static final String ICS_EVENT_START = "DTSTART";
     public static final String ICS_EVENT_END = "DTEND";
     public static final String ICS_SUMMARY = "SUMMARY";
+
+    // dates
+    public static final int PRE_SUMMER_TERM_START_MONTH = 5;
+    public static final int PRE_FALL_TERM_START_MONTH = 8;
+    public static final int PRE_WINTER_TERM_START_MONTH = 1;
 
     //misc
     public static final String REGEX_NON_NUM = "[^0-9]";
