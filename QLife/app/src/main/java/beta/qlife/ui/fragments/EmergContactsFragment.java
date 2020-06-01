@@ -1,8 +1,8 @@
 package beta.qlife.ui.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +25,7 @@ import java.util.HashMap;
  * Created by Carson on 12/06/2017.
  * Fragment that displays emergency contact information held in cloud database
  */
-public class EmergContactsFragment extends android.support.v4.app.ListFragment implements ActionbarFragment, DrawerItem, ListFragment {
+public class EmergContactsFragment extends androidx.fragment.app.ListFragment implements ActionbarFragment, DrawerItem, ListFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -30,7 +30,7 @@ public class Constants {
     public static final String GET_ROOM_BOOKINGS = "http://qlife.engsoc.queensu.ca/dibs_rooms.php?";
     public static final String GET_DATABASE = "http://qlife.engsoc.queensu.ca/database/get_database.php";
     public static final String QUEENS_LOGIN = "login.queensu.ca";
-    public static final String QUEENS_SOFTWARE_CENTRE = "http://my.queensu.ca/software-centre";
+    public static final String QUEENS_SOFTWARE_CENTRE = "https://my.queensu.ca/class-schedule";
 
     //numbers
     public static final int TIMEOUT = 5000;

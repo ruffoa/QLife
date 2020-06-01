@@ -4,7 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
@@ -35,6 +35,7 @@ import beta.qlife.utility.Constants;
  * A login screen that offers login to my.queensu.ca via netid/password SSO.
  */
 public class LoginActivity extends AppCompatActivity {
+    private static final String TAG = "LoginActivity";
     private UserManager mUserManager;
 
     public static String mIcsUrl = "";
@@ -90,10 +91,8 @@ public class LoginActivity extends AppCompatActivity {
     public void tryProcessHtml(String html) {
         if (html != null && html.contains("Class Schedule")) {
             html = html.replaceAll("\n", "");
-            int index = html.indexOf("Class Schedule");
-            html = html.substring(index);
-            String indexing = "Your URL for the Class Schedule Subscription pilot service is ";
-            index = html.indexOf(indexing) + indexing.length();
+            String indexing = "https://mytimetable.queensu.ca/timetable/";
+            int index = html.indexOf(indexing);
             String URL = html.substring(index, index + 200);
             mIcsUrl = URL.substring(0, URL.indexOf(".ics") + 4);
             index = URL.indexOf("/FU/") + 4;
@@ -101,7 +100,10 @@ public class LoginActivity extends AppCompatActivity {
             mUserEmail += "@queensu.ca";
 
             attemptAppLogin();
+        } else {
+            Log.d(TAG, "tryProcessHtml: Error: could not find calendar link in the page HTML! " + html);
         }
+
     }
 
     /**
@@ -140,10 +142,10 @@ public class LoginActivity extends AppCompatActivity {
         } else {        // if the user has logged in before, see if the schedule is up to date
             User userData = (User) mUserManager.getTable().get(0);
             String date = userData.getDateInit();
-            if (mIcsUrl == "")
+            if (mIcsUrl.equals(""))
                 mIcsUrl = userData.getIcsURL(); // get the URL from the DB so that we can re-download the schedule and info if we need to
 
-//            mIcsUrl = "https://raw.githubusercontent.com/ruffoa/QLife/master/testCal.ics"; // ToDo: Remove this temporary link
+            mIcsUrl = "https://raw.githubusercontent.com/ruffoa/QLife/master/testCal.ics"; // ToDo: Remove this temporary link
             if (!date.isEmpty()) {
                 //if downloaded calendar, but older than a week, re-download
                 Calendar lastWeek = Calendar.getInstance();
