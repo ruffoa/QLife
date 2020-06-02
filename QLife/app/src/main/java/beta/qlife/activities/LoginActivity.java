@@ -146,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
             if (mIcsUrl.equals(""))
                 mIcsUrl = userData.getIcsURL(); // get the URL from the DB so that we can re-download the schedule and info if we need to
 
-            mIcsUrl = "https://raw.githubusercontent.com/ruffoa/QLife/master/testCal.ics"; // ToDo: Remove this temporary link
+//            mIcsUrl = "https://raw.githubusercontent.com/ruffoa/QLife/master/testCal.ics"; // ToDo: Remove this temporary link
 
             if (!date.isEmpty()) {
                 //if downloaded calendar, but we are close to a term rollover, re-download it (class are probably added by now)
