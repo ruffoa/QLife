@@ -15,6 +15,7 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import beta.qlife.R;
@@ -46,12 +47,13 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_tab);
-        Toolbar toolbar = findViewById(R.id.toolbar);
         mDrawer = findViewById(R.id.drawer_layout);
 
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer,
                 toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+
         mDrawer.addDrawerListener(toggle);
         toggle.syncState();
         mFragManager = getSupportFragmentManager();
@@ -120,14 +122,16 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
      */
     private void displayView(int viewId) {
         mToActivity = false;
+        boolean isNoMarginFragment = false;
         Fragment fragment = null;
+
         switch (viewId) {
             case R.id.nav_month:
                 fragment = new MonthFragment();
                 break;
             case R.id.nav_map:
-                mToActivity = true;
-                startActivityForResult(new Intent(MainTabActivity.this, MapsActivity.class), 1);
+//                isNoMarginFragment = true;
+                fragment = new MapsActivity();
                 break;
             case R.id.nav_day:
                 fragment = new DayFragment();
@@ -152,9 +156,13 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
 
         if (fragment != null) {
             //if chose a fragment, add to back stack
-            FragmentTransaction ft = mFragManager.beginTransaction();
-            ft.addToBackStack(null).replace(R.id.content_frame, fragment);
-            ft.commit();
+            if (isNoMarginFragment) {
+//                removeMarginsFromFragment();
+            } else {
+                FragmentTransaction ft = mFragManager.beginTransaction();
+                ft.addToBackStack(null).replace(R.id.content_frame, fragment);
+                ft.commit();
+            }
         }
         mDrawer.closeDrawer(GravityCompat.START);
     }
@@ -173,4 +181,19 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
     public void inflateOptionsMenu(Menu menu) {
         Util.inflateOptionsMenu(R.menu.main_tab, menu, getMenuInflater());
     }
+
+//    void removeMarginsFromFragment() {
+//        final FrameLayout frameLayout = (FrameLayout) findViewById(R.id.content_frame);
+//        if ((frameLayout != null)) {
+//            final MapsActivity firstFragment = new MapsActivity();
+//            firstFragment.setArguments(getIntent().getExtras());
+//
+//            mFragManager.beginTransaction().addToBackStack(null).replace(R.id.content_frame, firstFragment).commit();
+//            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(frameLayout.getWidth(), frameLayout.getHeight());;
+//            //left, top, right, bottom
+//            params.setMargins(0, 0, 0, 0); //overriding margins to 0
+//            frameLayout.setLayoutParams(params);
+//        }
+//    }
+
 }

@@ -19,6 +19,7 @@
     <string name="fragment_emerg_contacts">Emergency Contacts</string>
     <string name="fragment_eng_contacts">Engineering Contacts</string>
     <string name="fragment_ilc_rooms">ILC Rooms</string>
+    <string name="map_fragment_title">Campus Map</string>
 
     <!--Short text in app-->
     <string name="brought_by">Brought to you by</string>
