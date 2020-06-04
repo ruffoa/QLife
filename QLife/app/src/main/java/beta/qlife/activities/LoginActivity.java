@@ -150,11 +150,10 @@ public class LoginActivity extends AppCompatActivity {
 
             if (!date.isEmpty()) {
                 //if downloaded calendar, but we are close to a term rollover, re-download it (class are probably added by now)
-//                SimpleDateFormat sdf = new SimpleDateFormat("MMMM d, yyyy, hh:mm aa", Locale.ENGLISH);
                 DateChecks dateChecks = new DateChecks();
 
                 try {
-                    if (dateChecks.dateIsCloseToNewTerm()) {
+                    if (dateChecks.dateIsCloseToNewTerm(date)) {
                         getIcsFile();
                     }
 //                    else    // ToDo: DELETE ME!! THIS IS JUST FOR DEBUGGING PURPOSES!!!

@@ -1,5 +1,6 @@
 package beta.qlife.utility
 
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -9,15 +10,25 @@ import java.util.concurrent.TimeUnit
  */
 
 internal class DateChecks {
-    fun dateIsCloseToNewTerm(): Boolean {
+    fun dateIsCloseToNewTerm(date: String): Boolean {
         val now = Calendar.getInstance()
+        val sdf = SimpleDateFormat("MMMM d, yyyy, h:mm aa", Locale.CANADA)
+        val initDate: Calendar = Calendar.getInstance()
+        initDate.time = sdf.parse(date)
+
+        val tenDaysAgo = Calendar.getInstance()
+        tenDaysAgo.set(Calendar.DAY_OF_YEAR, -10)
+
+        if (initDate.after(tenDaysAgo)) {
+            return false
+        }
 
         val startOfFallTerm = Calendar.getInstance();
         startOfFallTerm.set(Calendar.MONTH, 7)      // months start at *0*
 
         val diffBetweenNowAndStartOfFallTerm = getNumberOfDaysBetweenTwoCalendars(now, startOfFallTerm)
         if (diffBetweenNowAndStartOfFallTerm > -10 && diffBetweenNowAndStartOfFallTerm <= 0)     // if now is after 10 days before the start of the fall term,
-             return true                                                                         // but not after the start of the fall term (start - 10 days < now < start day)
+            return true                                                                         // but not after the start of the fall term (start - 10 days < now < start day)
 
         val startOfWinterTerm = Calendar.getInstance();
         startOfWinterTerm.set(Calendar.MONTH, 0)    // start of Jan
