@@ -1,14 +1,20 @@
 package beta.qlife.activities;
 
 import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import android.util.Log;
+import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import org.json.JSONObject;
 
@@ -19,6 +25,7 @@ import java.net.HttpURLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.Objects;
 
 import beta.qlife.ICS.DownloadICSFile;
 import beta.qlife.ICS.ParseICS;
@@ -38,6 +45,8 @@ import beta.qlife.utility.DateChecks;
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private UserManager mUserManager;
+    private ProgressBar mProgress;
+    private TextView mProgressText;
 
     public static String mIcsUrl = "";
     public static String mUserEmail = "";
@@ -50,9 +59,16 @@ public class LoginActivity extends AppCompatActivity {
         mUserManager = new UserManager(getBaseContext());
         if (mUserManager.getTable().isEmpty()) {
             browserLogin();
-        } else {
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        if (!mUserManager.getTable().isEmpty()) {
             attemptAppLogin();
         }
+
+        super.onStart();
     }
 
     /**
@@ -113,6 +129,16 @@ public class LoginActivity extends AppCompatActivity {
      * errors are presented and no actual login attempt is made.
      */
     private void attemptAppLogin() {
+        final WebView browser = findViewById(R.id.webView);
+        browser.setVisibility(View.GONE);
+
+        mProgress = findViewById(R.id.login_progress);
+        mProgress.setVisibility(View.VISIBLE);
+
+        mProgressText = findViewById(R.id.login_progress_text);
+        mProgressText.setText(R.string.login_download_data_from_cloud_message);
+        mProgressText.setVisibility(View.VISIBLE);
+
         String[] strings = mUserEmail.split("/");
         String netid = strings[strings.length - 1].split("@")[0];
 
@@ -121,9 +147,12 @@ public class LoginActivity extends AppCompatActivity {
             //no one logged in
             addUserSession(netid);
             final Context context = this;
+            final ProgressDialog dialog = new ProgressDialog(context);
+
             GetCloudDb getCloudDb = new GetCloudDb(new AsyncTaskObserver() {
                 @Override
                 public void onTaskCompleted(Object obj) {
+                    Log.d("CloudDB", "Done downloading cloud DB");
                 }
 
                 @Override
@@ -132,6 +161,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void duringTask(Object obj) {
+                    Log.d("CloudDB", "start downloading cloud DB");
+
                     if (obj instanceof JSONObject) {
                         JSONObject json = (JSONObject) obj;
                         CloudDbToPhone.cloudToPhoneDB(json, context);
@@ -139,6 +170,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             });
             getCloudDb.execute(); //get cloud db into phone db
+            mProgressText.setText(R.string.login_downloading_class_schedule_message);
             getIcsFile();
         } else {        // if the user has logged in before, see if the schedule is up to date
             User userData = (User) mUserManager.getTable().get(0);
@@ -153,25 +185,25 @@ public class LoginActivity extends AppCompatActivity {
                 DateChecks dateChecks = new DateChecks();
 
                 try {
-                    if (dateChecks.dateIsCloseToNewTerm(date)) {
+                    if (dateChecks.dateIsCloseToNewTerm(date) || true) {
                         getIcsFile();
                     }
-//                    else    // ToDo: DELETE ME!! THIS IS JUST FOR DEBUGGING PURPOSES!!!
-//                    {
-//                        getIcsFile();
-//                    }
+                    else   // launch the main activity, we are done here :)
+                    {
+                        startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
+                    }
                 } catch (Exception e) {
-                    Log.d(TAG, e.getMessage());
-
+                    Log.d(TAG, Objects.requireNonNull(e.getMessage()));
+                    startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
                 }
             } else    // the user never downloaded a schedule successfully, thus we should download
                 try {
                     getIcsFile();  // download the new schedule data right now on the main thread
                 } catch (Exception e) {
-                    Log.d(TAG, e.getMessage());
+                    Log.d(TAG, Objects.requireNonNull(e.getMessage()));
+                    startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
                 }
         }
-        startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
     }
 
     @Override
@@ -197,9 +229,13 @@ public class LoginActivity extends AppCompatActivity {
     private void getIcsFile() {
         if (mIcsUrl != null && mIcsUrl.contains(".ics")) {
             final Context context = getApplicationContext();
+            mProgressText.setText(R.string.login_downloading_class_schedule_message);
+
             DownloadICSFile icsDownloader = new DownloadICSFile(new AsyncTaskObserver() {
                 @Override
                 public void onTaskCompleted(Object obj) {
+                    Log.d("ICS Downloader", "Done downloading the ICS file, starting main activity");
+                    startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
                 }
 
                 @Override
@@ -208,6 +244,8 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void duringTask(Object obj) {
+                    Log.d("ICS Downloader", "Starting ICS file download");
+
                     if (obj instanceof HttpURLConnection) {
                         HttpURLConnection connection = (HttpURLConnection) obj;
                         InputStream input = null;
@@ -223,7 +261,7 @@ public class LoginActivity extends AppCompatActivity {
                                 output.write(data, 0, count);
                             }
                         } catch (Exception e) {
-                            Log.d("HELLOTHERE", e.getMessage());
+                            Log.d("ICS Downloader", e.getMessage());
                         } finally {
                             //close streams, end connection
                             try {
@@ -232,21 +270,27 @@ public class LoginActivity extends AppCompatActivity {
                                 if (input != null)
                                     input.close();
                             } catch (IOException ignored) {
-                                Log.d("HELLOTHERE", ignored.getMessage());
+                                Log.d("ICS Downloader", ignored.getMessage());
                             }
                         }
 
                         final ParseICS parser = new ParseICS(context);
+
+                        Log.d("ICS Downloader", "Starting ICS file parsing");
                         parser.parseICSData();
+                        Log.d("ICS Downloader", "Starting to get class names");
                         parser.getClassDisciplines();
+                        Log.d("ICS Downloader", "Done tasks, exiting duringTask function");
+                        startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
                     }
                 }
             });
 
             try {
-                icsDownloader.execute(mIcsUrl).get();
+                icsDownloader.execute(mIcsUrl);
             } catch (Exception e) {
                 Log.d("HELLOTHERE", e.getMessage());
+                startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
             }
         }
     }

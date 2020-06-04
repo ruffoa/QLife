@@ -32,7 +32,7 @@ public class GetCloudDb extends DownloadTextTask<Void, Void> {
             //catch JSONException as required
             //catch exception when getText() result is null - no data for whatever getText()
             //request failed
-            Log.d("HELLOTHERE", "BAD: " + e);
+            Log.d("CloudDB", "BAD: " + e);
         }
         return null;
     }
