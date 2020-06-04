@@ -223,39 +223,25 @@ public class ParseICS {
         if (htmlRes == null || htmlRes.length() == 0)
             return;
 
-        JSONArray commArray = null; // stores the JSON array for the COMM courses (if required)
-
-        if (classType.indexOf("COMM") >= 0){
-            try {
-                commArray = new JSONArray(htmlRes);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
         CourseManager mCourseManager = new CourseManager(mContext);
         ArrayList<DatabaseRow> courses = mCourseManager.getTable();
 
         for (DatabaseRow course : courses) {
             Course c = (Course) course;
             if (classType.indexOf("COMM") >= 0 && c.getCode().contains("COMM")) {   // if the current course is a COMM course, then parse the JSON Array to find out what the name of the course is
-                if (commArray != null && commArray.length() > 0){
-                    for(int i = 0; i < commArray.length(); i++){
-                        try {
-                            JSONObject obj = commArray.getJSONObject(i);
-                            if (obj.getString("code").contains(c.getCode()) && c.getCode().contains(classType))
-                            {
-                                String className = obj.getString("title");
-                                c.setName(className);
-                                c.setSetName(true);
-                                mCourseManager.updateRow(c.getId(), c);
-                            }
-                        }catch (JSONException e){
+////                if (commArray != null && commArray.length() > 0){     // now that COMM courses are no longer stored in a JSON array, we are back to old-school style string manipulation to find out what the class names are :(
 
-                        }
-                    }
+                if (c.getCode().contains(classType) && htmlRes.contains(c.getCode())) {
+                    int index = htmlRes.indexOf(c.getCode());
+                    String classString = htmlRes.substring(index);     // split the string starting at where the class code is to the end...
+                    classString = classString.split("\"")[0];
+
+                    String className = parseClassName(classString, classType);
+                    c.setName(className);
+                    c.setSetName(true);
+                    mCourseManager.updateRow(c.getId(), c);
                 }
-            }
-            else {
+            } else {
                 if (c.getCode().contains(classType) && htmlRes.contains(c.getCode())) {
                     int index = htmlRes.indexOf(c.getCode());
                     String className = parseClassName(htmlRes.substring(index), classType);
@@ -275,14 +261,24 @@ public class ParseICS {
      * @return The stripped version of the class name.
      */
     private String parseClassName(String className, String classType) {
-        Pattern pattern = Pattern.compile("[A-Z]+ [0-9]+ "); //matches '<discipline> <course code> '
+        Pattern pattern = Pattern.compile("[A-Z]+ [0-9]+(/)?"); //matches '<discipline> <course code> '
         Matcher matcher = pattern.matcher(className);
         if (matcher.find()) {
-            //remove ' F(or W) | <credits>' at end
-            className = className.substring(matcher.end(), className.indexOf(" |") - 2);
+            //remove ' F(or W) | <credits>' at end if it exists
+            if (className.contains(" |"))
+                className = className.substring(matcher.end(), className.indexOf(" |") - 2).trim();
+            else
+                className = className.substring(matcher.end());
+
+            if (className.contains("<td")) {    // this is the annoyingly formatted ArtSci online courses page, we have to manually deal with this :(
+                className = className.substring(className.indexOf("<a href=")).split("</a>")[0];    // find the first link in the HTML, this is the link to the course website, containing the course name
+                className = className.substring(className.indexOf(">") + 1).trim();                         // split the HTML string by the end of the link, the link text is all that remains after a trim, which contains the course name!
+            }
         } else {
             //just removes F/W
-            className = className.substring(0, className.length() - 2);
+
+            if (!classType.equals("COMM"))
+                className = className.substring(0, className.length() - 2);
         }
         return className;
     }
