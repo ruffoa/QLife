@@ -15,6 +15,7 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import beta.qlife.R;
+import beta.qlife.utility.ShowCloudDBErrorCard;
 import beta.qlife.utility.Util;
 import beta.qlife.database.local.DatabaseRow;
 import beta.qlife.database.local.buildings.Building;
@@ -49,6 +50,7 @@ public class FoodFragment extends ListFragment implements ActionbarFragment, Dra
         if (activity != null) {
             mFoodManager = new FoodManager(activity.getApplicationContext());
             inflateListView();
+            checkAndShowErrorCardIfRequired(v);
         }
         return v;
     }
@@ -179,5 +181,17 @@ public class FoodFragment extends ListFragment implements ActionbarFragment, Dra
         map.put(Food.COLUMN_CARD, oneFood.isCard() ? "Yes" : "No");
         map.put(TAG_DB_ID, String.valueOf(oneFood.getId()));
         return map;
+    }
+
+    void checkAndShowErrorCardIfRequired(View v) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            ArrayList<DatabaseRow> cafes = mFoodManager.getTable();
+
+            if (cafes.isEmpty()) {
+                ShowCloudDBErrorCard cloudDBErrorCard = new ShowCloudDBErrorCard();
+                cloudDBErrorCard.showCloudDBErrorCard(v, "food outlets", activity);
+            }
+        }
     }
 }

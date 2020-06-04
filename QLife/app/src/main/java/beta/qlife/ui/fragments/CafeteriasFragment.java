@@ -3,6 +3,8 @@ package beta.qlife.ui.fragments;
 import android.app.Activity;
 import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +12,9 @@ import android.widget.ListAdapter;
 import android.widget.SimpleAdapter;
 
 import beta.qlife.R;
+import beta.qlife.database.local.buildings.BuildingManager;
 import beta.qlife.interfaces.enforcers.ListFragment;
+import beta.qlife.utility.ShowCloudDBErrorCard;
 import beta.qlife.utility.Util;
 import beta.qlife.database.local.DatabaseRow;
 import beta.qlife.database.local.cafeterias.Cafeteria;
@@ -27,11 +31,14 @@ import java.util.HashMap;
  */
 public class CafeteriasFragment extends androidx.fragment.app.ListFragment implements ActionbarFragment, DrawerItem, ListFragment {
 
+    private CafeteriaManager mCafeteriaManager;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_list, container, false);
         setActionbarTitle();
         inflateListView();
+        checkAndShowErrorCardIfRequired(v);
         return v;
     }
 
@@ -67,7 +74,8 @@ public class CafeteriasFragment extends androidx.fragment.app.ListFragment imple
         Activity activity = getActivity();
         if (activity != null) {
             ArrayList<HashMap<String, String>> cafList = new ArrayList<>();
-            ArrayList<DatabaseRow> cafs = (new CafeteriaManager(activity.getApplicationContext())).getTable();
+            mCafeteriaManager = new CafeteriaManager(activity.getApplicationContext());
+            ArrayList<DatabaseRow> cafs = mCafeteriaManager.getTable();
             for (DatabaseRow row : cafs) {
                 cafList.add(packCafMap(row));
             }
@@ -110,4 +118,17 @@ public class CafeteriasFragment extends androidx.fragment.app.ListFragment imple
         map.put(Cafeteria.COLUMN_SUN_DINNER_START, Util.getHoursBetween(caf.getSunDinnerStart(), caf.getSunDinnerStop()));
         return map;
     }
+
+    void checkAndShowErrorCardIfRequired(View v) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            ArrayList<DatabaseRow> cafes = mCafeteriaManager.getTable();
+
+            if (cafes.isEmpty()) {
+                ShowCloudDBErrorCard cloudDBErrorCard = new ShowCloudDBErrorCard();
+                cloudDBErrorCard.showCloudDBErrorCard(v, "cafeterias", activity);
+            }
+        }
+    }
+
 }

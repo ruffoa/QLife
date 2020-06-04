@@ -33,6 +33,7 @@
     <string name="resources">Resources</string>
     <string name="links">Links</string>
     <string name="information_title">Information:</string>
+    <string name="cloud_db_not_found">The connection to the QLife cloud database failed.\nIf this persists, please contact doit@engsoc.queensu.ca</string>
 
     <!--Table row labels-->
     <string name="week_hours">Mon - Thurs</string>
@@ -75,6 +76,7 @@
     <string name="review_app">Review on Play Store</string>
     <string name="suggestions">Give suggestions</string>
     <string name="title_class">Class</string>
+    <string name="cloud_db_not_found_email_action">Email DoIT</string>
 
     <!--sections in drawer-->
     <string name="schedule_section">Schedule</string>
@@ -106,6 +108,7 @@
     <string name="logged_out">Logged out</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="connection_error_card_title">Sorry, we can\'t get the list of %1$s</string>
 
     <!--sections for introduction screen -->
     <string name="slide_welcome_title">Welcome to QLife!</string>

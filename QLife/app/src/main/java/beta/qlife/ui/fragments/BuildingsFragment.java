@@ -1,21 +1,31 @@
 package beta.qlife.ui.fragments;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.ListFragment;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.card.MaterialCardView;
+
 import beta.qlife.R;
 import beta.qlife.utility.Constants;
+import beta.qlife.utility.ShowCloudDBErrorCard;
 import beta.qlife.utility.Util;
 import beta.qlife.database.local.DatabaseRow;
 import beta.qlife.database.local.buildings.Building;
@@ -45,6 +55,7 @@ public class BuildingsFragment extends ListFragment implements ActionbarFragment
         View v = inflater.inflate(R.layout.fragment_list, container, false);
         setActionbarTitle();
         inflateListView();
+        checkAndShowErrorCardIfRequired(v);
         return v;
     }
 
@@ -140,20 +151,35 @@ public class BuildingsFragment extends ListFragment implements ActionbarFragment
             ArrayList<HashMap<String, String>> buildingsList = new ArrayList<>();
 
             ArrayList<DatabaseRow> buildings = mBuildingManager.getTable();
+
             for (DatabaseRow row : buildings) {
-                Building building = (Building) row;
-                HashMap<String, String> map = new HashMap<>();
-                map.put(Building.COLUMN_NAME, building.getName());
-                map.put(Building.COLUMN_PURPOSE, building.getPurpose());
-                String food = building.getFood() ? "Yes" : "No";
-                map.put(Building.COLUMN_FOOD, food);
-                map.put(FoodFragment.TAG_DB_ID, String.valueOf(building.getId()));
-                buildingsList.add(map);
+                    Building building = (Building) row;
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put(Building.COLUMN_NAME, building.getName());
+                    map.put(Building.COLUMN_PURPOSE, building.getPurpose());
+                    String food = building.getFood() ? "Yes" : "No";
+                    map.put(Building.COLUMN_FOOD, food);
+                    map.put(FoodFragment.TAG_DB_ID, String.valueOf(building.getId()));
+                    buildingsList.add(map);
+                }
+                ListAdapter adapter = new SimpleAdapter(activity.getApplicationContext(), buildingsList,
+                        R.layout.buildings_list_item, new String[]{Building.COLUMN_NAME, Building.COLUMN_PURPOSE, Building.COLUMN_FOOD, FoodFragment.TAG_DB_ID},
+                        new int[]{R.id.name, R.id.purpose, R.id.food, R.id.db_id});
+                setListAdapter(adapter);
+        }
+    }
+
+    void checkAndShowErrorCardIfRequired(View v) {
+        Activity activity = getActivity();
+        if (activity != null) {
+            mBuildingManager = new BuildingManager(activity.getApplicationContext());
+            ArrayList<DatabaseRow> buildings = mBuildingManager.getTable();
+            Log.d("BUILDING TABLE CHECK", "Building table is: " + buildings.size() + " isEmpty? " + buildings.isEmpty());
+
+            if (buildings.isEmpty()) {
+                ShowCloudDBErrorCard cloudDBErrorCard = new ShowCloudDBErrorCard();
+                cloudDBErrorCard.showCloudDBErrorCard(v, "buildings", activity);
             }
-            ListAdapter adapter = new SimpleAdapter(activity.getApplicationContext(), buildingsList,
-                    R.layout.buildings_list_item, new String[]{Building.COLUMN_NAME, Building.COLUMN_PURPOSE, Building.COLUMN_FOOD, FoodFragment.TAG_DB_ID},
-                    new int[]{R.id.name, R.id.purpose, R.id.food, R.id.db_id});
-            setListAdapter(adapter);
         }
     }
 }

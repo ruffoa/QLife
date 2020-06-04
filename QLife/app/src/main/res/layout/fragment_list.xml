@@ -4,6 +4,10 @@
               android:layout_height="fill_parent"
               android:orientation="vertical">
 
+    <include
+        layout="@layout/material_card"
+        android:id="@+id/database_error_card" />
+
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
