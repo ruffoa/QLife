@@ -26,30 +26,45 @@
         android:orientation="horizontal">
 
         <LinearLayout
+            android:id="@+id/login_progress_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:orientation="vertical"
+            android:visibility="visible">
 
-            <ProgressBar
-                android:id="@+id/login_progress"
-                style="?android:attr/progressBarStyleLarge"
+            <ImageView
+                android:id="@+id/login_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:visibility="visible" />
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="64dp"
+                android:layout_marginStart="-16dp"
+                app:srcCompat="@drawable/ic_qtap_logo_svg" />
 
-            <TextView
-                android:id="@+id/login_progress_text"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8dp"
-                android:layout_marginBottom="8dp"
-                android:text="BLAHAHAH"
-                android:visibility="visible" />
+                android:orientation="horizontal" >
+
+                <ProgressBar
+                    android:id="@+id/login_progress"
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/login_progress_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginBottom="8dp" />
+            </LinearLayout>
         </LinearLayout>
+
     </RelativeLayout>
 
     <LinearLayout

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -13,6 +14,8 @@ import android.view.View;
 import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -46,6 +49,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
     private UserManager mUserManager;
     private ProgressBar mProgress;
+    private ImageView mProgressImage;
     private TextView mProgressText;
 
     public static String mIcsUrl = "";
@@ -132,12 +136,16 @@ public class LoginActivity extends AppCompatActivity {
         final WebView browser = findViewById(R.id.webView);
         browser.setVisibility(View.GONE);
 
+        LinearLayout progressContainer = findViewById(R.id.login_progress_container);
+        progressContainer.setVisibility(View.VISIBLE);
+
         mProgress = findViewById(R.id.login_progress);
-        mProgress.setVisibility(View.VISIBLE);
+
+        mProgressImage = findViewById(R.id.login_logo);
+        mProgressImage.setImageResource(R.drawable.ic_qtap_logo_svg);
 
         mProgressText = findViewById(R.id.login_progress_text);
         mProgressText.setText(R.string.login_download_data_from_cloud_message);
-        mProgressText.setVisibility(View.VISIBLE);
 
         String[] strings = mUserEmail.split("/");
         String netid = strings[strings.length - 1].split("@")[0];
@@ -147,7 +155,6 @@ public class LoginActivity extends AppCompatActivity {
             //no one logged in
             addUserSession(netid);
             final Context context = this;
-            final ProgressDialog dialog = new ProgressDialog(context);
 
             GetCloudDb getCloudDb = new GetCloudDb(new AsyncTaskObserver() {
                 @Override
@@ -185,10 +192,9 @@ public class LoginActivity extends AppCompatActivity {
                 DateChecks dateChecks = new DateChecks();
 
                 try {
-                    if (dateChecks.dateIsCloseToNewTerm(date) || true) {
+                    if (dateChecks.dateIsCloseToNewTerm(date)) {
                         getIcsFile();
-                    }
-                    else   // launch the main activity, we are done here :)
+                    } else   // launch the main activity, we are done here :)
                     {
                         startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
                     }
@@ -277,8 +283,11 @@ public class LoginActivity extends AppCompatActivity {
                         final ParseICS parser = new ParseICS(context);
 
                         Log.d("ICS Downloader", "Starting ICS file parsing");
+                        updateLoginMessageOnUiThread(R.string.login_parse_ics_file, 40);
                         parser.parseICSData();
+
                         Log.d("ICS Downloader", "Starting to get class names");
+                        updateLoginMessageOnUiThread(R.string.login_create_class_db_message, 80);
                         parser.getClassDisciplines();
                         Log.d("ICS Downloader", "Done tasks, exiting duringTask function");
                         startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
@@ -293,5 +302,26 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
             }
         }
+    }
+
+    private void updateLoginMessageOnUiThread(final Integer messageId) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressText.setText(getString(messageId));
+            }
+        });
+    }
+
+    private void updateLoginMessageOnUiThread(final Integer messageId, final Integer progress) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mProgressText.setText(getString(messageId));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    mProgress.setProgress(progress, true);
+                }
+            }
+        });
     }
 }

@@ -109,6 +109,11 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="connection_error_card_title">Sorry, we can\'t get the list of %1$s</string>
+    <string name="login_download_data_from_cloud_message">Please wait, downloading data from the cloud</string>
+    <string name="login_downloading_class_schedule_message">Please wait, downloading class schedule</string>
+    <string name="login_parse_ics_file">Please wait, parsing class schedule</string>
+    <string name="login_create_class_db_message">Creating class database…</string>
+    <string name="login_download_class_names_message">Downloading class names…</string>
 
     <!--sections for introduction screen -->
     <string name="slide_welcome_title">Welcome to QLife!</string>
@@ -134,8 +139,4 @@ Shout out to the 2016-17 Engineering Society Software Development Team for start
 
     <string name="ask_suggestions">If you liked the app, please use the button below to review it on the Play Store!\n\nIf you have any suggestions for improvements, please feel free to email
     doit@engsoc.queensu.ca or submit a suggestion using the button below!</string>
-    <string name="login_download_data_from_cloud_message">Please wait, downloading data from the cloud</string>
-    <string name="login_downloading_class_schedule_message">Please wait, downloading class schedule</string>
-    <string name="login_parse_ics_file">Please wait, parsing class schedule</string>
-    <string name="login_download_class_names_message">Downloading class names...</string>
 </resources>
