@@ -15,10 +15,10 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import beta.qlife.R;
+import beta.qlife.ui.fragments.MapsFragment;
 import beta.qlife.ui.fragments.RoomsFragment;
 import beta.qlife.utility.Util;
 import beta.qlife.database.local.DatabaseAccessor;
@@ -131,7 +131,7 @@ public class MainTabActivity extends AppCompatActivity implements NavigationView
                 break;
             case R.id.nav_map:
 //                isNoMarginFragment = true;
-                fragment = new MapsActivity();
+                fragment = new MapsFragment();
                 break;
             case R.id.nav_day:
                 fragment = new DayFragment();

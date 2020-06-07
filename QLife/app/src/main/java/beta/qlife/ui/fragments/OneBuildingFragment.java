@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 
 import beta.qlife.R;
-import beta.qlife.activities.MapsActivity;
 import beta.qlife.database.local.buildings.Building;
 import beta.qlife.interfaces.enforcers.ActionbarFragment;
 import beta.qlife.interfaces.enforcers.DrawerItem;
@@ -66,7 +65,7 @@ public class OneBuildingFragment extends Fragment implements ActionbarFragment, 
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if (requestCode == MapsActivity.REQUEST_LOCATION_PERMISSIONS) {
+        if (requestCode == MapsFragment.REQUEST_LOCATION_PERMISSIONS) {
             onRequestLocationPermissionsResult();
         }
     }

@@ -185,7 +185,7 @@ public class LoginActivity extends AppCompatActivity {
             if (mIcsUrl.equals(""))
                 mIcsUrl = userData.getIcsURL(); // get the URL from the DB so that we can re-download the schedule and info if we need to
 
-            mIcsUrl = "https://raw.githubusercontent.com/ruffoa/QLife/master/testCal.ics"; // ToDo: Remove this temporary link
+//            mIcsUrl = "https://raw.githubusercontent.com/ruffoa/QLife/master/testCal.ics"; // ToDo: Remove this temporary link
 
             if (!date.isEmpty()) {
                 //if downloaded calendar, but we are close to a term rollover, re-download it (class are probably added by now)
@@ -194,6 +194,7 @@ public class LoginActivity extends AppCompatActivity {
                 try {
                     if (dateChecks.dateIsCloseToNewTerm(date)) {
                         getIcsFile();
+                        updateScheduleDownloadDate();
                     } else   // launch the main activity, we are done here :)
                     {
                         startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
@@ -323,5 +324,13 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void updateScheduleDownloadDate() {
+        SimpleDateFormat df = new SimpleDateFormat("MMMM d, yyyy, h:mm aa", Locale.CANADA);
+        String formattedDate = df.format(Calendar.getInstance().getTime());
+        User nUser = ((User) mUserManager.getTable().get(0));
+        nUser.setDateInit(formattedDate);
+        mUserManager.updateRow(nUser.getId(), nUser);
     }
 }

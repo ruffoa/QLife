@@ -23,7 +23,7 @@ public class User extends DatabaseRow {
     public static final int DATE_INIT_POS = 4;
     public static final int ICS_URL_POS = 5;
 
-    //fields in database
+    //fields in databased
     private String netid;
     private String firstName;
     private String lastName;
@@ -53,6 +53,10 @@ public class User extends DatabaseRow {
 
     public String getDateInit() {
         return dateInit;
+    }
+
+    public void setDateInit(String date) {
+        this.dateInit = date;
     }
 
     public String getIcsURL() {

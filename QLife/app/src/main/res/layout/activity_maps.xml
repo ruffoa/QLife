@@ -4,7 +4,7 @@
 <!--    android:name="com.google.android.gms.maps.SupportMapFragment"-->
 <!--    android:layout_width="match_parent"-->
 <!--    android:layout_height="match_parent"-->
-<!--    tools:context="beta.qlife.activities.MapsActivity" />-->
+<!--    tools:context="beta.qlife.ui.fragments.MapsFragment" />-->
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"

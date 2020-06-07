@@ -12,7 +12,7 @@ import com.google.android.gms.maps.GoogleMap;
 import java.util.ArrayList;
 import java.util.List;
 
-import beta.qlife.activities.MapsActivity;
+import beta.qlife.ui.fragments.MapsFragment;
 
 /**
  * Created by Carson on 13/08/2017.
@@ -36,7 +36,7 @@ public class HandlePermissions {
             if (!listPermissionsNeeded.isEmpty()) {
                 ActivityCompat.requestPermissions(activity,
                         listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),
-                        MapsActivity.REQUEST_LOCATION_PERMISSIONS);
+                        MapsFragment.REQUEST_LOCATION_PERMISSIONS);
             }
         }
     }
