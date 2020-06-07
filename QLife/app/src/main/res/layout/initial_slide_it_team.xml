@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="@string/brought_by"
-            android:textColor="@color/white" />
+            android:textColor="?android:attr/textColorPrimaryInverse" />
 
         <TextView
             android:id="@+id/it_text"

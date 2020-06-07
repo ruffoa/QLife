@@ -4,7 +4,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_view"
         style="@style/ListItemCardView">
 
@@ -231,5 +231,5 @@
 
             </TableLayout>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

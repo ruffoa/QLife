@@ -33,7 +33,7 @@
                 android:layout_gravity="center"
                 android:paddingTop="15dp"
                 android:textSize="15sp"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold" />
 
             <TextView
@@ -43,7 +43,7 @@
                 android:layout_gravity="center"
                 android:paddingTop="15dp"
                 android:textSize="15sp"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:text="@string/no_rooms_available"
                 android:visibility="gone" />
 
@@ -54,7 +54,7 @@
                 android:layout_gravity="center"
                 android:paddingTop="15dp"
                 android:textSize="15sp"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:text="@string/no_data"
                 android:visibility="gone" />
         </LinearLayout>

@@ -37,7 +37,7 @@
         android:layout_alignParentRight="true"
         android:text="@string/next"
         style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:textColor="@android:color/white" />
+        android:textColor="?android:attr/textColorPrimaryInverse" />
 
     <Button
         android:id="@+id/btn_skip"
@@ -47,6 +47,6 @@
         android:layout_alignParentLeft="true"
         style="@style/Widget.MaterialComponents.Button.TextButton"
         android:text="@string/skip"
-        android:textColor="@android:color/white" />
+        android:textColor="?android:attr/textColorPrimaryInverse" />
 
 </RelativeLayout>

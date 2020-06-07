@@ -17,6 +17,7 @@ import android.webkit.WebViewClient;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONObject;
@@ -68,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        if (!mUserManager.getTable().isEmpty()) {
+        if (!mUserManager.getTable().isEmpty() && mUserManager.getTable().get(0) != null) {
             attemptAppLogin();
         }
 
@@ -136,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
         final WebView browser = findViewById(R.id.webView);
         browser.setVisibility(View.GONE);
 
-        LinearLayout progressContainer = findViewById(R.id.login_progress_container);
+        RelativeLayout progressContainer = findViewById(R.id.login_progress_container);
         progressContainer.setVisibility(View.VISIBLE);
 
         mProgress = findViewById(R.id.login_progress);

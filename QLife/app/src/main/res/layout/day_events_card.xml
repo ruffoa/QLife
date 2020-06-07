@@ -7,10 +7,16 @@
 
     <!--android:clickable="true" add this to the cardView for animation support-->
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_view"
         style="@style/ListItemCardView"
-        android:foreground="?android:attr/selectableItemBackground">
+        android:foreground="?android:attr/selectableItemBackground"
+        android:layout_marginLeft="@dimen/mtrl_card_spacing"
+        android:layout_marginTop="@dimen/mtrl_card_spacing"
+        android:layout_marginRight="@dimen/mtrl_card_spacing"
+        android:layout_marginBottom="@dimen/mtrl_card_spacing"
+        card_view:cardCornerRadius="@dimen/cardview_default_radius"
+        card_view:cardElevation="@dimen/cardview_default_elevation">
 
         <RelativeLayout
             android:layout_width="fill_parent"
@@ -21,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
-                android:textColor="@android:color/black"
+                android:textColor="?android:attr/textColorPrimary"
                 android:textStyle="bold"/>
 
             <TextView
@@ -30,9 +36,9 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/textView"
                 android:layout_marginTop="10dp"
-                android:textColor="@android:color/black"/>
+                android:textColor="?android:attr/textColorPrimary"/>
         </RelativeLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 
 </LinearLayout>
