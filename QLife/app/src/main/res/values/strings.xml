@@ -139,4 +139,6 @@ Shout out to the 2016-17 Engineering Society Software Development Team for start
 
     <string name="ask_suggestions">If you liked the app, please use the button below to review it on the Play Store!\n\nIf you have any suggestions for improvements, please feel free to email
     doit@engsoc.queensu.ca or submit a suggestion using the button below!</string>
+    <string name="redownload_schedule">Re-download Schedule</string>
+    <string name="redownloading_schedule">Starting schedule re-download</string>
 </resources>

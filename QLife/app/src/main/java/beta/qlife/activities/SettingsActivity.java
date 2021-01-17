@@ -44,6 +44,16 @@ public class SettingsActivity extends AppCompatActivity implements OptionsMenuAc
             }
         });
 
+        Button redownloadSchedule = findViewById(R.id.redownload_schedule);
+        redownloadSchedule.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
+                intent.putExtra(LoginActivity.TAG_REDOWNLOAD_SCHEDULE, true);
+                startActivity(intent);
+                finishAffinity();
+            }
+        });
+
         setBackButton();
         setTextViews();
     }

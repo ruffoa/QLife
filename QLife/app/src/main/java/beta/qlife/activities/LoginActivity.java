@@ -1,7 +1,6 @@
 package beta.qlife.activities;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -15,7 +14,6 @@ import android.webkit.ValueCallback;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -48,6 +46,8 @@ import beta.qlife.utility.DateChecks;
  */
 public class LoginActivity extends AppCompatActivity {
     private static final String TAG = "LoginActivity";
+    public static final String TAG_REDOWNLOAD_SCHEDULE = "redownload_schedule";
+
     private UserManager mUserManager;
     private ProgressBar mProgress;
     private ImageView mProgressImage;
@@ -55,6 +55,8 @@ public class LoginActivity extends AppCompatActivity {
 
     public static String mIcsUrl = "";
     public static String mUserEmail = "";
+
+    private Boolean shouldRedownloadSchedule = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +66,11 @@ public class LoginActivity extends AppCompatActivity {
         mUserManager = new UserManager(getBaseContext());
         if (mUserManager.getTable().isEmpty()) {
             browserLogin();
+        }
+
+        Bundle bundle = getIntent().getExtras();
+        if (bundle != null) {
+            shouldRedownloadSchedule = bundle.getBoolean(LoginActivity.TAG_REDOWNLOAD_SCHEDULE);
         }
     }
 
@@ -186,14 +193,15 @@ public class LoginActivity extends AppCompatActivity {
             if (mIcsUrl.equals(""))
                 mIcsUrl = userData.getIcsURL(); // get the URL from the DB so that we can re-download the schedule and info if we need to
 
-            mIcsUrl = "https://raw.githubusercontent.com/ruffoa/QLife/master/testCal.ics"; // ToDo: Remove this temporary link
+//            mIcsUrl = "https://raw.githubusercontent.com/ruffoa/QLife/master/testCal.ics"; // ToDo: Remove this temporary link
 
             if (!date.isEmpty()) {
                 //if downloaded calendar, but we are close to a term rollover, re-download it (class are probably added by now)
                 DateChecks dateChecks = new DateChecks();
 
                 try {
-                    if (dateChecks.dateIsCloseToNewTerm(date)) {
+                    // Redownload the schedule if we are close to a new school term, or if the user clicked the "redownload" button in the settings page
+                    if (dateChecks.dateIsCloseToNewTerm(date) || shouldRedownloadSchedule) {
                         getIcsFile();
                         updateScheduleDownloadDate();
                     } else   // launch the main activity, we are done here :)
@@ -207,6 +215,7 @@ public class LoginActivity extends AppCompatActivity {
             } else    // the user never downloaded a schedule successfully, thus we should download
                 try {
                     getIcsFile();  // download the new schedule data right now on the main thread
+                    updateScheduleDownloadDate();
                 } catch (Exception e) {
                     Log.d(TAG, Objects.requireNonNull(e.getMessage()));
                     startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
@@ -300,7 +309,7 @@ public class LoginActivity extends AppCompatActivity {
             try {
                 icsDownloader.execute(mIcsUrl);
             } catch (Exception e) {
-                Log.d("HELLOTHERE", e.getMessage());
+                Log.d("ICS Downloader", e.getMessage());
                 startActivity(new Intent(LoginActivity.this, MainTabActivity.class));
             }
         }

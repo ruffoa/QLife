@@ -11,8 +11,8 @@ import beta.qlife.database.local.DatabaseRow;
 
 /**
  * Created by Carson on 29/01/2017.
- * Holds all information for the courses table.
- * Manages the courses within the database. Inserts/deletes rows and the entire table.
+ * Holds all information for the users table.
+ * Manages the user within the database. Inserts/deletes rows and the entire table.
  */
 public class UserManager extends DatabaseManager {
     public UserManager(Context context) {
