@@ -20,11 +20,8 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.crashlytics.android.Crashlytics;
-
 import beta.qlife.R;
 import beta.qlife.database.local.users.UserManager;
-import io.fabric.sdk.android.Fabric;
 
 /**
  * Activity that holds on app start UI/info.
@@ -40,7 +37,6 @@ public class StartupActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Fabric.with(this, new Crashlytics());
 
         //Check user already logged in, don't need startup screens
         if (!new UserManager(this).getTable().isEmpty()) {

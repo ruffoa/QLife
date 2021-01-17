@@ -67,9 +67,9 @@ public class ParseICS {
                 inputStream.close();
             }
         } catch (FileNotFoundException e) {
-            Log.e("HELLOTHERE", "File not found: " + e.toString());
+            Log.e("ICS_FILE_DOWNLOADER", "File not found: " + e.toString());
         } catch (IOException e) {
-            Log.e("HELLOTHER", "Can not read file: " + e.toString());
+            Log.e("ICS_FILE_DOWNLOADER", "Can not read file: " + e.toString());
         }
         return mLines;
     }

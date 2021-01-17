@@ -49,11 +49,6 @@
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustResize"/>
 
-        <!-- api key for crashlytics -->
-        <meta-data
-            android:name="io.fabric.ApiKey"
-            android:value="d84ee4ad5d54b10dede20dd1d87deb32e5214421"/>
-
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/activity_settings"/>
