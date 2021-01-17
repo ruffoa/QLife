@@ -5,6 +5,8 @@
     <color name="colorPrimaryDark">#002984</color>
     <color name="colorPrimaryLight">#757de8</color>
     <color name="colorAccent">#809fff</color>
+    <color name="colorErrorDark">#CF6679</color>
+    <color name="colorError">#B00020</color>
 
     <color name="complementaryLight">#b5a33f</color>
     <color name="analogousBlue">#3f8cb5</color>

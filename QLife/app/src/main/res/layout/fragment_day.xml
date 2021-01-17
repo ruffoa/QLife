@@ -25,20 +25,20 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/prev"
-                style="@style/MainButton"
+                style="@style/MainRoundedButton"
                 android:text="@string/prev" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/today"
-                style="@style/MainButton"
+                style="@style/MainRoundedButton"
                 android:layout_centerHorizontal="true"
                 android:text="@string/today" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/next"
-                style="@style/MainButton"
+                style="@style/MainRoundedButton"
                 android:layout_alignParentEnd="true"
                 android:text="@string/next" />
         </RelativeLayout>

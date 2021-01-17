@@ -83,17 +83,18 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/redownload_schedule"
-        style="@style/MainButton"
+        style="@style/MainRoundedButton"
         android:layout_width="match_parent"
         android:gravity="start|center_vertical"
         android:text="@string/redownload_schedule"
         tools:gravity="center" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/logout"
-        style="@style/MainButton"
+        style="@style/WarningButton"
+        android:layout_marginTop="0dp"
         android:layout_width="match_parent"
         android:gravity="start|center_vertical"
         android:text="@string/logout"
